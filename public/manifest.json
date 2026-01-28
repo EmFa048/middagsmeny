@@ -1,6 +1,6 @@
 {
-    "name": "Dagens middag",
-    "short_name": "Dagens middag",
+    "name": "Middagsmeny",
+    "short_name": "Middagsmeny",
     "description": "Synka skollunchen med goda middagsförslag.",
     "start_url": "/",
     "display": "standalone",

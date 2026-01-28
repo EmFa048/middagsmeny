@@ -271,7 +271,7 @@ export default function Home() {
   }, [searchParams]);
 
   const handleShare = async () => {
-    const shareTitle = 'Dagens middag';
+    const shareTitle = 'Middagsmeny';
 
     // 1. Skapa den snygga listan för textmeddelandet
     const dishList = menu
@@ -698,7 +698,7 @@ export default function Home() {
         <div className="relative w-full aspect-[5/1] min-h-[100px] max-h-[180px]">
           <img
             src="/header-bg-organic-v7.png"
-            alt="Dagens middag Illustration"
+            alt="Middagsmeny Illustration"
             className="w-full h-full object-cover object-center"
           />
         </div>

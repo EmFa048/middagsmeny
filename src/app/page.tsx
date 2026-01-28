@@ -786,7 +786,7 @@ function HomeContent() {
               className="bg-brand-yellow hover:bg-[#ffc800] text-brand-dark px-6 py-2 rounded-lg font-bold transition-colors disabled:opacity-50 h-[42px] flex items-center gap-2"
             >
               <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
-              Slumpa ny vecka
+              Slumpa ny meny
             </button>
 
             <button

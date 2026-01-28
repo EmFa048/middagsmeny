@@ -729,9 +729,11 @@ function HomeContent() {
       <main className="max-w-4xl mx-auto p-6 space-y-8">
 
         {/* Settings / Search */}
-        <div className="bg-white rounded-xl shadow-sm p-6 space-y-4 border border-slate-100">
+        <div className="bg-white rounded-xl shadow-sm p-6 space-y-6 border border-slate-100">
+
+          {/* RAD 1: Sökfält & Se meny */}
           <div className="flex flex-col md:flex-row gap-4">
-            <div className="flex-1 relative group">
+            <div className="flex-1 md:flex-[4] relative group">
               <Search className="absolute left-3 top-3 text-slate-400 w-5 h-5" />
               <input
                 type="text"
@@ -739,7 +741,7 @@ function HomeContent() {
                 onChange={(e) => handleSearch(e.target.value)}
                 onFocus={() => setShowResults(true)}
                 placeholder="Sök skola (t.ex. Malmö)..."
-                className="w-full pl-10 pr-10 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-brand-yellow outline-none transition-all"
+                className="w-full pl-10 pr-10 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-brand-yellow outline-none transition-all h-[42px]"
               />
               {searchQuery && (
                 <button
@@ -775,18 +777,28 @@ function HomeContent() {
             </div>
 
             <button
+              onClick={() => fetchMenu(undefined, false, true)}
+              disabled={loading}
+              className="md:flex-1 h-[42px] bg-brand-blue hover:bg-brand-dark text-white rounded-lg font-medium transition-colors disabled:opacity-50 whitespace-nowrap shadow-sm"
+            >
+              {loading ? 'Hämtar...' : 'Se meny'}
+            </button>
+          </div>
+
+          {/* RAD 2: Funktioner */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+            <button
               onClick={toggleFavorite}
-              className={`px-4 py-2 rounded-lg border transition-colors flex items-center gap-2 group ${isFavorite ? 'bg-brand-yellow text-brand-dark border-brand-yellow' : 'bg-white border-slate-200 text-slate-400 hover:text-brand-yellow hover:border-brand-yellow'}`}
+              className={`h-[42px] rounded-lg border transition-colors flex items-center justify-center gap-2 group ${isFavorite ? 'bg-brand-yellow text-brand-dark border-brand-yellow shadow-sm' : 'bg-white border-slate-200 text-slate-400 hover:text-brand-yellow hover:border-brand-yellow'}`}
               title="Spara skola till dina genvägar"
             >
               <Heart className={`w-4 h-4 ${isFavorite ? 'fill-current' : 'group-hover:scale-110 transition-transform'}`} />
               <span className="text-sm font-medium">Spara skola</span>
             </button>
 
-
             <button
               onClick={handleShare}
-              className="px-4 py-2 rounded-lg border border-slate-200 bg-white text-slate-600 hover:text-brand-blue hover:border-brand-blue transition-colors flex items-center gap-2"
+              className="h-[42px] rounded-lg border border-slate-200 bg-white text-slate-600 hover:text-brand-blue hover:border-brand-blue transition-colors flex items-center justify-center gap-2"
               title="Kopiera och dela veckans middagar"
             >
               <Share2 className="w-4 h-4" />
@@ -796,18 +808,10 @@ function HomeContent() {
             <button
               onClick={() => fetchMenu(undefined, false, true)}
               disabled={loading}
-              className="bg-brand-yellow hover:bg-[#ffc800] text-brand-dark px-6 py-2 rounded-lg font-bold transition-colors disabled:opacity-50 h-[42px] flex items-center gap-2"
+              className="h-[42px] bg-brand-yellow hover:bg-[#ffc800] text-brand-dark rounded-lg font-bold transition-colors disabled:opacity-50 flex items-center justify-center gap-2 shadow-sm"
             >
               <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
-              Slumpa ny meny
-            </button>
-
-            <button
-              onClick={() => fetchMenu(undefined, false, true)}
-              disabled={loading}
-              className="bg-brand-blue hover:bg-brand-dark text-white px-6 py-2 rounded-lg font-medium transition-colors disabled:opacity-50 h-[42px]"
-            >
-              {loading ? 'Hämtar...' : 'Se meny'}
+              <span className="text-sm">Slumpa ny meny</span>
             </button>
           </div>
 

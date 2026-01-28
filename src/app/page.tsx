@@ -234,6 +234,8 @@ function HomeContent() {
   });
 
   // Read URL param and fetch
+  // Track fetching to prevent loops
+  const lastFetchedUrl = useRef('');
   const initialLoadDone = useRef(false);
   useEffect(() => {
     // Only handle INITIAL reading from URL here
@@ -593,28 +595,29 @@ function HomeContent() {
     });
   };
 
-  const fetchMenu = async (overrideUrl?: string, forceSkipAutoCorrect = false, isAutoJump = false) => {
+  const fetchMenu = async (overrideUrl?: string, forceSkipAutoCorrect = false) => {
     const activeUrl = overrideUrl || url;
     const skipAutoCorrect = forceSkipAutoCorrect || isManual;
 
-    if (!activeUrl) {
-      setMenu([]);
-      setError('');
-      return;
-    }
+    if (!activeUrl) return;
+
+    // Prevent redundant fetches
+    if (activeUrl === lastFetchedUrl.current && !forceSkipAutoCorrect) return;
+    lastFetchedUrl.current = activeUrl;
 
     setLoading(true);
     setError('');
 
-    // Only clear menu if we are NOT doing an auto-jump (to avoid multiple flashes)
-    if (!isAutoJump) {
-      setMenu([]);
-    }
-
     try {
       const res = await fetch(`/api/menu?url=${encodeURIComponent(activeUrl)}`);
       if (!res.ok) throw new Error('Kunde inte hämta menyn');
-      let data = await res.json();
+      const data = await res.json();
+
+      if (!data.meals || data.meals.length === 0) {
+        setMenu([]);
+        setLoading(false);
+        return;
+      }
 
       // --- AUTO-CORRECTION LOGIC ---
       const now = new Date();
@@ -630,8 +633,6 @@ function HomeContent() {
 
         if (lastDate && todayStr > lastDate && data.nextURL) {
           setUrl(data.nextURL);
-          // Instead of calling fetchMenu directly here, we let the useEffect[url] handle it
-          // OR we return here and let the state update trigger the next fetch
           return;
         } else if (firstDate && todayStr < firstDate && data.previousURL) {
           setUrl(data.previousURL);
@@ -644,6 +645,7 @@ function HomeContent() {
         next: data.nextURL
       });
 
+      // Group by date
       const grouped = new Map<string, SchoolMeal[]>();
       data.meals.forEach((m: SchoolMeal) => {
         const date = m.date.split('T')[0];
@@ -654,19 +656,12 @@ function HomeContent() {
       const processedMenu: DayMenu[] = [];
       const usedDishes: string[] = [];
       const sortedDates = Array.from(grouped.keys()).sort();
-
-      // Get shared dishes from URL ONCE at start of processing
       const currentParams = new URLSearchParams(window.location.search);
 
       for (const date of sortedDates) {
-        const meals = grouped.get(date)!;
-        let forcedDish = undefined;
-
-        // Check if the URL has a saved dish for THIS date
-        const sharedDish = currentParams.get('s_' + date);
-        if (sharedDish) forcedDish = sharedDish;
-
-        const suggestion = generateMockSuggestion(meals, preferences, customDishes, favoriteDishNames, usedDishes, forcedDish);
+        const mealsForDay = grouped.get(date)!;
+        const sharedDish = currentParams.get('s_' + date) || undefined;
+        const suggestion = generateMockSuggestion(mealsForDay, preferences, customDishes, favoriteDishNames, usedDishes, sharedDish);
 
         if (suggestion) {
           usedDishes.push(suggestion.dish);
@@ -674,7 +669,7 @@ function HomeContent() {
 
         processedMenu.push({
           date,
-          schoolMeals: meals,
+          schoolMeals: mealsForDay,
           dinnerSuggestion: suggestion,
         });
       }

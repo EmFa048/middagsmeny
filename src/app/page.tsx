@@ -510,6 +510,21 @@ function HomeContent() {
         score += 1000; // Very heavy penalty for consecutive same category
       }
 
+      // 3b. BASE VARIETY: No same base (pasta/rice/potato) two days in a row
+      const getBase = (dish: any) => {
+        const t = (dish.dish + ' ' + (dish.description || '')).toLowerCase();
+        if (t.includes('pasta') || t.includes('spaghetti') || t.includes('makaron') || t.includes('lasagne') || t.includes('tortellini') || t.includes('penne')) return 'pasta';
+        if (t.includes('ris') || t.includes('bulgur') || t.includes('couscous') || t.includes('paella')) return 'rice';
+        if (t.includes('potatis') || t.includes('mos') || t.includes('pommes') || t.includes('stubbar')) return 'potato';
+        return null;
+      };
+
+      const currentBase = getBase(d);
+      const lastBase = lastDish ? getBase(lastDish) : null;
+      if (currentBase && currentBase === lastBase) {
+        score += 2000; // Heavy penalty for same base two days in a row
+      }
+
       // 4. WEEKLY BALANCE: Strictly prioritize unused core categories
       if (currentCategory) {
         if (usedWeekCategories.includes(currentCategory)) {

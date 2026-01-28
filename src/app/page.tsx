@@ -510,12 +510,12 @@ function HomeContent() {
         score += 1000; // Very heavy penalty for consecutive same category
       }
 
-      // 4. WEEKLY BALANCE: Prioritize unused core categories
+      // 4. WEEKLY BALANCE: Strictly prioritize unused core categories
       if (currentCategory) {
         if (usedWeekCategories.includes(currentCategory)) {
-          score += 200; // Penalty for repeating within the week
+          score += 5000; // Strict one-category-per-week rule
         } else {
-          score -= 300; // Strong reward for being a new category this week!
+          score -= 500; // Reward for unused categories
         }
       }
 

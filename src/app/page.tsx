@@ -695,28 +695,12 @@ function HomeContent() {
   return (
     <div className="min-h-screen bg-slate-50 text-slate-800 font-sans">
       <header className="w-full bg-[#051c2c] shadow-xl overflow-hidden flex flex-col">
-        <div className="relative w-full aspect-[3/1] md:aspect-[5/1] min-h-[140px] max-h-[320px] flex items-center">
+        <div className="relative w-full aspect-[3/1] md:aspect-[5/1] min-h-[140px] max-h-[280px]">
           <img
-            src="/header-bg-clean.png"
-            alt="Middagsmeny bakgrund"
-            className="absolute inset-0 w-full h-full object-cover object-center"
+            src="/header-bg-organic-v7.png"
+            alt="Middagsmeny"
+            className="w-full h-full object-cover object-center"
           />
-
-          {/* Snygg text-overlay ovanpå bilden */}
-          <div className="relative z-10 w-full max-w-4xl mx-auto px-8 py-4">
-            <h1 className="text-4xl md:text-5xl lg:text-7xl font-black text-white tracking-tight drop-shadow-xl flex flex-col leading-none">
-              <span className="opacity-95">MIDDAGS</span>
-              <span className="text-brand-yellow drop-shadow-[0_2px_10px_rgba(255,196,112,0.3)]">MENY</span>
-            </h1>
-            <p className="text-white/90 text-xs md:text-lg font-medium tracking-wide mt-2 md:mt-3 drop-shadow max-w-[200px] md:max-w-none border-l-2 border-brand-yellow/50 pl-3">
-              Smarta förslag baserat på skollunchen
-            </p>
-          </div>
-
-          {/* Diskret versionstagg */}
-          <div className="absolute top-4 right-4 bg-black/20 backdrop-blur-md px-2 py-1 rounded text-[10px] text-white/40 font-bold border border-white/5">
-            v1.1
-          </div>
         </div>
       </header>
 

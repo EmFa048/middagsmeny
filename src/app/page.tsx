@@ -696,11 +696,31 @@ function HomeContent() {
     <div className="min-h-screen bg-slate-50 text-slate-800 font-sans">
       <header className="w-full bg-[#051c2c] shadow-xl overflow-hidden flex flex-col">
         <div className="relative w-full aspect-[3/1] md:aspect-[5/1] min-h-[140px] max-h-[280px]">
+          {/* Originalbilden som bas */}
           <img
             src="/header-bg-organic-v7.png"
             alt="Middagsmeny"
-            className="w-full h-full object-cover object-center"
+            className="w-full h-full object-cover object-[center_25%]"
           />
+
+          {/* PATCH: Döljer 'v1.0' bubblan */}
+          <div className="absolute top-[34%] right-[11%] lg:right-[15%] w-[12%] h-[20%] bg-[#051c2c] z-10 hidden md:block"></div>
+
+          {/* REKONSTRUKTION: Återskapar den vita loopen under bubblan */}
+          <svg className="absolute top-[20%] right-[8%] lg:right-[12%] w-[15%] h-[40%] z-20 hidden md:block" viewBox="0 0 100 100" fill="none">
+            <path d="M70 80 C 90 20, 20 20, 40 80" stroke="white" strokeWidth="1.5" strokeLinecap="round" />
+          </svg>
+
+          {/* PATCH: Täcker "Dagens middag" och lägger till "Middagsmeny" */}
+          <div className="absolute top-[55%] left-[22%] md:left-[23%] z-30">
+            <div className="bg-[#051c2c] absolute inset-0 -top-1 -bottom-4 -left-1 -right-4"></div>
+            <h1 className="relative text-2xl md:text-4xl font-semibold text-white tracking-tight leading-none">
+              Middagsmeny
+            </h1>
+            <p className="relative text-[10px] md:text-sm text-[#FFC470] font-medium mt-1">
+              Veckans menyer & smarta receptförslag
+            </p>
+          </div>
         </div>
       </header>
 
@@ -1083,53 +1103,55 @@ function HomeContent() {
       </main>
 
       {/* Interstitial Ad / Welcome Modal */}
-      {showAd && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-300">
-          <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full overflow-hidden scale-100 animate-in zoom-in-95 duration-300 relative">
+      {
+        showAd && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-300">
+            <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full overflow-hidden scale-100 animate-in zoom-in-95 duration-300 relative">
 
-            {/* Ad Content */}
-            <div className="bg-brand-blue p-6 text-white text-center relative overflow-hidden">
-              <div className="absolute top-0 right-0 p-4 opacity-10">
-                <Utensils className="w-32 h-32" />
-              </div>
-              <h3 className="text-2xl font-black relative z-10 mb-2">Välkommen!</h3>
-              <p className="text-blue-100 text-sm relative z-10">
-                Vi hjälper dig att spara tid och äta godare.
-              </p>
-            </div>
-
-            <div className="p-8 text-center space-y-6">
-              <div className="bg-slate-50 border border-slate-100 rounded-xl p-4">
-                <p className="text-xs uppercase tracking-wider font-bold text-slate-400 mb-2">ANNONS</p>
-                <div className="font-semibold text-slate-800 text-lg">
-                  Veckans Erbjudande!
+              {/* Ad Content */}
+              <div className="bg-brand-blue p-6 text-white text-center relative overflow-hidden">
+                <div className="absolute top-0 right-0 p-4 opacity-10">
+                  <Utensils className="w-32 h-32" />
                 </div>
-                <p className="text-slate-600 text-sm mt-1">
-                  Just nu: Få 50 kr rabatt på din första matkasse hos Mathem!
+                <h3 className="text-2xl font-black relative z-10 mb-2">Välkommen!</h3>
+                <p className="text-blue-100 text-sm relative z-10">
+                  Vi hjälper dig att spara tid och äta godare.
                 </p>
-                <button className="mt-3 text-sm font-bold text-brand-blue underline decoration-2 hover:text-brand-dark">
-                  Hämta rabattkod
+              </div>
+
+              <div className="p-8 text-center space-y-6">
+                <div className="bg-slate-50 border border-slate-100 rounded-xl p-4">
+                  <p className="text-xs uppercase tracking-wider font-bold text-slate-400 mb-2">ANNONS</p>
+                  <div className="font-semibold text-slate-800 text-lg">
+                    Veckans Erbjudande!
+                  </div>
+                  <p className="text-slate-600 text-sm mt-1">
+                    Just nu: Få 50 kr rabatt på din första matkasse hos Mathem!
+                  </p>
+                  <button className="mt-3 text-sm font-bold text-brand-blue underline decoration-2 hover:text-brand-dark">
+                    Hämta rabattkod
+                  </button>
+                </div>
+
+                <p className="text-xs text-slate-400">
+                  Genom att använda Middagsmatcharen godkänner du att vi ibland visar relevanta erbjudanden för att hålla tjänsten gratis.
+                </p>
+
+                <button
+                  onClick={() => {
+                    setShowAd(false);
+                    sessionStorage.setItem('mm_seen_ad', 'true');
+                  }}
+                  className="w-full py-3 bg-brand-yellow text-brand-dark font-bold rounded-xl hover:bg-[#ffc800] transition-colors shadow-sm flex items-center justify-center gap-2"
+                >
+                  Gå vidare till appen &rarr;
                 </button>
               </div>
 
-              <p className="text-xs text-slate-400">
-                Genom att använda Middagsmatcharen godkänner du att vi ibland visar relevanta erbjudanden för att hålla tjänsten gratis.
-              </p>
-
-              <button
-                onClick={() => {
-                  setShowAd(false);
-                  sessionStorage.setItem('mm_seen_ad', 'true');
-                }}
-                className="w-full py-3 bg-brand-yellow text-brand-dark font-bold rounded-xl hover:bg-[#ffc800] transition-colors shadow-sm flex items-center justify-center gap-2"
-              >
-                Gå vidare till appen &rarr;
-              </button>
             </div>
-
           </div>
-        </div>
-      )}
+        )
+      }
     </div >
   );
 }

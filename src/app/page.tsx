@@ -695,12 +695,21 @@ function HomeContent() {
   return (
     <div className="min-h-screen bg-slate-50 text-slate-800 font-sans">
       <header className="w-full bg-[#051c2c] shadow-xl overflow-hidden flex flex-col">
-        <div className="relative w-full aspect-[3/1] md:aspect-[5/1] min-h-[140px] max-h-[280px] bg-[#051c2c]">
+        <div className="relative w-full aspect-[3/1] md:aspect-[5/1] min-h-[140px] max-h-[300px]">
           <img
-            src="/header-bg-perfect.png"
+            src="/header-bg-Finalv5.png"
             alt="Middagsmeny"
-            className="w-full h-full object-cover object-center scale-[1.02]"
+            className="w-full h-full object-cover object-center"
           />
+
+          <div className="absolute left-[20%] md:left-[22%] bottom-[15%] md:bottom-[20%] z-10">
+            <h1 className="text-2xl md:text-3xl lg:text-4xl font-semibold text-white tracking-tight leading-loose">
+              Middagsmeny
+            </h1>
+            <p className="text-[10px] md:text-sm text-[#FFC470] font-medium -mt-1 opacity-90">
+              Veckans menyer & smarta receptförslag
+            </p>
+          </div>
         </div>
       </header>
 

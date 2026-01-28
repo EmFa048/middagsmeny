@@ -695,7 +695,7 @@ function HomeContent() {
   return (
     <div className="min-h-screen bg-slate-50 text-slate-800 font-sans">
       <header className="w-full bg-[#051c2c] shadow-xl overflow-hidden flex flex-col">
-        <div className="relative w-full aspect-[5/1] min-h-[100px] max-h-[180px]">
+        <div className="relative w-full aspect-[3/1] md:aspect-[5/1] min-h-[120px] max-h-[280px]">
           <img
             src="/header-bg-organic-v7.png"
             alt="Middagsmeny Illustration"

@@ -694,19 +694,22 @@ function HomeContent() {
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-800 font-sans">
-      <header className="w-full bg-[#051c2c] shadow-2xl relative overflow-hidden">
-        <div className="relative w-full aspect-[2/1] md:aspect-[3/1] min-h-[220px] max-h-[420px]">
+      <header className="w-full bg-[#051c2c] shadow-xl relative overflow-hidden">
+        <div className="relative w-full aspect-[1062/261] min-h-[160px] md:min-h-[240px] lg:min-h-[300px]">
           <img
-            src="/header-bg-clean.png"
+            src="/header-bg-organic-v7.png"
             alt="Middagsmeny"
-            className="w-full h-full object-cover object-center"
+            className="w-full h-full object-cover"
           />
 
-          <div className="absolute left-[8%] md:left-[10%] bottom-[15%] md:bottom-[18%] z-10 p-4">
-            <h1 className="text-3xl md:text-5xl lg:text-7xl font-bold text-white tracking-tight leading-none drop-shadow-[0_4px_4px_rgba(0,0,0,0.5)]">
+          <div className="absolute top-[20%] right-[3%] w-[12%] h-[30%] bg-[#051c2c] z-10 hidden md:block"></div>
+          <div className="absolute top-[52%] left-[21%] w-[30%] h-[40%] bg-[#051c2c] z-10"></div>
+
+          <div className="absolute left-[22%] bottom-[12%] md:bottom-[15%] z-20">
+            <h1 className="text-xl md:text-3xl lg:text-5xl font-semibold text-white tracking-tight leading-none">
               Middagsmeny
             </h1>
-            <p className="text-[12px] md:text-xl text-[#FFC470] font-semibold mt-2 md:mt-4 opacity-100 tracking-wide drop-shadow-md">
+            <p className="text-[10px] md:text-sm lg:text-lg text-[#FFC470] font-medium mt-1 md:mt-2 opacity-90">
               Veckans menyer & smarta receptförslag
             </p>
           </div>

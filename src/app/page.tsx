@@ -695,32 +695,12 @@ function HomeContent() {
   return (
     <div className="min-h-screen bg-slate-50 text-slate-800 font-sans">
       <header className="w-full bg-[#051c2c] shadow-xl overflow-hidden flex flex-col">
-        <div className="relative w-full aspect-[3/1] md:aspect-[5/1] min-h-[140px] max-h-[280px]">
-          {/* Originalbilden som bas */}
+        <div className="relative w-full aspect-[3/1] md:aspect-[5/1] min-h-[140px] max-h-[280px] bg-[#051c2c]">
           <img
-            src="/header-bg-organic-v7.png"
+            src="/header-bg-perfect.png"
             alt="Middagsmeny"
-            className="w-full h-full object-cover object-[center_25%]"
+            className="w-full h-full object-cover object-center scale-[1.02]"
           />
-
-          {/* PATCH: Döljer 'v1.0' bubblan */}
-          <div className="absolute top-[34%] right-[11%] lg:right-[15%] w-[12%] h-[20%] bg-[#051c2c] z-10 hidden md:block"></div>
-
-          {/* REKONSTRUKTION: Återskapar den vita loopen under bubblan */}
-          <svg className="absolute top-[20%] right-[8%] lg:right-[12%] w-[15%] h-[40%] z-20 hidden md:block" viewBox="0 0 100 100" fill="none">
-            <path d="M70 80 C 90 20, 20 20, 40 80" stroke="white" strokeWidth="1.5" strokeLinecap="round" />
-          </svg>
-
-          {/* PATCH: Täcker "Dagens middag" och lägger till "Middagsmeny" */}
-          <div className="absolute top-[55%] left-[22%] md:left-[23%] z-30">
-            <div className="bg-[#051c2c] absolute inset-0 -top-1 -bottom-4 -left-1 -right-4"></div>
-            <h1 className="relative text-2xl md:text-4xl font-semibold text-white tracking-tight leading-none">
-              Middagsmeny
-            </h1>
-            <p className="relative text-[10px] md:text-sm text-[#FFC470] font-medium mt-1">
-              Veckans menyer & smarta receptförslag
-            </p>
-          </div>
         </div>
       </header>
 

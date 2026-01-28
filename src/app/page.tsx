@@ -595,15 +595,24 @@ function HomeContent() {
     });
   };
 
-  const fetchMenu = async (overrideUrl?: string, forceSkipAutoCorrect = false) => {
+  const fetchMenu = async (overrideUrl?: string, forceSkipAutoCorrect = false, clearSuggestions = false) => {
     const activeUrl = overrideUrl || url;
     const skipAutoCorrect = forceSkipAutoCorrect || isManual;
 
     if (!activeUrl) return;
 
-    // Prevent redundant fetches
-    if (activeUrl === lastFetchedUrl.current && !forceSkipAutoCorrect) return;
+    // Only skip if NOT forced and URL is the same
+    if (activeUrl === lastFetchedUrl.current && !forceSkipAutoCorrect && !clearSuggestions) return;
     lastFetchedUrl.current = activeUrl;
+
+    if (clearSuggestions) {
+      // Clear all suggestion params from the URL to allow a fresh shuffle
+      const params = new URLSearchParams(window.location.search);
+      Array.from(params.keys()).forEach(key => {
+        if (key.startsWith('s_')) params.delete(key);
+      });
+      window.history.replaceState(null, '', `?${params.toString()}`);
+    }
 
     setLoading(true);
     setError('');
@@ -770,16 +779,7 @@ function HomeContent() {
             </button>
 
             <button
-              onClick={() => {
-                // Remove all 's_' parameters from URL and refetch
-                const cleanUrl = new URL(window.location.href);
-                const params = new URLSearchParams(cleanUrl.search);
-                Array.from(params.keys()).forEach(key => {
-                  if (key.startsWith('s_')) params.delete(key);
-                });
-                window.history.replaceState({}, '', `?${params.toString()}`);
-                fetchMenu();
-              }}
+              onClick={() => fetchMenu(undefined, false, true)}
               disabled={loading}
               className="bg-brand-yellow hover:bg-[#ffc800] text-brand-dark px-6 py-2 rounded-lg font-bold transition-colors disabled:opacity-50 h-[42px] flex items-center gap-2"
             >
@@ -788,7 +788,7 @@ function HomeContent() {
             </button>
 
             <button
-              onClick={() => fetchMenu()}
+              onClick={() => fetchMenu(undefined, false, true)}
               disabled={loading}
               className="bg-brand-blue hover:bg-brand-dark text-white px-6 py-2 rounded-lg font-medium transition-colors disabled:opacity-50 h-[42px]"
             >

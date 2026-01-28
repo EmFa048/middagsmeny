@@ -283,15 +283,7 @@ function HomeContent() {
       })
       .join('\n');
 
-    // 2. Skapa en "ren" länk som bara innehåller skolan
-    const cleanUrl = new URL(window.location.href);
-    const searchParams = new URLSearchParams(cleanUrl.search);
-    const schoolUrl = searchParams.get('school');
-
-    const finalUrl = schoolUrl
-      ? `${window.location.origin}${window.location.pathname}?school=${encodeURIComponent(schoolUrl)}`
-      : window.location.href;
-
+    const finalUrl = window.location.href;
     const shareText = `Här är veckans middagsplanering:\n\n${dishList}\n\nKolla in hela matsedeln här:`;
 
     try {

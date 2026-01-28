@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, Suspense } from 'react';
+import { useState, useEffect, Suspense, useRef } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { format, parseISO, startOfWeek, endOfWeek } from 'date-fns';
 import { sv } from 'date-fns/locale';
@@ -233,42 +233,60 @@ function HomeContent() {
     noFish: false,
   });
 
-  // Sync URL state AND Menu Suggestions to Browser URL (Deep linking + State Sharing)
+  // Read URL param and fetch
+  const initialLoadDone = useRef(false);
   useEffect(() => {
-    if (url) {
-      const params = new URLSearchParams(window.location.search);
-      let needsUpdate = false;
+    // Only handle INITIAL reading from URL here
+    if (initialLoadDone.current) return;
 
-      // Sync School
-      if (params.get('school') !== url) {
-        params.set('school', url);
-        needsUpdate = true;
-      }
-
-      // Sync Suggestions
-      menu.forEach(day => {
-        if (day.dinnerSuggestion) {
-          const key = `s_${day.date}`;
-          if (params.get(key) !== day.dinnerSuggestion.dish) {
-            params.set(key, day.dinnerSuggestion.dish);
-            needsUpdate = true;
-          }
-        }
-      });
-
-      if (needsUpdate) {
-        window.history.replaceState({}, '', `?${params.toString()}`);
-      }
-    }
-  }, [url, menu]);
-
-  // Read URL param on initial load
-  useEffect(() => {
     const schoolParam = searchParams.get('school');
     if (schoolParam && schoolParam !== url) {
       setUrl(schoolParam);
+      // We don't call fetchMenu here, the useEffect[url] will catch it
+
+      // Also, try to make a nice name for the search query if it's empty
+      if (!searchQuery) {
+        const parts = schoolParam.split('_');
+        const lastPart = parts[parts.length - 1];
+        if (lastPart) {
+          const readable = lastPart.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+          setSearchQuery(readable);
+        }
+      }
     }
+    initialLoadDone.current = true;
   }, [searchParams]);
+
+  // Sync state BACK to URL (Deep linking)
+  useEffect(() => {
+    if (!url || !initialLoadDone.current) return;
+
+    const params = new URLSearchParams(window.location.search);
+    let needsUpdate = false;
+
+    // Sync School
+    if (params.get('school') !== url) {
+      params.set('school', url);
+      needsUpdate = true;
+    }
+
+    // Sync Suggestions
+    menu.forEach(day => {
+      if (day.dinnerSuggestion) {
+        const key = `s_${day.date}`;
+        if (params.get(key) !== day.dinnerSuggestion.dish) {
+          params.set(key, day.dinnerSuggestion.dish);
+          needsUpdate = true;
+        }
+      }
+    });
+
+    if (needsUpdate) {
+      // Use replaceState but don't trigger a full Next.js navigation if possible
+      // to avoid re-triggering useSearchParams effects in a loop
+      window.history.replaceState(null, '', `?${params.toString()}`);
+    }
+  }, [url, menu]);
 
   const handleShare = async () => {
     const shareTitle = 'Middagsmeny';
@@ -575,7 +593,7 @@ function HomeContent() {
     });
   };
 
-  const fetchMenu = async (overrideUrl?: string, forceSkipAutoCorrect = false) => {
+  const fetchMenu = async (overrideUrl?: string, forceSkipAutoCorrect = false, isAutoJump = false) => {
     const activeUrl = overrideUrl || url;
     const skipAutoCorrect = forceSkipAutoCorrect || isManual;
 
@@ -584,11 +602,14 @@ function HomeContent() {
       setError('');
       return;
     }
+
     setLoading(true);
     setError('');
 
-    // Clear menu while loading to show feedback
-    setMenu([]);
+    // Only clear menu if we are NOT doing an auto-jump (to avoid multiple flashes)
+    if (!isAutoJump) {
+      setMenu([]);
+    }
 
     try {
       const res = await fetch(`/api/menu?url=${encodeURIComponent(activeUrl)}`);
@@ -596,7 +617,6 @@ function HomeContent() {
       let data = await res.json();
 
       // --- AUTO-CORRECTION LOGIC ---
-      // Goal: Does this menu actually contain TODAY? (Only for weekdays)
       const now = new Date();
       const isWeekday = now.getDay() >= 1 && now.getDay() <= 5;
       const todayStr = format(now, 'yyyy-MM-dd');
@@ -609,14 +629,12 @@ function HomeContent() {
         const firstDate = [...menuDates].sort()[0];
 
         if (lastDate && todayStr > lastDate && data.nextURL) {
-          // Today is AFTER this menu, jump forward
           setUrl(data.nextURL);
-          fetchMenu(data.nextURL, true);
+          // Instead of calling fetchMenu directly here, we let the useEffect[url] handle it
+          // OR we return here and let the state update trigger the next fetch
           return;
         } else if (firstDate && todayStr < firstDate && data.previousURL) {
-          // Today is BEFORE this menu, jump backward
           setUrl(data.previousURL);
-          fetchMenu(data.previousURL, true);
           return;
         }
       }
@@ -626,7 +644,6 @@ function HomeContent() {
         next: data.nextURL
       });
 
-      // Process data: Group by date (existing logic)
       const grouped = new Map<string, SchoolMeal[]>();
       data.meals.forEach((m: SchoolMeal) => {
         const date = m.date.split('T')[0];
@@ -634,25 +651,20 @@ function HomeContent() {
         grouped.get(date)?.push(m);
       });
 
-      // Sequential Generation to avoid duplicates
       const processedMenu: DayMenu[] = [];
       const usedDishes: string[] = [];
-      const sortedDates = Array.from(grouped.keys()).sort(); // Ensure order
+      const sortedDates = Array.from(grouped.keys()).sort();
+
+      // Get shared dishes from URL ONCE at start of processing
+      const currentParams = new URLSearchParams(window.location.search);
 
       for (const date of sortedDates) {
         const meals = grouped.get(date)!;
-
-        // Check for shared dish in URL
         let forcedDish = undefined;
-        // Use window location to get fresh params
-        if (typeof window !== 'undefined') {
-          const currentParams = new URLSearchParams(window.location.search);
-          // Verify we are on the same school to avoid forcing dishes on wrong menu
-          if (currentParams.get('school') === url) {
-            const sharedDish = currentParams.get('s_' + date);
-            if (sharedDish) forcedDish = sharedDish;
-          }
-        }
+
+        // Check if the URL has a saved dish for THIS date
+        const sharedDish = currentParams.get('s_' + date);
+        if (sharedDish) forcedDish = sharedDish;
 
         const suggestion = generateMockSuggestion(meals, preferences, customDishes, favoriteDishNames, usedDishes, forcedDish);
 
@@ -668,10 +680,9 @@ function HomeContent() {
       }
 
       setMenu(processedMenu);
-      setIsManual(false); // Reset after successful load
+      setIsManual(false);
     } catch (err: any) {
       setError(err.message);
-      setLoading(false);
       setIsManual(false);
     } finally {
       setLoading(false);

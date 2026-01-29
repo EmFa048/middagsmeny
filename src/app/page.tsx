@@ -169,8 +169,6 @@ function HomeContent() {
 
   // Navigation State
   const [navURLs, setNavURLs] = useState<{ prev: string | null; next: string | null }>({ prev: null, next: null });
-  const manualNavRef = useState(false); // Using a simple state to track manual jumps
-  const [isManual, setIsManual] = [manualNavRef[0], manualNavRef[1]];
 
   const [url, setUrl] = useState(DEFAULT_SCHOOL_URL);
   // We separate the input text from the actual URL to prevent trying to fetch "Stockho..."
@@ -612,7 +610,7 @@ function HomeContent() {
 
   const fetchMenu = async (overrideUrl?: string, forceSkipAutoCorrect = false, clearSuggestions = false) => {
     const activeUrl = overrideUrl || url;
-    const skipAutoCorrect = forceSkipAutoCorrect || isManual;
+    const skipAutoCorrect = forceSkipAutoCorrect;
 
     if (!activeUrl) return;
 
@@ -699,10 +697,8 @@ function HomeContent() {
       }
 
       setMenu(processedMenu);
-      setIsManual(false);
     } catch (err: any) {
       setError(err.message);
-      setIsManual(false);
     } finally {
       setLoading(false);
     }
@@ -716,13 +712,19 @@ function HomeContent() {
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-800 font-sans">
-      <header className="w-full bg-[#051c2c] shadow-xl overflow-hidden">
+      <header className="w-full bg-[#051c2c] shadow-xl overflow-hidden relative">
         <div className="relative w-full aspect-[1062/261] min-h-[160px] md:min-h-[260px] lg:min-h-[320px]">
           <img
-            src="/header-bg-organic-v7.png"
-            alt="Middagsmeny"
+            src="/header-bg-clean-final.png"
+            alt="Bakgrund"
             className="w-full h-full object-cover object-center"
           />
+          {/* Text Overlay */}
+          <div className="absolute inset-0 flex items-center justify-center p-4">
+            <h1 className="text-white text-3xl md:text-5xl lg:text-7xl font-black tracking-tight drop-shadow-[0_4px_4px_rgba(0,0,0,0.5)] uppercase italic">
+              Middagsmeny
+            </h1>
+          </div>
         </div>
       </header>
 
@@ -806,7 +808,7 @@ function HomeContent() {
             </button>
 
             <button
-              onClick={() => fetchMenu(undefined, false, true)}
+              onClick={() => fetchMenu(undefined, true, true)}
               disabled={loading}
               className="h-[42px] bg-brand-yellow hover:bg-[#ffc800] text-brand-dark rounded-lg font-bold transition-colors disabled:opacity-50 flex items-center justify-center gap-2 shadow-sm"
             >
@@ -955,8 +957,8 @@ function HomeContent() {
           <button
             onClick={() => {
               if (navURLs.prev) {
-                setIsManual(true);
                 setUrl(navURLs.prev);
+                fetchMenu(navURLs.prev, true);
               }
             }}
             disabled={!navURLs.prev || loading}
@@ -968,8 +970,8 @@ function HomeContent() {
           <button
             onClick={() => {
               if (navURLs.next) {
-                setIsManual(true);
                 setUrl(navURLs.next);
+                fetchMenu(navURLs.next, true);
               }
             }}
             disabled={!navURLs.next || loading}

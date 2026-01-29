@@ -713,17 +713,20 @@ function HomeContent() {
   return (
     <div className="min-h-screen bg-slate-50 text-slate-800 font-sans">
       <header className="w-full bg-[#051c2c] shadow-xl overflow-hidden relative">
-        <div className="relative w-full aspect-[1062/261] min-h-[160px] md:min-h-[260px] lg:min-h-[320px]">
+        <div className="relative w-full">
           <img
             src="/header-bg-clean-final.png"
             alt="Bakgrund"
-            className="w-full h-full object-cover object-center"
+            className="w-full h-auto block"
           />
           {/* Text Overlay */}
-          <div className="absolute inset-0 flex items-center justify-center p-4">
-            <h1 className="text-white text-3xl md:text-5xl lg:text-7xl font-black tracking-tight drop-shadow-[0_4px_4px_rgba(0,0,0,0.5)] uppercase italic">
+          <div className="absolute inset-0 flex flex-col items-center justify-center p-4 text-center">
+            <h1 className="text-white text-3xl md:text-5xl lg:text-7xl font-bold drop-shadow-lg">
               Middagsmeny
             </h1>
+            <p className="text-brand-yellow text-[10px] md:text-sm lg:text-base font-semibold uppercase tracking-wider mt-0.5 md:mt-1 drop-shadow-md">
+              veckans menyer & smarta middagsförslag
+            </p>
           </div>
         </div>
       </header>

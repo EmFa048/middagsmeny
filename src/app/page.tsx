@@ -720,11 +720,11 @@ function HomeContent() {
             className="w-full h-auto block"
           />
           {/* Text Overlay */}
-          <div className="absolute inset-0 flex flex-col items-center justify-center p-4 text-center">
-            <h1 className="text-white text-3xl md:text-5xl lg:text-7xl font-bold drop-shadow-lg">
+          <div className="absolute inset-0 flex flex-col items-center justify-center p-4 text-center transform translate-y-4 md:translate-y-8">
+            <h1 className="text-white text-2xl md:text-4xl lg:text-6xl font-bold drop-shadow-lg">
               Middagsmeny
             </h1>
-            <p className="text-brand-yellow text-[10px] md:text-sm lg:text-base font-semibold uppercase tracking-wider mt-0.5 md:mt-1 drop-shadow-md">
+            <p className="text-brand-yellow text-[9px] md:text-xs lg:text-sm font-semibold uppercase tracking-wider mt-0.5 md:mt-1 drop-shadow-md transform translate-x-3 md:translate-x-0">
               veckans menyer & smarta middagsförslag
             </p>
           </div>

@@ -4,7 +4,7 @@ import { useState, useEffect, Suspense, useRef } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { format, parseISO, startOfWeek, endOfWeek } from 'date-fns';
 import { sv } from 'date-fns/locale';
-import { Search, Utensils, ChefHat, Leaf, Fish, AlertCircle, Heart, RefreshCw, Share2, Coffee, X, ExternalLink } from 'lucide-react';
+import { Search, Utensils, ChefHat, Leaf, Fish, AlertCircle, Heart, RefreshCw, Share2, Coffee, X, ExternalLink, Cookie } from 'lucide-react';
 
 interface Dish {
   id: string;
@@ -193,6 +193,19 @@ function HomeContent() {
 
   // Ad Overlay State
   const [showAd, setShowAd] = useState(false);
+  const [copySuccess, setCopySuccess] = useState(false);
+  const [showCookieConsent, setShowCookieConsent] = useState(false);
+
+  const handleCopyCode = (code: string) => {
+    navigator.clipboard.writeText(code);
+    setCopySuccess(true);
+    setTimeout(() => setCopySuccess(false), 2000);
+
+    // Öppna Mathem (byt ut länken till din affiliate-länk senare)
+    setTimeout(() => {
+      window.open('https://www.mathem.se', '_blank');
+    }, 500);
+  };
 
   // Load from LocalStorage on Mount AND Check Ad Status
   useEffect(() => {
@@ -209,8 +222,14 @@ function HomeContent() {
     const seenAd = sessionStorage.getItem('mm_seen_ad');
     if (!seenAd) {
       // Small delay to feel like a "popup" or let page load slightly
-      const timer = setTimeout(() => setShowAd(true), 800);
+      const timer = setTimeout(() => setShowAd(false), 800);
       return () => clearTimeout(timer);
+    }
+
+    // Check cookie consent
+    const consent = localStorage.getItem('mm_cookie_consent');
+    if (!consent) {
+      setShowCookieConsent(true);
     }
   }, []);
 
@@ -822,10 +841,10 @@ function HomeContent() {
             <button
               onClick={toggleFavorite}
               className={`h-[42px] rounded-lg border transition-colors flex items-center justify-center gap-2 group ${isFavorite ? 'bg-brand-yellow text-brand-dark border-brand-yellow shadow-sm' : 'bg-white border-slate-200 text-slate-400 hover:text-brand-yellow hover:border-brand-yellow'}`}
-              title="Spara skola till dina genvägar"
+              title={isFavorite ? "Ta bort från genvägar" : "Spara skola till dina genvägar"}
             >
               <Heart className={`w-4 h-4 ${isFavorite ? 'fill-current' : 'group-hover:scale-110 transition-transform'}`} />
-              <span className="text-sm font-medium">Spara skola</span>
+              <span className="text-sm font-bold">{isFavorite ? 'Sparad skola' : 'Spara skola'}</span>
             </button>
 
             <button
@@ -852,18 +871,28 @@ function HomeContent() {
               <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest flex items-center gap-1.5">
                 <Heart className="w-3 h-3 text-brand-red" /> Mina sparade skolor
               </span>
-              <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
+              <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide py-1">
                 {favorites.map((fav, i) => (
-                  <button
-                    key={i}
-                    onClick={() => {
-                      setUrl(fav.url);
-                      setSearchQuery(fav.name);
-                    }}
-                    className={`whitespace-nowrap px-3 py-1.5 text-xs font-medium rounded-full border transition-all ${url === fav.url ? 'bg-brand-blue text-white border-brand-blue shadow-md' : 'bg-white text-slate-600 border-slate-200 hover:border-brand-blue hover:text-brand-blue'}`}
-                  >
-                    {fav.name}
-                  </button>
+                  <div key={i} className="relative group/fav">
+                    <button
+                      onClick={() => {
+                        setUrl(fav.url);
+                        setSearchQuery(fav.name);
+                      }}
+                      className={`whitespace-nowrap px-3 py-1.5 pr-8 text-xs font-medium rounded-full border transition-all ${url === fav.url ? 'bg-brand-blue text-white border-brand-blue shadow-md' : 'bg-white text-slate-600 border-slate-200 hover:border-brand-blue hover:text-brand-blue'}`}
+                    >
+                      {fav.name}
+                    </button>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setFavorites(favorites.filter(f => f.url !== fav.url));
+                      }}
+                      className={`absolute right-2 top-1/2 -translate-y-1/2 p-0.5 rounded-full hover:bg-black/10 transition-colors ${url === fav.url ? 'text-white/70 hover:text-white' : 'text-slate-400 hover:text-brand-red'}`}
+                    >
+                      <X className="w-3 h-3" />
+                    </button>
+                  </div>
                 ))}
               </div>
             </div>
@@ -1154,56 +1183,120 @@ function HomeContent() {
       {/* Interstitial Ad / Welcome Modal */}
       {
         showAd && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-md animate-in fade-in duration-500">
-            <div className="bg-white rounded-3xl shadow-2xl max-w-md w-full overflow-hidden scale-100 animate-in zoom-in-95 duration-300 relative border border-white/20">
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-md animate-in fade-in duration-500">
+            <div className="bg-white rounded-[2rem] shadow-2xl max-w-md w-full overflow-hidden scale-100 animate-in zoom-in-95 duration-300 relative border border-white/20">
 
-              {/* Ad Content */}
-              <div className="bg-[#4793AF] p-8 text-white text-center relative overflow-hidden">
-                <div className="absolute -top-10 -right-10 opacity-10 rotate-12">
-                  <Utensils className="w-48 h-48" />
+              {/* Close Button */}
+              <button
+                onClick={() => {
+                  setShowAd(false);
+                  sessionStorage.setItem('mm_seen_ad', 'true');
+                }}
+                className="absolute top-4 right-4 z-20 p-2 bg-black/10 hover:bg-black/20 rounded-full transition-colors"
+              >
+                <X className="w-5 h-5 text-white md:text-white" />
+              </button>
+
+              {/* Header Content */}
+              <div className="bg-[#051c2c] p-10 text-white text-center relative overflow-hidden">
+                {/* Decorative Elements */}
+                <div className="absolute top-0 left-0 w-full h-full opacity-10 pointer-events-none">
+                  <Utensils className="absolute -top-10 -right-10 w-48 h-48 rotate-12" />
+                  <Utensils className="absolute -bottom-10 -left-10 w-48 h-48 -rotate-12" />
                 </div>
-                <h3 className="text-3xl font-black relative z-10 mb-2 tracking-tight">Smarta val?</h3>
-                <p className="text-blue-50 text-sm relative z-10 font-medium opacity-90">
-                  Planera middagen här – klicka hem råvarorna där.
-                </p>
+
+                <div className="relative z-10 space-y-2">
+                  <div className="inline-block px-3 py-1 rounded-full bg-[#FFC470]/20 text-[#FFC470] text-[10px] font-black uppercase tracking-[0.2em] mb-2">
+                    Välkommen till
+                  </div>
+                  <h3 className="text-4xl font-black tracking-tight leading-none">Middagsmeny</h3>
+                  <p className="text-[#FFC470] text-sm font-medium opacity-90 max-w-[200px] mx-auto">
+                    Vi matchar skollunchen med smarta middagsförslag
+                  </p>
+                </div>
               </div>
 
               <div className="p-8 text-center space-y-6">
-                <div className="bg-slate-50 border border-slate-100 rounded-2xl p-6 transition-all hover:border-brand-yellow/50">
-                  <div className="inline-block px-3 py-1 rounded-full bg-brand-yellow/20 text-brand-dark text-[10px] font-bold uppercase tracking-widest mb-4">
+                <div className="space-y-2">
+                  <h4 className="text-xl font-bold text-slate-800">Slipp bära hem maten?</h4>
+                  <p className="text-slate-500 text-sm">
+                    Just nu får du ett exklusivt erbjudande när du planerar dina middagar med oss.
+                  </p>
+                </div>
+
+                <div className="bg-slate-50 border-2 border-dashed border-slate-200 rounded-2xl p-6 relative group transition-all hover:border-[#4793AF]/50">
+                  <div className="text-[10px] font-black text-[#4793AF] uppercase tracking-widest mb-3">
                     Erbjudande från Mathem
                   </div>
-                  <div className="font-bold text-slate-800 text-xl leading-tight">
-                    Slipp bära tunga kassar!
+                  <div className="font-black text-slate-800 text-2xl mb-1">
+                    100 kr RABATT
                   </div>
-                  <p className="text-slate-600 text-sm mt-3 leading-relaxed">
-                    Få <strong>100 kr rabatt</strong> på din första storhandling. Perfekt när du ska fylla på för veckans alla middagar.
+                  <p className="text-slate-500 text-xs mb-5">
+                    Gäller vid ditt första köp över 700 kr.
                   </p>
-                  <button className="mt-5 w-full py-2.5 px-4 bg-white border-2 border-slate-200 text-slate-700 rounded-xl text-sm font-bold hover:border-[#4793AF] hover:text-[#4793AF] transition-all">
-                    Kopiera kod: MIDDAG100
+
+                  <button
+                    onClick={() => handleCopyCode('MIDDAG100')}
+                    className={`w-full py-3 px-4 rounded-xl text-sm font-black transition-all flex items-center justify-center gap-2 ${copySuccess
+                      ? 'bg-green-500 text-white'
+                      : 'bg-white border-2 border-slate-200 text-slate-700 hover:border-[#4793AF] hover:text-[#4793AF]'
+                      }`}
+                  >
+                    {copySuccess ? (
+                      <>Koden kopierad!</>
+                    ) : (
+                      <>Kopiera kod: <span className="text-[#4793AF]">MIDDAG100</span></>
+                    )}
                   </button>
                 </div>
 
-                <div className="space-y-3">
+                <div className="pt-2">
                   <button
                     onClick={() => {
                       setShowAd(false);
                       sessionStorage.setItem('mm_seen_ad', 'true');
                     }}
-                    className="w-full py-4 bg-[#FFC470] text-brand-dark font-black rounded-2xl hover:bg-[#ffb44d] transition-all shadow-[0_4px_0_rgb(221,87,70)] active:shadow-none active:translate-y-1"
+                    className="w-full py-4 bg-[#FFC470] text-[#051c2c] text-base font-black rounded-2xl hover:bg-[#ffb44d] transition-all shadow-[0_4px_0_rgb(221,87,70)] active:shadow-none active:translate-y-1"
                   >
                     Börja planera nu
                   </button>
-                  <p className="text-[10px] text-slate-400 leading-relaxed px-4">
-                    Genom att använda Middagsmatcharen hjälper du oss att hålla tjänsten gratis via våra samarbetspartners.
+                  <p className="text-[9px] text-slate-400 mt-4 leading-relaxed italic">
+                    Genom att använda Middagsmeny hjälper du oss att hålla tjänsten gratis. Tack!
                   </p>
                 </div>
               </div>
-
             </div>
           </div>
         )
       }
+      {/* Cookie Consent Banner */}
+      {showCookieConsent && (
+        <div className="fixed bottom-4 left-4 right-4 z-[60] animate-in slide-in-from-bottom-full duration-500">
+          <div className="max-w-4xl mx-auto bg-white rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.12)] border border-slate-100 p-4 md:p-6 flex flex-col md:flex-row items-center gap-4">
+            <div className="flex-1 flex items-start gap-4 text-left">
+              <div className="bg-brand-yellow/20 p-3 rounded-xl flex-shrink-0">
+                <Cookie className="w-6 h-6 text-[#051c2c]" />
+              </div>
+              <div className="space-y-1">
+                <h4 className="text-sm font-bold text-slate-800 uppercase tracking-tight">Cookies & Information</h4>
+                <p className="text-xs text-slate-500 leading-relaxed">
+                  Vi använder lokala data (local storage) för att komma ihåg dina sparade skolor och favoriter, samt för att tjänsten ska fungera tekniskt. Genom att använda Middagsmeny godkänner du detta.
+                </p>
+              </div>
+            </div>
+            <button
+              onClick={() => {
+                localStorage.setItem('mm_cookie_consent', 'true');
+                setShowCookieConsent(false);
+              }}
+              className="w-full md:w-auto px-8 py-3 bg-[#051c2c] text-white text-sm font-bold rounded-xl hover:bg-brand-dark transition-all shadow-md active:scale-95"
+            >
+              Jag förstår
+            </button>
+          </div>
+        </div>
+      )}
+
     </div >
   );
 }

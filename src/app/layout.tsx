@@ -23,9 +23,6 @@ export const metadata: Metadata = {
     statusBarStyle: "default",
     title: "Middagsmeny",
   },
-  icons: {
-    apple: "/logo.png",
-  },
   openGraph: {
     title: "Middagsmeny",
     description: "Slut på middagspaniken! Vi matchar skollunchen med goda receptförslag hemma.",
@@ -55,7 +52,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="sv" suppressHydrationWarning>
+      <head>
+        <link rel="icon" href="/favicon.png?v=10" type="image/png" />
+        <link rel="shortcut icon" href="/favicon.png?v=10" type="image/png" />
+      </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >

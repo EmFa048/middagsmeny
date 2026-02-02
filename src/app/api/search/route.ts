@@ -4,6 +4,7 @@ import * as cheerio from 'cheerio';
 interface Distributor {
     id: string;
     name: string;
+    organization?: string;
     address?: {
         addressLocality?: string;
     };
@@ -48,12 +49,8 @@ export async function GET(request: Request) {
             id: d.id,
             name: d.name,
             locality: d.address?.addressLocality || '',
-            // Construct the URL structure we observed: /meals/week/[id]_[slug]
-            // But wait, the slug part might be optional or generated. 
-            // Let's check if the ID alone works or if we need to slugify the name.
-            // The example URL was: .../meals/week/6899..._sis-(stockholm-international-school)
-            // Usually these platforms allow ID or ID_slug. Let's send the ID and name back.
-            url: `https://menu.matildaplatform.com/meals/week/${d.id}_${slugify(d.name)}`
+            // Matilda URLs use [id]_[organization] or [id]_[slugified-name]
+            url: `https://menu.matildaplatform.com/meals/week/${d.id}_${d.organization || slugify(d.name)}`
         }));
 
         return NextResponse.json({ results: results.slice(0, 100) }); // Limit to 100
@@ -65,8 +62,12 @@ export async function GET(request: Request) {
 }
 
 function slugify(text: string) {
+    const swedishMap: { [key: string]: string } = { 'å': 'a', 'ä': 'a', 'ö': 'o', 'Å': 'a', 'Ä': 'a', 'Ö': 'o' };
     return text
         .toString()
+        .split('')
+        .map(char => swedishMap[char] || char)
+        .join('')
         .toLowerCase()
         .replace(/\s+/g, '-')           // Replace spaces with -
         .replace(/[^\w\-]+/g, '')       // Remove all non-word chars

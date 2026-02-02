@@ -4,7 +4,7 @@ import { useState, useEffect, Suspense, useRef } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { format, parseISO, startOfWeek, endOfWeek } from 'date-fns';
 import { sv } from 'date-fns/locale';
-import { Search, Utensils, ChefHat, Leaf, Fish, AlertCircle, Heart, RefreshCw, Share2, Coffee, X } from 'lucide-react';
+import { Search, Utensils, ChefHat, Leaf, Fish, AlertCircle, Heart, RefreshCw, Share2, Coffee, X, ExternalLink } from 'lucide-react';
 
 interface Dish {
   id: string;
@@ -30,7 +30,7 @@ interface DayMenu {
   };
 }
 
-const DEFAULT_SCHOOL_URL = 'https://menu.matildaplatform.com/meals/week/67235974e0bf6917655326f4_malmo-latinskola';
+
 
 // Dish Database moved outside for shared access
 const DEFAULT_DISHES = [
@@ -170,9 +170,12 @@ function HomeContent() {
   // Navigation State
   const [navURLs, setNavURLs] = useState<{ prev: string | null; next: string | null }>({ prev: null, next: null });
 
-  const [url, setUrl] = useState(DEFAULT_SCHOOL_URL);
-  // We separate the input text from the actual URL to prevent trying to fetch "Stockho..."
-  const [searchQuery, setSearchQuery] = useState('');
+  // 1. Initialise state directly from searchParams to avoid "flicker/race" on reload
+  const initialSchool = searchParams.get('school') || '';
+  const initialName = searchParams.get('name') || '';
+
+  const [url, setUrl] = useState(initialSchool);
+  const [searchQuery, setSearchQuery] = useState(initialName);
   const [loading, setLoading] = useState(false);
   const [menu, setMenu] = useState<DayMenu[]>([]);
   const [error, setError] = useState('');
@@ -235,27 +238,28 @@ function HomeContent() {
   // Track fetching to prevent loops
   const lastFetchedUrl = useRef('');
   const initialLoadDone = useRef(false);
+
+  // Still need to sync name fallback IF name is missing but school is present
   useEffect(() => {
-    // Only handle INITIAL reading from URL here
     if (initialLoadDone.current) return;
 
-    const schoolParam = searchParams.get('school');
-    if (schoolParam && schoolParam !== url) {
-      setUrl(schoolParam);
-      // We don't call fetchMenu here, the useEffect[url] will catch it
-
-      // Also, try to make a nice name for the search query if it's empty
-      if (!searchQuery) {
-        const parts = schoolParam.split('_');
-        const lastPart = parts[parts.length - 1];
+    // Use the actual parameter from searchParams to decide if fallback is needed
+    const nameParam = searchParams.get('name');
+    if (url && !nameParam) {
+      try {
+        const decoded = decodeURIComponent(url);
+        const parts = decoded.split('_');
+        const lastPart = parts[parts.length - 1].split('?')[0];
         if (lastPart) {
           const readable = lastPart.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
           setSearchQuery(readable);
         }
+      } catch (e) {
+        console.error("Failed to parse school name from URL", e);
       }
     }
     initialLoadDone.current = true;
-  }, [searchParams]);
+  }, []); // Only once on mount
 
   // Sync state BACK to URL (Deep linking)
   useEffect(() => {
@@ -267,6 +271,13 @@ function HomeContent() {
     // Sync School
     if (params.get('school') !== url) {
       params.set('school', url);
+      needsUpdate = true;
+    }
+
+    // Sync Name (to preserve characters like Ö)
+    const currentNameParam = params.get('name');
+    if (searchQuery && currentNameParam !== searchQuery) {
+      params.set('name', searchQuery);
       needsUpdate = true;
     }
 
@@ -286,7 +297,7 @@ function HomeContent() {
       // to avoid re-triggering useSearchParams effects in a loop
       window.history.replaceState(null, '', `?${params.toString()}`);
     }
-  }, [url, menu]);
+  }, [url, menu, searchQuery]);
 
   const handleShare = async () => {
     const shareTitle = 'Middagsmeny';
@@ -649,14 +660,25 @@ function HomeContent() {
       const menuDates = data.meals.map((m: any) => m.date.split('T')[0]);
       const hasToday = menuDates.includes(todayStr);
 
-      if (!skipAutoCorrect && isWeekday && !hasToday && menuDates.length > 0) {
+      // Auto-jump logic: 
+      // Only jump to NEXT week if it's Friday afternoon or weekend AND the current menu doesn't have today
+      // OR if it's a weekday and we are looking at a past week.
+      const isWeekend = now.getDay() === 0 || now.getDay() === 6;
+      const isFridayAfternoon = now.getDay() === 5 && now.getHours() >= 14;
+
+      if (!skipAutoCorrect && !hasToday && menuDates.length > 0) {
         const lastDate = [...menuDates].sort().pop();
         const firstDate = [...menuDates].sort()[0];
 
+        // If current week is in the past, jump to next (if available)
         if (lastDate && todayStr > lastDate && data.nextURL) {
+          // If it's Friday/Weekend, we definitely want the next week.
+          // Otherwise, we might still be looking for "current" week.
           setUrl(data.nextURL);
           return;
-        } else if (firstDate && todayStr < firstDate && data.previousURL) {
+        }
+        // If current week is in the future, but it's middle of the week, maybe jump back?
+        else if (firstDate && todayStr < firstDate && data.previousURL && !isFridayAfternoon && !isWeekend) {
           setUrl(data.previousURL);
           return;
         }
@@ -706,7 +728,10 @@ function HomeContent() {
 
   // Trigger fetch when URL changes
   useEffect(() => {
-    fetchMenu();
+    // On the very first load of the page, we want to skip auto-correct 
+    // to preserve the week specified in the URL.
+    const isFirstFetchForSession = lastFetchedUrl.current === '';
+    fetchMenu(undefined, isFirstFetchForSession);
   }, [url]);
 
 
@@ -719,14 +744,16 @@ function HomeContent() {
             alt="Bakgrund"
             className="w-full h-auto block"
           />
-          {/* Text Overlay */}
-          <div className="absolute inset-0 flex flex-col items-center justify-center p-4 text-center transform translate-y-4 md:translate-y-8">
-            <h1 className="text-white text-2xl md:text-4xl lg:text-6xl font-bold drop-shadow-lg">
-              Middagsmeny
-            </h1>
-            <p className="text-brand-yellow text-[9px] md:text-xs lg:text-sm font-semibold uppercase tracking-wider mt-0.5 md:mt-1 drop-shadow-md transform translate-x-3 md:translate-x-0">
-              veckans menyer & smarta middagsförslag
-            </p>
+          <div className="absolute inset-0 flex flex-col items-center justify-center p-4 text-center">
+            <div className="transform -translate-y-1 md:translate-y-3 lg:translate-y-5">
+              <h1 className="text-white text-3xl md:text-5xl lg:text-7xl font-black drop-shadow-[0_4px_12px_rgba(0,0,0,0.5)] tracking-tight">
+                Middagsmeny
+              </h1>
+              <div className="h-0.5 w-12 md:w-20 bg-brand-yellow mx-auto my-2 md:my-3 rounded-full shadow-sm"></div>
+              <p className="text-brand-yellow text-[10px] md:text-sm lg:text-base font-bold uppercase tracking-[0.2em] drop-shadow-md">
+                veckans menyer & smarta middagsförslag
+              </p>
+            </div>
           </div>
         </div>
       </header>
@@ -984,6 +1011,14 @@ function HomeContent() {
           </button>
         </div>
 
+        {/* current school title */}
+        {menu.length > 0 && searchQuery && (
+          <div className="text-center space-y-1">
+            <h2 className="text-xl font-bold text-slate-800">{searchQuery}</h2>
+            <p className="text-xs text-slate-400 uppercase tracking-widest font-bold">Aktuell matsedel</p>
+          </div>
+        )}
+
         {/* Weekly Menu */}
         <div className="space-y-6">
           {menu.map((day) => (
@@ -1069,14 +1104,26 @@ function HomeContent() {
                         </span>
                       </div>
 
-                      <a
-                        href={day.dinnerSuggestion.recipeLink}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="inline-block mt-2 text-sm font-medium text-brand-red hover:text-brand-dark underline underline-offset-2"
-                      >
-                        Sök recept &rarr;
-                      </a>
+                      <div className="flex items-center justify-between mt-4 pt-4 border-t border-brand-yellow/20">
+                        <a
+                          href={day.dinnerSuggestion.recipeLink}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="flex items-center gap-1.5 text-sm font-medium text-brand-red hover:text-brand-dark transition-colors group"
+                        >
+                          <span>Sök recept</span>
+                          <ExternalLink className="w-3.5 h-3.5 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                        </a>
+                        <a
+                          href={`https://www.mathem.se/sok?q=${encodeURIComponent(day.dinnerSuggestion.dish)}`}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="flex items-center gap-1.5 text-[10px] font-black bg-[#4793AF] text-white px-3 py-2 rounded-lg hover:bg-brand-dark transition-all shadow-sm hover:shadow-md active:scale-95 whitespace-nowrap"
+                        >
+                          <Search className="w-3 h-3" />
+                          HANDLA PÅ MATHEM
+                        </a>
+                      </div>
                     </div>
                   )}
                 </div>
@@ -1107,47 +1154,50 @@ function HomeContent() {
       {/* Interstitial Ad / Welcome Modal */}
       {
         showAd && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-300">
-            <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full overflow-hidden scale-100 animate-in zoom-in-95 duration-300 relative">
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-md animate-in fade-in duration-500">
+            <div className="bg-white rounded-3xl shadow-2xl max-w-md w-full overflow-hidden scale-100 animate-in zoom-in-95 duration-300 relative border border-white/20">
 
               {/* Ad Content */}
-              <div className="bg-brand-blue p-6 text-white text-center relative overflow-hidden">
-                <div className="absolute top-0 right-0 p-4 opacity-10">
-                  <Utensils className="w-32 h-32" />
+              <div className="bg-[#4793AF] p-8 text-white text-center relative overflow-hidden">
+                <div className="absolute -top-10 -right-10 opacity-10 rotate-12">
+                  <Utensils className="w-48 h-48" />
                 </div>
-                <h3 className="text-2xl font-black relative z-10 mb-2">Välkommen!</h3>
-                <p className="text-blue-100 text-sm relative z-10">
-                  Vi hjälper dig att spara tid och äta godare.
+                <h3 className="text-3xl font-black relative z-10 mb-2 tracking-tight">Smarta val?</h3>
+                <p className="text-blue-50 text-sm relative z-10 font-medium opacity-90">
+                  Planera middagen här – klicka hem råvarorna där.
                 </p>
               </div>
 
               <div className="p-8 text-center space-y-6">
-                <div className="bg-slate-50 border border-slate-100 rounded-xl p-4">
-                  <p className="text-xs uppercase tracking-wider font-bold text-slate-400 mb-2">ANNONS</p>
-                  <div className="font-semibold text-slate-800 text-lg">
-                    Veckans Erbjudande!
+                <div className="bg-slate-50 border border-slate-100 rounded-2xl p-6 transition-all hover:border-brand-yellow/50">
+                  <div className="inline-block px-3 py-1 rounded-full bg-brand-yellow/20 text-brand-dark text-[10px] font-bold uppercase tracking-widest mb-4">
+                    Erbjudande från Mathem
                   </div>
-                  <p className="text-slate-600 text-sm mt-1">
-                    Just nu: Få 50 kr rabatt på din första matkasse hos Mathem!
+                  <div className="font-bold text-slate-800 text-xl leading-tight">
+                    Slipp bära tunga kassar!
+                  </div>
+                  <p className="text-slate-600 text-sm mt-3 leading-relaxed">
+                    Få <strong>100 kr rabatt</strong> på din första storhandling. Perfekt när du ska fylla på för veckans alla middagar.
                   </p>
-                  <button className="mt-3 text-sm font-bold text-brand-blue underline decoration-2 hover:text-brand-dark">
-                    Hämta rabattkod
+                  <button className="mt-5 w-full py-2.5 px-4 bg-white border-2 border-slate-200 text-slate-700 rounded-xl text-sm font-bold hover:border-[#4793AF] hover:text-[#4793AF] transition-all">
+                    Kopiera kod: MIDDAG100
                   </button>
                 </div>
 
-                <p className="text-xs text-slate-400">
-                  Genom att använda Middagsmatcharen godkänner du att vi ibland visar relevanta erbjudanden för att hålla tjänsten gratis.
-                </p>
-
-                <button
-                  onClick={() => {
-                    setShowAd(false);
-                    sessionStorage.setItem('mm_seen_ad', 'true');
-                  }}
-                  className="w-full py-3 bg-brand-yellow text-brand-dark font-bold rounded-xl hover:bg-[#ffc800] transition-colors shadow-sm flex items-center justify-center gap-2"
-                >
-                  Gå vidare till appen &rarr;
-                </button>
+                <div className="space-y-3">
+                  <button
+                    onClick={() => {
+                      setShowAd(false);
+                      sessionStorage.setItem('mm_seen_ad', 'true');
+                    }}
+                    className="w-full py-4 bg-[#FFC470] text-brand-dark font-black rounded-2xl hover:bg-[#ffb44d] transition-all shadow-[0_4px_0_rgb(221,87,70)] active:shadow-none active:translate-y-1"
+                  >
+                    Börja planera nu
+                  </button>
+                  <p className="text-[10px] text-slate-400 leading-relaxed px-4">
+                    Genom att använda Middagsmatcharen hjälper du oss att hålla tjänsten gratis via våra samarbetspartners.
+                  </p>
+                </div>
               </div>
 
             </div>

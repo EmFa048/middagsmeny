@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, Suspense, useRef } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { format, parseISO, startOfWeek, endOfWeek } from 'date-fns';
 import { sv } from 'date-fns/locale';
 import { Search, Utensils, ChefHat, Leaf, Fish, AlertCircle, Heart, RefreshCw, Share2, Coffee, X, ExternalLink, Cookie } from 'lucide-react';
@@ -120,7 +120,21 @@ const DEFAULT_DISHES = [
   { dish: 'Minipizzor på tortillas', description: 'Snabbt, enkelt och barnsligt gott.', vegetarian: true, tags: ['vegetarian', 'bread'], avoidIfSchoolServes: ['pizza'] },
   { dish: 'Risotto med sparris', description: 'Krämig lyxig risotto med citron och parmesan.', vegetarian: true, tags: ['vegetarian', 'rice'], avoidIfSchoolServes: ['ris'] },
   { dish: 'Grekisk sallad med feta', description: 'Fräsch och snabb sommarmat.', vegetarian: true, tags: ['vegetarian', 'salad'], avoidIfSchoolServes: ['sallad'] },
-
+  { dish: 'Röd linssoppa', description: 'Mustig soppa med ingefära, kokosmjölk och koriander.', vegetarian: true, tags: ['vegetarian', 'soup', 'stew'], avoidIfSchoolServes: ['soppa', 'linser'] },
+  { dish: 'Vegetarisk Bibimbap', description: 'Koreansk risrätt med stekta grönsaker, ägg och gochujangsås.', vegetarian: true, tags: ['vegetarian', 'rice', 'asian'], avoidIfSchoolServes: ['ris', 'bibimbap'] },
+  { dish: 'Pasta med valnötssås', description: 'Krämig sås på valnötter, parmesan och vitlök.', vegetarian: true, tags: ['vegetarian', 'pasta'], avoidIfSchoolServes: ['pasta'] },
+  { dish: 'Chili sin carne', description: 'Vegetarisk chili med quornfärs, bönor och choklad.', vegetarian: true, tags: ['vegetarian', 'stew'], avoidIfSchoolServes: ['chili', 'gryta'] },
+  { dish: 'Marockansk kikärtsgryta', description: 'Kryddig gryta med spiskummin, kanel och aprikoser.', vegetarian: true, tags: ['vegetarian', 'stew'], avoidIfSchoolServes: ['gryta', 'kikärtor'] },
+  { dish: 'Ugnspannkaka med äpple', description: 'Variant med stekta äpplen och kanel, serveras med keso.', vegetarian: true, tags: ['vegetarian', 'egg'], avoidIfSchoolServes: ['pannkaka'] },
+  { dish: 'Gnocchi med salviasmör', description: 'Smörstekt gnocchi med salvia, hasselnötter och parmesan.', vegetarian: true, tags: ['vegetarian', 'pasta'], avoidIfSchoolServes: ['gnocchi', 'pasta'] },
+  { dish: 'Tofustroganoff', description: 'Klassisk stroganoff men med rökt tofu istället för korv.', vegetarian: true, tags: ['vegetarian', 'rice', 'stew'], avoidIfSchoolServes: ['korv', 'stroganoff'] },
+  { dish: 'Vegetariska kåldolmar', description: 'Savoykål fylld med linser och ris, serveras med sås och potatis.', vegetarian: true, tags: ['vegetarian', 'potato'], avoidIfSchoolServes: ['kåldolmar'] },
+  { dish: 'Melanzane alla Parmigiana', description: 'Gratäng med aubergine, tomatsås och mozzarella.', vegetarian: true, tags: ['vegetarian', 'stew'], avoidIfSchoolServes: ['gratäng', 'lasagne'] },
+  { dish: 'Spenat- och ricottapaj', description: 'Hög paj med krämig fyllning och frasigt skal.', vegetarian: true, tags: ['vegetarian', 'pie'], avoidIfSchoolServes: ['paj'] },
+  { dish: 'Pad Thai med tofu', description: 'Stekta risnudlar med jordnötter, lime och tofu.', vegetarian: true, tags: ['vegetarian', 'asian', 'noodles'], avoidIfSchoolServes: ['pad thai', 'nudlar'] },
+  { dish: 'Belugabolognese', description: 'Lyxig "köttfärssås" gjord på svarta belugalinser.', vegetarian: true, tags: ['vegetarian', 'pasta'], avoidIfSchoolServes: ['pasta', 'bolognese'] },
+  { dish: 'Halloumi-pytt i panna', description: 'Tärnad potatis, halloumi och rotfrukter med senapskräm.', vegetarian: true, tags: ['vegetarian', 'potato'], avoidIfSchoolServes: ['pyttipanna'] },
+  { dish: 'Rödbetscarpaccio med getost', description: 'Tunnskivade rödbetor, valnötter och honung (lättare middag).', vegetarian: true, tags: ['vegetarian', 'salad'], avoidIfSchoolServes: ['sallad'] },
   // Fisk (10 st)
   { dish: 'Torskrygg med bacontärningar', description: 'Lyxig torsk med brynt smör och pepparrot.', vegetarian: false, tags: ['fish'], avoidIfSchoolServes: ['fisk', 'torsk'] },
   { dish: 'Räkpasta med chili och vitlök', description: 'Scampi eller räkor i en lätt oljebaserad sås.', vegetarian: false, tags: ['fish', 'pasta'], avoidIfSchoolServes: ['pasta', 'skaldjur'] },
@@ -165,17 +179,13 @@ const DEFAULT_DISHES = [
 
 function HomeContent() {
   const router = useRouter();
-  const searchParams = useSearchParams();
 
   // Navigation State
   const [navURLs, setNavURLs] = useState<{ prev: string | null; next: string | null }>({ prev: null, next: null });
 
-  // 1. Initialise state directly from searchParams to avoid "flicker/race" on reload
-  const initialSchool = searchParams.get('school') || '';
-  const initialName = searchParams.get('name') || '';
-
-  const [url, setUrl] = useState(initialSchool);
-  const [searchQuery, setSearchQuery] = useState(initialName);
+  // Initialise state empty to avoid hydration mismatch/suspense
+  const [url, setUrl] = useState('');
+  const [searchQuery, setSearchQuery] = useState('');
   const [loading, setLoading] = useState(false);
   const [menu, setMenu] = useState<DayMenu[]>([]);
   const [error, setError] = useState('');
@@ -222,7 +232,7 @@ function HomeContent() {
     const seenAd = sessionStorage.getItem('mm_seen_ad');
     if (!seenAd) {
       // Small delay to feel like a "popup" or let page load slightly
-      const timer = setTimeout(() => setShowAd(false), 800);
+      const timer = setTimeout(() => setShowAd(true), 800);
       return () => clearTimeout(timer);
     }
 
@@ -258,27 +268,38 @@ function HomeContent() {
   const lastFetchedUrl = useRef('');
   const initialLoadDone = useRef(false);
 
-  // Still need to sync name fallback IF name is missing but school is present
+  // Load params on mount (Client Side Only)
   useEffect(() => {
     if (initialLoadDone.current) return;
 
-    // Use the actual parameter from searchParams to decide if fallback is needed
-    const nameParam = searchParams.get('name');
-    if (url && !nameParam) {
-      try {
-        const decoded = decodeURIComponent(url);
-        const parts = decoded.split('_');
-        const lastPart = parts[parts.length - 1].split('?')[0];
-        if (lastPart) {
-          const readable = lastPart.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
-          setSearchQuery(readable);
+    const params = new URLSearchParams(window.location.search);
+    const schoolParam = params.get('school');
+    const nameParam = params.get('name');
+
+    if (schoolParam) {
+      setUrl(schoolParam);
+
+      if (nameParam) {
+        setSearchQuery(nameParam);
+      } else {
+        // Fallback: Try to derive name from URL if missing
+        try {
+          const decoded = decodeURIComponent(schoolParam);
+          const parts = decoded.split('_');
+          const lastPart = parts[parts.length - 1].split('?')[0];
+          if (lastPart) {
+            const readable = lastPart.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+            setSearchQuery(readable);
+          }
+        } catch (e) {
+          console.error("Failed to parse school name from URL", e);
         }
-      } catch (e) {
-        console.error("Failed to parse school name from URL", e);
       }
     }
+
     initialLoadDone.current = true;
-  }, []); // Only once on mount
+  }, []);
+
 
   // Sync state BACK to URL (Deep linking)
   useEffect(() => {
@@ -476,10 +497,28 @@ function HomeContent() {
     const coreCategories = ['fish', 'vegetarian', 'chicken', 'minced_sausage', 'red_meat'];
 
     // Helper to map a dish to our core categories (using tags AND text detection)
+    // Helper to map a dish to our core categories (using tags AND text detection)
     const getCoreCategory = (d: any) => {
       const tags = d.tags || [];
       const text = (d.dish + ' ' + (d.description || '')).toLowerCase();
 
+      // SPECIAL MODE: If Vegetarian preference is active, use granular categories to ensure variety
+      if (prefs.vegetarian) {
+        if (text.includes('pizza')) return 'pizza'; // Explicit pizza category
+        if (tags.includes('soup')) return 'soup';
+        if (tags.includes('pasta')) return 'pasta';
+        if (tags.includes('rice')) return 'rice';
+        if (tags.includes('noodles')) return 'noodles';
+        if (tags.includes('pie') || tags.includes('paj')) return 'pie';
+        if (tags.includes('stew') || tags.includes('gryta') || tags.includes('curry')) return 'stew';
+        if (tags.includes('salad')) return 'salad';
+        if (tags.includes('bread') || tags.includes('macka') || tags.includes('burgare')) return 'bread';
+        if (tags.includes('asian')) return 'asian';
+        if (tags.includes('texmex') || tags.includes('tacos')) return 'texmex';
+        return 'vegetarian_general';
+      }
+
+      // Standard logic for mixed eaters
       if (tags.includes('fish') || text.includes('lax') || text.includes('torsk')) return 'fish';
       if (tags.includes('vegetarian')) return 'vegetarian';
       if (tags.includes('chicken') || text.includes('kyckling')) return 'chicken';
@@ -1162,6 +1201,42 @@ function HomeContent() {
           ))}
         </div>
 
+
+
+        {/* Info & Tips Section - SEO Content */}
+        <section className="mt-16 bg-white rounded-2xl p-8 border border-slate-100 shadow-sm space-y-6">
+          <div className="text-center max-w-2xl mx-auto space-y-4">
+            <h2 className="text-2xl font-black text-[#051c2c]">Smartare middagsplanering för barnfamiljer</h2>
+            <p className="text-slate-600 leading-relaxed">
+              Att få ihop vardagspusslet är inte lätt. <strong>Middagsmeny</strong> är ett gratis verktyg som hjälper dig att se vad barnen ätit i skolan och automatiskt föreslår en middag som kompletterar lunchen.
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-6 pt-6 text-sm text-slate-600">
+            <div className="space-y-2">
+              <h3 className="font-bold text-[#051c2c] flex items-center gap-2">
+                <Leaf className="w-4 h-4 text-green-600" />
+                Varierad kost
+              </h3>
+              <p>Vi ser till att du inte serverar pasta bolognese till middag om barnen redan ätit det till lunch.</p>
+            </div>
+            <div className="space-y-2">
+              <h3 className="font-bold text-[#051c2c] flex items-center gap-2">
+                <ChefHat className="w-4 h-4 text-brand-yellow" />
+                Enkla recept
+              </h3>
+              <p>Våra förslag är anpassade för vardagar – snabbt, gott och barnvänligt.</p>
+            </div>
+            <div className="space-y-2">
+              <h3 className="font-bold text-[#051c2c] flex items-center gap-2">
+                <Heart className="w-4 h-4 text-brand-red" />
+                Helt gratis
+              </h3>
+              <p>Tjänsten finansieras av annonser och frivilliga bidrag, så att den kan förbli gratis för alla.</p>
+            </div>
+          </div>
+        </section>
+
         {/* Footer / Monetization */}
         <footer className="pt-8 pb-4 text-center border-t border-slate-100 mt-12">
           <a
@@ -1173,12 +1248,17 @@ function HomeContent() {
             <Coffee className="w-5 h-5" />
             Gillar du appen? Bjud på en kaffe!
           </a>
-          <p className="text-slate-400 text-xs mt-4">
-            Middagsmeny © {new Date().getFullYear()} — Gör vardagspusslet enklare.
-          </p>
+          <div className="flex flex-col gap-2 mt-6">
+            <p className="text-slate-400 text-xs">
+              Middagsmeny © {new Date().getFullYear()} — Gör vardagspusslet enklare.
+            </p>
+            <a href="/privacy" className="text-slate-400 text-[10px] hover:text-slate-600 underline decoration-slate-300 underline-offset-2">
+              Integritetspolicy
+            </a>
+          </div>
         </footer>
 
-      </main>
+      </main >
 
       {/* Interstitial Ad / Welcome Modal */}
       {
@@ -1224,30 +1304,17 @@ function HomeContent() {
                   </p>
                 </div>
 
-                <div className="bg-slate-50 border-2 border-dashed border-slate-200 rounded-2xl p-6 relative group transition-all hover:border-[#4793AF]/50">
-                  <div className="text-[10px] font-black text-[#4793AF] uppercase tracking-widest mb-3">
-                    Erbjudande från Mathem
+                <div className="bg-slate-50 border-2 border-dashed border-slate-200 rounded-2xl p-6 relative group transition-all flex flex-col items-center justify-center min-h-[300px]">
+                  <div className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3">
+                    Annons
                   </div>
-                  <div className="font-black text-slate-800 text-2xl mb-1">
-                    100 kr RABATT
+                  {/* Google Ads Placeholder - 300x250 or Responsive */}
+                  <div className="w-[300px] h-[250px] bg-slate-200 flex items-center justify-center rounded-lg text-slate-400 font-medium text-sm border border-slate-300">
+                    Här visas en Google Ad
                   </div>
-                  <p className="text-slate-500 text-xs mb-5">
-                    Gäller vid ditt första köp över 700 kr.
+                  <p className="text-slate-400 text-xs mt-4 max-w-[250px]">
+                    Relevanta erbjudanden för dig och din familj.
                   </p>
-
-                  <button
-                    onClick={() => handleCopyCode('MIDDAG100')}
-                    className={`w-full py-3 px-4 rounded-xl text-sm font-black transition-all flex items-center justify-center gap-2 ${copySuccess
-                      ? 'bg-green-500 text-white'
-                      : 'bg-white border-2 border-slate-200 text-slate-700 hover:border-[#4793AF] hover:text-[#4793AF]'
-                      }`}
-                  >
-                    {copySuccess ? (
-                      <>Koden kopierad!</>
-                    ) : (
-                      <>Kopiera kod: <span className="text-[#4793AF]">MIDDAG100</span></>
-                    )}
-                  </button>
                 </div>
 
                 <div className="pt-2">
@@ -1270,32 +1337,34 @@ function HomeContent() {
         )
       }
       {/* Cookie Consent Banner */}
-      {showCookieConsent && (
-        <div className="fixed bottom-4 left-4 right-4 z-[60] animate-in slide-in-from-bottom-full duration-500">
-          <div className="max-w-4xl mx-auto bg-white rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.12)] border border-slate-100 p-4 md:p-6 flex flex-col md:flex-row items-center gap-4">
-            <div className="flex-1 flex items-start gap-4 text-left">
-              <div className="bg-brand-yellow/20 p-3 rounded-xl flex-shrink-0">
-                <Cookie className="w-6 h-6 text-[#051c2c]" />
+      {
+        showCookieConsent && (
+          <div className="fixed bottom-4 left-4 right-4 z-[60] animate-in slide-in-from-bottom-full duration-500">
+            <div className="max-w-4xl mx-auto bg-white rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.12)] border border-slate-100 p-4 md:p-6 flex flex-col md:flex-row items-center gap-4">
+              <div className="flex-1 flex items-start gap-4 text-left">
+                <div className="bg-brand-yellow/20 p-3 rounded-xl flex-shrink-0">
+                  <Cookie className="w-6 h-6 text-[#051c2c]" />
+                </div>
+                <div className="space-y-1">
+                  <h4 className="text-sm font-bold text-slate-800 uppercase tracking-tight">Cookies & Information</h4>
+                  <p className="text-xs text-slate-500 leading-relaxed">
+                    Vi använder lokala data (local storage) för att komma ihåg dina sparade skolor och favoriter, samt för att tjänsten ska fungera tekniskt. Genom att använda Middagsmeny godkänner du detta.
+                  </p>
+                </div>
               </div>
-              <div className="space-y-1">
-                <h4 className="text-sm font-bold text-slate-800 uppercase tracking-tight">Cookies & Information</h4>
-                <p className="text-xs text-slate-500 leading-relaxed">
-                  Vi använder lokala data (local storage) för att komma ihåg dina sparade skolor och favoriter, samt för att tjänsten ska fungera tekniskt. Genom att använda Middagsmeny godkänner du detta.
-                </p>
-              </div>
+              <button
+                onClick={() => {
+                  localStorage.setItem('mm_cookie_consent', 'true');
+                  setShowCookieConsent(false);
+                }}
+                className="w-full md:w-auto px-8 py-3 bg-[#051c2c] text-white text-sm font-bold rounded-xl hover:bg-brand-dark transition-all shadow-md active:scale-95"
+              >
+                Jag förstår
+              </button>
             </div>
-            <button
-              onClick={() => {
-                localStorage.setItem('mm_cookie_consent', 'true');
-                setShowCookieConsent(false);
-              }}
-              className="w-full md:w-auto px-8 py-3 bg-[#051c2c] text-white text-sm font-bold rounded-xl hover:bg-brand-dark transition-all shadow-md active:scale-95"
-            >
-              Jag förstår
-            </button>
           </div>
-        </div>
-      )}
+        )
+      }
 
     </div >
   );

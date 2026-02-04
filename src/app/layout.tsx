@@ -54,8 +54,9 @@ export default function RootLayout({
   return (
     <html lang="sv" suppressHydrationWarning>
       <head>
-        <link rel="icon" href="/favicon.png?v=10" type="image/png" />
-        <link rel="shortcut icon" href="/favicon.png?v=10" type="image/png" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/icons/icon-72x72.png" />
+        <link rel="apple-touch-icon" href="/icons/icon-192x192.png" />
+        <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5713849466989513" crossOrigin="anonymous"></script>
       </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}

@@ -1298,9 +1298,9 @@ function HomeContent() {
 
               <div className="p-8 text-center space-y-6">
                 <div className="space-y-2">
-                  <h4 className="text-xl font-bold text-slate-800">Slipp bära hem maten?</h4>
+                  <h4 className="text-xl font-bold text-slate-800">Tips & Erbjudanden</h4>
                   <p className="text-slate-500 text-sm">
-                    Just nu får du ett exklusivt erbjudande när du planerar dina middagar med oss.
+                    Här hittar du utvalda erbjudanden från våra samarbetspartners.
                   </p>
                 </div>
 

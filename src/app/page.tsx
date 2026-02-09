@@ -1085,19 +1085,27 @@ function HomeContent() {
 
         {/* Inline Advertisement Block */}
         {menu.length > 0 && (
-          <div className="w-full bg-slate-50 border border-slate-100 rounded-xl p-4 flex flex-col items-center justify-center my-6">
-            <span className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mb-2">Annons</span>
-            {/* Google AdSense Responsive Unit */}
-            <div className="w-full max-w-[728px] min-h-[90px] bg-white border border-dashed border-slate-200 rounded-lg flex items-center justify-center text-slate-300 text-xs">
-              <ins className="adsbygoogle"
-                style={{ display: 'block', width: '100%' }}
-                data-ad-client="ca-pub-5713849466989513"
-                data-ad-slot="auto"
-                data-ad-format="auto"
-                data-full-width-responsive="true"></ins>
-              <script>
-                {`(adsbygoogle = window.adsbygoogle || []).push({});`}
-              </script>
+          <div className="w-full bg-slate-50 border-2 border-dashed border-slate-200 rounded-xl p-4 flex flex-col items-center justify-center my-6 min-h-[150px] relative">
+            <span className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mb-2 bg-slate-100 px-2 py-1 rounded">Annonsplats</span>
+
+            {/* Ad Container */}
+            <div className="w-full max-w-[728px] flex items-center justify-center text-slate-300 text-xs">
+              {/* This text is behind the ad, visible only until ad loads */}
+              <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-0">
+                <p className="text-slate-300 font-medium">Laddar annons...</p>
+              </div>
+
+              <div className="relative z-10 w-full">
+                <ins className="adsbygoogle"
+                  style={{ display: 'block' }}
+                  data-ad-client="ca-pub-5713849466989513"
+                  data-ad-slot="auto"
+                  data-ad-format="auto"
+                  data-full-width-responsive="true"></ins>
+                <script>
+                  {`(adsbygoogle = window.adsbygoogle || []).push({});`}
+                </script>
+              </div>
             </div>
           </div>
         )}

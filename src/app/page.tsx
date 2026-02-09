@@ -1203,15 +1203,7 @@ function HomeContent() {
                           <span>Sök recept</span>
                           <ExternalLink className="w-3.5 h-3.5 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
                         </a>
-                        <a
-                          href={`https://www.mathem.se/sok?q=${encodeURIComponent(day.dinnerSuggestion.dish)}`}
-                          target="_blank"
-                          rel="noreferrer"
-                          className="flex items-center gap-1.5 text-[10px] font-black bg-[#4793AF] text-white px-3 py-2 rounded-lg hover:bg-brand-dark transition-all shadow-sm hover:shadow-md active:scale-95 whitespace-nowrap"
-                        >
-                          <Search className="w-3 h-3" />
-                          HANDLA PÅ MATHEM
-                        </a>
+
                       </div>
                     </div>
                   )}

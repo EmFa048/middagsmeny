@@ -1083,6 +1083,11 @@ function HomeContent() {
           </div>
         )}
 
+        {/* DEBUG ELEMENT - OUTSIDE OF ALL CHECKS */}
+        <div className="w-full bg-yellow-100 border-4 border-red-600 p-8 text-center my-10 font-black text-red-600 text-xl z-50 relative">
+          JAG ÄR HÄR! (DEBUG)
+        </div>
+
         {/* Inline Advertisement Block */}
         {menu.length > 0 && (
           <div className="w-full bg-slate-50 border-2 border-dashed border-slate-200 rounded-xl p-4 flex flex-col items-center justify-center my-6 min-h-[150px] relative">

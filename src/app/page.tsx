@@ -1090,21 +1090,9 @@ function HomeContent() {
 
             {/* Ad Container */}
             <div className="w-full max-w-[728px] flex items-center justify-center text-slate-300 text-xs">
-              {/* This text is behind the ad, visible only until ad loads */}
-              <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-0">
-                <p className="text-slate-300 font-medium">Laddar annons...</p>
-              </div>
-
-              <div className="relative z-10 w-full">
-                <ins className="adsbygoogle"
-                  style={{ display: 'block' }}
-                  data-ad-client="ca-pub-5713849466989513"
-                  data-ad-slot="auto"
-                  data-ad-format="auto"
-                  data-full-width-responsive="true"></ins>
-                <script>
-                  {`(adsbygoogle = window.adsbygoogle || []).push({});`}
-                </script>
+              {/* Debug element replacement */}
+              <div className="w-full h-24 border border-red-500 bg-red-50 flex items-center justify-center text-red-500 font-bold">
+                DEBUG: AD SCRIPT REMOVED
               </div>
             </div>
           </div>

@@ -1083,25 +1083,30 @@ function HomeContent() {
           </div>
         )}
 
-        {/* DEBUG ELEMENT - OUTSIDE OF ALL CHECKS */}
-        <div className="w-full bg-yellow-100 border-4 border-red-600 p-8 text-center my-10 font-black text-red-600 text-xl z-50 relative">
-          JAG ÄR HÄR! (DEBUG)
-        </div>
+        {/* Inline Advertisement Block - Always visible */}
+        <div className="w-full bg-slate-50 border-2 border-dashed border-slate-200 rounded-xl p-4 flex flex-col items-center justify-center my-6 min-h-[150px] relative">
+          <span className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mb-2 bg-slate-100 px-2 py-1 rounded">Annonsplats</span>
 
-        {/* Inline Advertisement Block */}
-        {menu.length > 0 && (
-          <div className="w-full bg-slate-50 border-2 border-dashed border-slate-200 rounded-xl p-4 flex flex-col items-center justify-center my-6 min-h-[150px] relative">
-            <span className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mb-2 bg-slate-100 px-2 py-1 rounded">Annonsplats</span>
+          {/* Ad Container */}
+          <div className="w-full max-w-[728px] flex items-center justify-center text-slate-300 text-xs min-h-[100px]">
+            {/* This text is behind the ad, visible only until ad loads */}
+            <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-0">
+              <p className="text-slate-300 font-medium">Här kommer en annons...</p>
+            </div>
 
-            {/* Ad Container */}
-            <div className="w-full max-w-[728px] flex items-center justify-center text-slate-300 text-xs">
-              {/* Debug element replacement */}
-              <div className="w-full h-24 border border-red-500 bg-red-50 flex items-center justify-center text-red-500 font-bold">
-                DEBUG: AD SCRIPT REMOVED
-              </div>
+            <div className="relative z-10 w-full">
+              <ins className="adsbygoogle"
+                style={{ display: 'block' }}
+                data-ad-client="ca-pub-5713849466989513"
+                data-ad-slot="auto"
+                data-ad-format="auto"
+                data-full-width-responsive="true"></ins>
+              <script>
+                {`(adsbygoogle = window.adsbygoogle || []).push({});`}
+              </script>
             </div>
           </div>
-        )}
+        </div>
 
         {/* Weekly Menu */}
         <div className="space-y-6">

@@ -1083,6 +1083,25 @@ function HomeContent() {
           </div>
         )}
 
+        {/* Inline Advertisement Block */}
+        {menu.length > 0 && (
+          <div className="w-full bg-slate-50 border border-slate-100 rounded-xl p-4 flex flex-col items-center justify-center my-6">
+            <span className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mb-2">Annons</span>
+            {/* Google AdSense Responsive Unit */}
+            <div className="w-full max-w-[728px] min-h-[90px] bg-white border border-dashed border-slate-200 rounded-lg flex items-center justify-center text-slate-300 text-xs">
+              <ins className="adsbygoogle"
+                style={{ display: 'block', width: '100%' }}
+                data-ad-client="ca-pub-5713849466989513"
+                data-ad-slot="auto"
+                data-ad-format="auto"
+                data-full-width-responsive="true"></ins>
+              <script>
+                {`(adsbygoogle = window.adsbygoogle || []).push({});`}
+              </script>
+            </div>
+          </div>
+        )}
+
         {/* Weekly Menu */}
         <div className="space-y-6">
           {menu.map((day) => (
@@ -1254,86 +1273,10 @@ function HomeContent() {
           </div>
         </footer>
 
-      </main >
 
-      {/* Interstitial Ad / Welcome Modal */}
-      {
-        showAd && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-md animate-in fade-in duration-500 overflow-y-auto">
-            <div className="bg-white rounded-[2rem] shadow-2xl max-w-md w-full overflow-hidden scale-100 animate-in zoom-in-95 duration-300 relative border border-white/20 my-auto max-h-[90vh] overflow-y-auto">
 
-              {/* Close Button */}
-              <button
-                onClick={() => {
-                  setShowAd(false);
-                  sessionStorage.setItem('mm_seen_ad', 'true');
-                }}
-                className="absolute top-4 right-4 z-20 p-2 bg-black/10 hover:bg-black/20 rounded-full transition-colors"
-              >
-                <X className="w-5 h-5 text-white md:text-white" />
-              </button>
-
-              {/* Header Content */}
-              <div className="bg-[#051c2c] p-10 text-white text-center relative overflow-hidden">
-                {/* Decorative Elements */}
-                <div className="absolute top-0 left-0 w-full h-full opacity-10 pointer-events-none">
-                  <Utensils className="absolute -top-10 -right-10 w-48 h-48 rotate-12" />
-                  <Utensils className="absolute -bottom-10 -left-10 w-48 h-48 -rotate-12" />
-                </div>
-
-                <div className="relative z-10 space-y-2">
-                  <div className="inline-block px-3 py-1 rounded-full bg-[#FFC470]/20 text-[#FFC470] text-[10px] font-black uppercase tracking-[0.2em] mb-2">
-                    Välkommen till
-                  </div>
-                  <h3 className="text-4xl font-black tracking-tight leading-none">Middagsmeny</h3>
-                  <p className="text-[#FFC470] text-sm font-medium opacity-90 max-w-[200px] mx-auto">
-                    Vi matchar skollunchen med smarta middagsförslag
-                  </p>
-                </div>
-              </div>
-
-              <div className="p-8 text-center space-y-6">
-                <div className="space-y-2">
-                  <h4 className="text-xl font-bold text-slate-800">Tips & Erbjudanden</h4>
-                  <p className="text-slate-500 text-sm">
-                    Här hittar du utvalda erbjudanden från våra samarbetspartners.
-                  </p>
-                </div>
-
-                <div className="bg-slate-50 border-2 border-dashed border-slate-200 rounded-2xl p-6 relative group transition-all flex flex-col items-center justify-center min-h-[300px]">
-                  <div className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3">
-                    Annons
-                  </div>
-                  {/* Google Ads Placeholder - 300x250 or Responsive */}
-                  <div className="w-[300px] h-[250px] bg-slate-200 flex items-center justify-center rounded-lg text-slate-400 font-medium text-sm border border-slate-300">
-                    Här visas en Google Ad
-                  </div>
-                  <p className="text-slate-400 text-xs mt-4 max-w-[250px]">
-                    Relevanta erbjudanden för dig och din familj.
-                  </p>
-                </div>
-
-                <div className="pt-2">
-                  <button
-                    onClick={() => {
-                      setShowAd(false);
-                      sessionStorage.setItem('mm_seen_ad', 'true');
-                    }}
-                    className="w-full py-4 bg-[#FFC470] text-[#051c2c] text-base font-black rounded-2xl hover:bg-[#ffb44d] transition-all shadow-[0_4px_0_rgb(221,87,70)] active:shadow-none active:translate-y-1"
-                  >
-                    Börja planera nu
-                  </button>
-                  <p className="text-[9px] text-slate-400 mt-4 leading-relaxed italic">
-                    Genom att använda Middagsmeny hjälper du oss att hålla tjänsten gratis. Tack!
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-        )
-      }
-
-    </div >
+      </main>
+    </div>
   );
 }
 

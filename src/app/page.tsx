@@ -1254,7 +1254,7 @@ function HomeContent() {
         <footer className="pt-8 pb-4 text-center border-t border-slate-100 mt-12">
 
           <a
-            href="https://buymeacoffee.com/middagsmeny"
+            href="https://buymeacoffee.com/edysweden"
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-2 px-6 py-3 bg-[#FFDD00] text-slate-900 rounded-full font-bold shadow-md hover:shadow-lg hover:scale-105 transition-all text-sm mb-6"

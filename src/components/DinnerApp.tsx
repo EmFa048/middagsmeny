@@ -515,6 +515,7 @@ export default function DinnerApp() {
       }
 
       // Standard logic for mixed eaters
+      if (tags.includes('soup') || text.includes('soppa')) return 'soup';
       if (tags.includes('fish') || text.includes('lax') || text.includes('torsk')) return 'fish';
       if (tags.includes('vegetarian')) return 'vegetarian';
       if (tags.includes('chicken') || text.includes('kyckling')) return 'chicken';

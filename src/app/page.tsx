@@ -42,41 +42,94 @@ export default function Home() {
         <DinnerApp />
       </Suspense>
 
-      {/* SEO Content & Footer - VISIBLE IMMEDIATELY */}
+      {/* SEO Content & Information - TONS OF TEXT FOR GOOGLE */}
       <main className="max-w-4xl mx-auto px-6 pb-12">
-        <section className="mt-8 bg-white rounded-2xl p-8 border border-slate-100 shadow-sm space-y-6">
-          <div className="text-center max-w-2xl mx-auto space-y-4">
-            <h2 className="text-2xl font-black text-[#051c2c]">Smartare middagsplanering för barnfamiljer</h2>
-            <p className="text-slate-600 leading-relaxed">
-              Att få ihop vardagspusslet är inte lätt. <strong>Middagsmeny</strong> är ett gratis verktyg som hjälper dig att se vad barnen ätit i skolan och automatiskt föreslår en middag som kompletterar lunchen.
-            </p>
+        <section className="mt-8 space-y-12">
+
+          {/* Main Info Section */}
+          <div className="bg-white rounded-2xl p-8 border border-slate-100 shadow-sm space-y-6">
+            <div className="text-center max-w-2xl mx-auto space-y-4">
+              <h2 className="text-3xl font-black text-[#051c2c]">Slipp middagspaniken med Middagsmeny</h2>
+              <p className="text-slate-600 leading-relaxed text-lg">
+                Varje dag ställs hundratusentals föräldrar inför samma fråga: <em>"Vad ska vi äta till middag?"</em>. Med Middagsmeny blir beslutet enklare än någonsin.
+              </p>
+            </div>
+
+            <div className="grid md:grid-cols-3 gap-8 pt-6">
+              <div className="space-y-3 p-4 bg-slate-50 rounded-xl">
+                <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
+                  <Leaf className="w-6 h-6 text-green-600" />
+                </div>
+                <h3 className="font-bold text-[#051c2c] text-lg">Varierad kost</h3>
+                <p className="text-sm text-slate-600">Vår algoritm analyserar barnens skollunch och ser till att middagen hemma blir ett bra komplement. Om skolan serverar fisk, föreslår vi något annat till kvällen.</p>
+              </div>
+
+              <div className="space-y-3 p-4 bg-slate-50 rounded-xl">
+                <div className="w-10 h-10 bg-brand-yellow/20 rounded-lg flex items-center justify-center">
+                  <ChefHat className="w-6 h-6 text-brand-yellow" />
+                </div>
+                <h3 className="font-bold text-[#051c2c] text-lg">Enkla vardagsrecept</h3>
+                <p className="text-sm text-slate-600">Alla våra förslag är valda för att passa en stressig vardag. Vi fokuserar på mat som går snabbt att laga, ingredienser som barn gillar och recept som inte kräver timmar i köket.</p>
+              </div>
+
+              <div className="space-y-3 p-4 bg-slate-50 rounded-xl">
+                <div className="w-10 h-10 bg-rose-100 rounded-lg flex items-center justify-center">
+                  <Heart className="w-6 h-6 text-rose-600" />
+                </div>
+                <h3 className="font-bold text-[#051c2c] text-lg">Bättre matglädje</h3>
+                <p className="text-sm text-slate-600">Genom att planera veckan minskar du matsvinnet och sparar pengar. Middagsmeny är helt gratis att använda och hjälper dig att bygga en hållbar och god matvecka för hela familjen.</p>
+              </div>
+            </div>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-6 pt-6 text-sm text-slate-600">
-            <div className="space-y-2">
-              <h3 className="font-bold text-[#051c2c] flex items-center gap-2">
-                <Leaf className="w-4 h-4 text-green-600" />
-                Varierad kost
-              </h3>
-              <p>Vi ser till att du inte serverar pasta bolognese till middag om barnen redan ätit det till lunch.</p>
+          {/* Detailed Content for Google AdSense Approval */}
+          <div className="grid md:grid-cols-2 gap-12 text-slate-600">
+            <div className="space-y-4">
+              <h3 className="text-xl font-bold text-[#051c2c]">Hur fungerar det?</h3>
+              <p>
+                Middagsmeny hämtar automatiskt veckans matsedel för de flesta grundskolor och förskolor i Sverige. Genom att söka på din skola får du direkt koll på vad barnen äter till lunch.
+              </p>
+              <p>
+                När vi vet lunchen kan vi föreslå en middag som balanserar dagens totala näringsintag och smakvariation. Om lunchen är en mustig soppa föreslår vi kanske en fräsch sallad eller pasta till middag. Är det fisk i skolan? Då siktar vi på kyckling eller kött hemma.
+              </p>
             </div>
-            <div className="space-y-2">
-              <h3 className="font-bold text-[#051c2c] flex items-center gap-2">
-                <ChefHat className="w-4 h-4 text-brand-yellow" />
-                Enkla recept
-              </h3>
-              <p>Våra förslag är anpassade för vardagar – snabbt, gott och barnvänligt.</p>
+            <div className="space-y-4">
+              <h3 className="text-xl font-bold text-[#051c2c]">Spara dina favoriter</h3>
+              <p>
+                Du kan enkelt spara din skola som en genväg för att snabbt komma åt veckans meny varje gång du öppnar appen. Du kan också markera dina favoriträtter bland våra förslag för att få upp dem oftare i framtiden.
+              </p>
+              <p>
+                För att göra din vardag ännu enklare kan du dela hela veckans middagsplanering direkt till din partner eller familj via SMS, WhatsApp eller e-post med ett enkelt klick på "Dela veckomeny".
+              </p>
             </div>
-            <div className="space-y-2">
-              <h3 className="font-bold text-[#051c2c] flex items-center gap-2">
-                <Heart className="w-4 h-4 text-brand-red" />
-                Helt gratis
-              </h3>
-              <p>Tjänsten finansieras av annonser och frivilliga bidrag, så att den kan förbli gratis för alla.</p>
+          </div>
+
+          {/* FAQ Section - Excellent for AdSense Value */}
+          <div className="bg-[#051c2c] text-white rounded-2xl p-8 md:p-12 space-y-8 shadow-xl">
+            <h2 className="text-2xl md:text-3xl font-black text-center text-brand-yellow">Vanliga frågor om Middagsmeny</h2>
+
+            <div className="grid md:grid-cols-2 gap-x-12 gap-y-8">
+              <div className="space-y-2">
+                <h4 className="font-bold text-brand-yellow text-lg">Är tjänsten gratis?</h4>
+                <p className="text-slate-300 text-sm">Ja, Middagsmeny är helt kostnadsfritt för alla användare. Vi finansierar driften genom annonser och frivilliga kaffebidrag.</p>
+              </div>
+              <div className="space-y-2">
+                <h4 className="font-bold text-brand-yellow text-lg">Hur många skolor finns med?</h4>
+                <p className="text-slate-300 text-sm">Vi täcker nästan alla kommunala skolor och de flesta friskolor i Sverige genom att hämta data från de största matleverantörerna.</p>
+              </div>
+              <div className="space-y-2">
+                <h4 className="font-bold text-brand-yellow text-lg">Kan jag lägga till egna recept?</h4>
+                <p className="text-slate-300 text-sm">Ja! Du kan lägga till egna favoriträtter som sedan blandas in bland förslagen för att göra din matsedel personlig.</p>
+              </div>
+              <div className="space-y-2">
+                <h4 className="font-bold text-brand-yellow text-lg">Vem ligger bakom sidan?</h4>
+                <p className="text-slate-300 text-sm">Middagsmeny drivs av engagerade föräldrar som själva ville lösa problemet med middagsplanering i en hektisk vardag.</p>
+              </div>
             </div>
           </div>
         </section>
 
+        {/* Footer */}
         <footer className="pt-8 pb-4 text-center border-t border-slate-100 mt-12">
           <a
             href="https://buymeacoffee.com/edysweden"
@@ -85,16 +138,18 @@ export default function Home() {
             className="inline-flex items-center gap-2 px-6 py-3 bg-[#FFDD00] text-slate-900 rounded-full font-bold shadow-md hover:shadow-lg hover:scale-105 transition-all text-sm mb-6"
           >
             <Coffee className="w-5 h-5" />
-            Gillar du appen? Bjud på en kaffe!
+            Bjud på en kaffe!
           </a>
 
           <div className="flex flex-col gap-2 mt-2">
             <p className="text-slate-400 text-xs">
-              Middagsmeny © {new Date().getFullYear()} — Gör vardagspusslet enklare.
+              Middagsmeny © {new Date().getFullYear()} — Din guide till en enklare vardag.
             </p>
-            <a href="/privacy" className="text-slate-400 text-[10px] hover:text-slate-600 underline decoration-slate-300 underline-offset-2">
-              Integritetspolicy
-            </a>
+            <div className="flex justify-center gap-4">
+              <a href="/privacy" className="text-slate-400 text-[10px] hover:text-slate-600 underline">Integritetspolicy</a>
+              <span className="text-slate-300 text-[10px]">|</span>
+              <span className="text-slate-400 text-[10px]">Version 1.2.0</span>
+            </div>
           </div>
         </footer>
       </main>

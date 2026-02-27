@@ -115,7 +115,7 @@ export default function Home() {
               </div>
               <div className="space-y-2">
                 <h4 className="font-bold text-brand-yellow text-lg">Hur många skolor finns med?</h4>
-                <p className="text-slate-300 text-sm">Vi täcker nästan alla kommunala skolor och de flesta friskolor i Sverige genom att hämta data från de största matleverantörerna.</p>
+                <p className="text-slate-300 text-sm">Vi täcker de skolor som använder Matilda Menu som verktyg.</p>
               </div>
               <div className="space-y-2">
                 <h4 className="font-bold text-brand-yellow text-lg">Kan jag lägga till egna recept?</h4>

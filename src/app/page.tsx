@@ -32,26 +32,46 @@ export default function Home() {
         </div>
       </header>
 
-      {/* Main Content Area */}
-      <Suspense fallback={
-        <div className="min-h-screen flex flex-col items-center justify-center space-y-4 pt-20">
-          <div className="w-12 h-12 border-4 border-brand-yellow border-t-transparent rounded-full animate-spin"></div>
-          <p className="text-slate-500 font-medium">Laddar menyn...</p>
-        </div>
-      }>
-        <DinnerApp />
-      </Suspense>
-
-      {/* SEO Content & Information - TONS OF TEXT FOR GOOGLE */}
       <main className="max-w-4xl mx-auto px-6 pb-12">
         <section className="mt-8 space-y-12">
+
+          {/* Moved SEO text higher for AdSense Crawler visibility */}
+          <div className="grid md:grid-cols-2 gap-12 text-slate-600 bg-white rounded-2xl p-8 border border-slate-50 shadow-sm">
+            <div className="space-y-4">
+              <h3 className="text-xl font-bold text-[#051c2c]">Hur fungerar det?</h3>
+              <p>
+                Middagsmeny hämtar automatiskt veckans matsedel för de flesta grundskolor och förskolor i Sverige genom att ansluta till de största matsedelsleverantörerna. Genom att söka på din skola får du direkt koll på vad barnen äter till lunch, vilket är grunden för en bra matplanering.
+              </p>
+              <p>
+                När vi vet lunchen kan vi föreslå en middag som balanserar dagens totala näringsintag och smakvariation. Om lunchen är en mustig soppa föreslår vi kanske en fräsch sallad eller pasta till middag. Är det fisk i skolan? Då siktar vi på kyckling eller kött hemma för att skapa en varierad kost under hela veckan.
+              </p>
+            </div>
+            <div className="space-y-4">
+              <h3 className="text-xl font-bold text-[#051c2c]">Spara dina favoriter</h3>
+              <p>
+                Du kan enkelt spara din skola som en genväg för att snabbt komma åt veckans meny varje gång du öppnar appen. Du kan också markera dina favoriträtter bland våra förslag för att få upp dem oftare i framtiden. Vår databas innehåller över 130 olika vardagsrecept anpassade för barnfamiljer.
+              </p>
+              <p>
+                För att göra din vardag ännu enklare kan du dela hela veckans middagsplanering direkt till din partner eller familj via SMS, WhatsApp eller e-post med ett enkelt klick på "Dela veckomeny". Synkroniserad planering minskar både stress och matsvinn.
+              </p>
+            </div>
+          </div>
+
+          <Suspense fallback={
+            <div className="min-h-[400px] flex flex-col items-center justify-center space-y-4 pt-10">
+              <div className="w-12 h-12 border-4 border-brand-yellow border-t-transparent rounded-full animate-spin"></div>
+              <p className="text-slate-500 font-medium">Laddar menyn...</p>
+            </div>
+          }>
+            <DinnerApp />
+          </Suspense>
 
           {/* Main Info Section */}
           <div className="bg-white rounded-2xl p-8 border border-slate-100 shadow-sm space-y-6">
             <div className="text-center max-w-2xl mx-auto space-y-4">
               <h2 className="text-3xl font-black text-[#051c2c]">Slipp middagspaniken med Middagsmeny</h2>
               <p className="text-slate-600 leading-relaxed text-lg">
-                Varje dag ställs hundratusentals föräldrar inför samma fråga: <em>"Vad ska vi äta till middag?"</em>. Med Middagsmeny blir beslutet enklare än någonsin.
+                Varje dag ställs hundratusentals föräldrar inför samma fråga: <em>"Vad ska vi äta till middag?"</em>. Med Middagsmeny blir beslutet enklare än någonsin genom smart synkronisering med skolan.
               </p>
             </div>
 
@@ -61,7 +81,7 @@ export default function Home() {
                   <Leaf className="w-6 h-6 text-green-600" />
                 </div>
                 <h3 className="font-bold text-[#051c2c] text-lg">Varierad kost</h3>
-                <p className="text-sm text-slate-600">Vår algoritm analyserar barnens skollunch och ser till att middagen hemma blir ett bra komplement. Om skolan serverar fisk, föreslår vi något annat till kvällen.</p>
+                <p className="text-sm text-slate-600">Vår algoritm analyserar barnens skollunch och ser till att middagen hemma blir ett bra komplement för en hälosam vardag.</p>
               </div>
 
               <div className="space-y-3 p-4 bg-slate-50 rounded-xl">
@@ -69,7 +89,7 @@ export default function Home() {
                   <ChefHat className="w-6 h-6 text-brand-yellow" />
                 </div>
                 <h3 className="font-bold text-[#051c2c] text-lg">Enkla vardagsrecept</h3>
-                <p className="text-sm text-slate-600">Alla våra förslag är valda för att passa en stressig vardag. Vi fokuserar på mat som går snabbt att laga, ingredienser som barn gillar och recept som inte kräver timmar i köket.</p>
+                <p className="text-sm text-slate-600">Alla våra förslag är valda för att passa en stressig vardag. Vi fokuserar på snabba, barnvänliga och näringsrika recept.</p>
               </div>
 
               <div className="space-y-3 p-4 bg-slate-50 rounded-xl">
@@ -77,30 +97,8 @@ export default function Home() {
                   <Heart className="w-6 h-6 text-rose-600" />
                 </div>
                 <h3 className="font-bold text-[#051c2c] text-lg">Bättre matglädje</h3>
-                <p className="text-sm text-slate-600">Genom att planera veckan minskar du matsvinnet och sparar pengar. Middagsmeny är helt gratis att använda och hjälper dig att bygga en hållbar och god matvecka för hela familjen.</p>
+                <p className="text-sm text-slate-600"> Genom planerad matsedel minskar du både matsvinn och spontanköp, vilket är bra för både plånbok och miljö.</p>
               </div>
-            </div>
-          </div>
-
-          {/* Detailed Content for Google AdSense Approval */}
-          <div className="grid md:grid-cols-2 gap-12 text-slate-600">
-            <div className="space-y-4">
-              <h3 className="text-xl font-bold text-[#051c2c]">Hur fungerar det?</h3>
-              <p>
-                Middagsmeny hämtar automatiskt veckans matsedel för de flesta grundskolor och förskolor i Sverige. Genom att söka på din skola får du direkt koll på vad barnen äter till lunch.
-              </p>
-              <p>
-                När vi vet lunchen kan vi föreslå en middag som balanserar dagens totala näringsintag och smakvariation. Om lunchen är en mustig soppa föreslår vi kanske en fräsch sallad eller pasta till middag. Är det fisk i skolan? Då siktar vi på kyckling eller kött hemma.
-              </p>
-            </div>
-            <div className="space-y-4">
-              <h3 className="text-xl font-bold text-[#051c2c]">Spara dina favoriter</h3>
-              <p>
-                Du kan enkelt spara din skola som en genväg för att snabbt komma åt veckans meny varje gång du öppnar appen. Du kan också markera dina favoriträtter bland våra förslag för att få upp dem oftare i framtiden.
-              </p>
-              <p>
-                För att göra din vardag ännu enklare kan du dela hela veckans middagsplanering direkt till din partner eller familj via SMS, WhatsApp eller e-post med ett enkelt klick på "Dela veckomeny".
-              </p>
             </div>
           </div>
 

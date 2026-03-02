@@ -19,7 +19,7 @@ export default function Home() {
             className="w-full h-auto block"
           />
           <div className="absolute inset-0 flex flex-col items-center justify-center p-4 text-center">
-            <div className="transform -translate-y-1 md:translate-y-3 lg:translate-y-5">
+            <div className="transform translate-y-2 md:translate-y-6 lg:translate-y-10">
               <h1 className="text-white text-3xl md:text-5xl lg:text-7xl font-black drop-shadow-[0_4px_12px_rgba(0,0,0,0.5)] tracking-tight">
                 Middagsmeny
               </h1>

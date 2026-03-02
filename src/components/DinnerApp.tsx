@@ -4,7 +4,7 @@ import { useState, useEffect, Suspense, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { format, parseISO, startOfWeek, endOfWeek } from 'date-fns';
 import { sv } from 'date-fns/locale';
-import { Search, Utensils, ChefHat, Leaf, Fish, AlertCircle, Heart, RefreshCw, Share2, Coffee, X, ExternalLink, Cookie } from 'lucide-react';
+import { Search, Utensils, ChefHat, Leaf, Fish, AlertCircle, Heart, RefreshCw, Share2, Coffee, X, ExternalLink, Cookie, Pencil } from 'lucide-react';
 
 interface Dish {
   id: string;
@@ -200,6 +200,8 @@ export default function DinnerApp() {
   const [customDishes, setCustomDishes] = useState<any[]>([]); // Using any for simplicity in this specific block, ideally typed
   const [showAddDish, setShowAddDish] = useState(false);
   const [newDish, setNewDish] = useState({ dish: '', description: '', vegetarian: false, tags: '' });
+  const [editingDay, setEditingDay] = useState<string | null>(null);
+  const [editSearchQuery, setEditSearchQuery] = useState('');
 
   // Ad Overlay State
   const [showAd, setShowAd] = useState(false);
@@ -446,6 +448,36 @@ export default function DinnerApp() {
     setShowAddDish(false);
   };
 
+  const handleSelectManualDish = (date: string, selectedDish: any) => {
+    setMenu(prevMenu => prevMenu.map(day => {
+      if (day.date === date) {
+        return {
+          ...day,
+          dinnerSuggestion: {
+            dish: selectedDish.dish,
+            description: selectedDish.description,
+            vegetarian: selectedDish.vegetarian,
+            recipeLink: `https://www.google.com/search?q=recept+${encodeURIComponent(selectedDish.dish)}`,
+            matchReason: 'Manuellt valt förslag'
+          }
+        };
+      }
+      return day;
+    }));
+    setEditingDay(null);
+    setEditSearchQuery('');
+  };
+
+  const handleSetCustomManualDish = (date: string, dishName: string) => {
+    if (!dishName) return;
+    const selectedDish = {
+      dish: dishName,
+      description: 'Eget förslag',
+      vegetarian: false,
+    };
+    handleSelectManualDish(date, selectedDish);
+  };
+
   // Extended Mock AI Logic
   const generateMockSuggestion = (schoolMeals: SchoolMeal[], prefs: typeof preferences, custom: any[], favDishNames: string[], avoidDishes: string[] = [], forceDish?: string) => {
     // Determine what was served at school (very basic keyword matching)
@@ -559,19 +591,19 @@ export default function DinnerApp() {
       const combinedKeywords = ['kyckling', 'fisk', 'korv', 'lax', 'torsk', 'färs', 'kött', 'pasta', 'ris', 'soppa'];
       combinedKeywords.forEach(kw => {
         if (schoolToText.includes(kw) && (dishNameLower.includes(kw) || dishDescLower.includes(kw))) {
-          score += 3000; // Direct text match skip
+          score += 1000; // Reduced from 3000
         }
       });
 
       categories.forEach(cat => {
         if (cat.keywords.some(word => schoolToText.includes(word))) {
-          if (d.tags.includes(cat.tag)) score += 2000; // Strong category skip
+          if (d.tags.includes(cat.tag)) score += 500; // Reduced from 2000
         }
       });
 
       // 3. VARIETY RULE: No same primary category two days in a row
       if (currentCategory && currentCategory === lastCategory) {
-        score += 1000; // Very heavy penalty for consecutive same category
+        score += 300; // Reduced from 1000
       }
 
       // 3b. BASE VARIETY: No same base (pasta/rice/potato) two days in a row
@@ -586,27 +618,27 @@ export default function DinnerApp() {
       const currentBase = getBase(d);
       const lastBase = lastDish ? getBase(lastDish) : null;
       if (currentBase && currentBase === lastBase) {
-        score += 2000; // Heavy penalty for same base two days in a row
+        score += 500; // Reduced from 2000
       }
 
       // 4. WEEKLY BALANCE: Strictly prioritize unused core categories
       if (currentCategory) {
         if (usedWeekCategories.includes(currentCategory)) {
-          score += 5000; // Strict one-category-per-week rule
+          score += 200; // Reduced significantly from 5000 to allow more rotation within categories
         } else {
-          score -= 500; // Reward for unused categories
+          score -= 50; // Reduced bonus from 500
         }
       }
 
       // 5. MANUAL AVOID TERMS (defined in dish data)
       if (d.avoidIfSchoolServes) {
         d.avoidIfSchoolServes.forEach((term: string) => {
-          if (schoolToText.includes(term.toLowerCase())) score += 1000;
+          if (schoolToText.includes(term.toLowerCase())) score += 300; // Reduced from 1000
         });
       }
 
       // Priority favorites
-      if (favDishNames.includes(d.dish)) score -= 50;
+      if (favDishNames.includes(d.dish)) score -= 100; // Increased bonus to make favorites pop more
 
       return { ...d, score };
     });
@@ -615,12 +647,12 @@ export default function DinnerApp() {
     scoredDishes.sort((a, b) => a.score - b.score);
 
     // Pick from the best available options
-    // STRICT FILTER: No dishes with score > 1000 (serious clashes)
-    let pool = scoredDishes.filter(d => d.score < 500);
+    // BROADER POOL: Higher threshold to allow more variation
+    let pool = scoredDishes.filter(d => d.score < 1500);
 
-    // If pool is empty, take the 5 least bad ones (even if they have some penalty, but not the >1000 ones)
-    if (pool.length === 0) {
-      pool = scoredDishes.filter(d => d.score < 1000).slice(0, 5);
+    // If pool is empty or too small, take the top 15% (at least 15 dishes)
+    if (pool.length < 15) {
+      pool = scoredDishes.slice(0, Math.max(15, Math.floor(scoredDishes.length * 0.15)));
     }
 
     // Final emergency fallback (should rarely happen)
@@ -1142,7 +1174,14 @@ export default function DinnerApp() {
                       <h3 className="uppercase tracking-wider text-xs font-bold text-brand-dark/70">Middagsförslag</h3>
                     </div>
                     {day.dinnerSuggestion && (
-                      <div className="flex gap-1">
+                      <div className="flex gap-1 items-center">
+                        <button
+                          onClick={() => setEditingDay(editingDay === day.date ? null : day.date)}
+                          className="text-slate-400 hover:text-brand-blue transition-colors p-1"
+                          title="Välj rätt manuellt"
+                        >
+                          <Pencil className="w-4 h-4" />
+                        </button>
                         <button
                           onClick={() => regenerateSuggestion(day.date)}
                           className="text-brand-dark/30 hover:text-brand-blue transition-colors p-1"
@@ -1161,7 +1200,49 @@ export default function DinnerApp() {
                     )}
                   </div>
 
-                  {day.dinnerSuggestion && (
+                  {editingDay === day.date && (
+                    <div className="mb-4 p-4 bg-white rounded-lg border border-brand-yellow/30 shadow-sm space-y-3 animate-in fade-in slide-in-from-top-1">
+                      <div className="flex justify-between items-center">
+                        <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">Sök eller skriv egen rätt</span>
+                        <button onClick={() => setEditingDay(null)} className="text-slate-400 hover:text-slate-600">
+                          <X className="w-4 h-4" />
+                        </button>
+                      </div>
+                      <input
+                        type="text"
+                        autoFocus
+                        value={editSearchQuery}
+                        onChange={(e) => setEditSearchQuery(e.target.value)}
+                        placeholder="T.ex. Pasta, Lax..."
+                        className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-brand-blue outline-none"
+                      />
+                      <div className="max-h-40 overflow-y-auto space-y-1">
+                        {[...DEFAULT_DISHES, ...customDishes]
+                          .filter(d => d.dish.toLowerCase().includes(editSearchQuery.toLowerCase()))
+                          .slice(0, 10)
+                          .map((d, i) => (
+                            <button
+                              key={i}
+                              onClick={() => handleSelectManualDish(day.date, d)}
+                              className="w-full text-left px-3 py-2 hover:bg-slate-50 text-sm rounded transition-colors flex justify-between items-center group"
+                            >
+                              <span className="font-medium text-slate-700">{d.dish}</span>
+                              <span className="text-[10px] text-slate-400 opacity-0 group-hover:opacity-100 uppercase tracking-tighter transition-opacity">Välj</span>
+                            </button>
+                          ))}
+                        {editSearchQuery.length > 2 && ![...DEFAULT_DISHES, ...customDishes].some(d => d.dish.toLowerCase() === editSearchQuery.toLowerCase()) && (
+                          <button
+                            onClick={() => handleSetCustomManualDish(day.date, editSearchQuery)}
+                            className="w-full text-left px-3 py-2 hover:bg-brand-blue/5 text-sm rounded transition-colors flex items-center gap-2 text-brand-blue font-medium"
+                          >
+                            <span>Använd "{editSearchQuery}"</span>
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  )}
+
+                  {day.dinnerSuggestion && editingDay !== day.date && (
                     <div className="space-y-3">
                       <div>
                         <h4 className="text-lg font-bold text-slate-800">{day.dinnerSuggestion.dish}</h4>

@@ -35,7 +35,16 @@ export default function Home() {
       <main className="max-w-4xl mx-auto px-6 pb-12">
         <section className="mt-8 space-y-12">
 
-          {/* Moved SEO text higher for AdSense Crawler visibility */}
+          <Suspense fallback={
+            <div className="min-h-[400px] flex flex-col items-center justify-center space-y-4 pt-10">
+              <div className="w-12 h-12 border-4 border-brand-yellow border-t-transparent rounded-full animate-spin"></div>
+              <p className="text-slate-500 font-medium">Laddar menyn...</p>
+            </div>
+          }>
+            <DinnerApp />
+          </Suspense>
+
+          {/* SEO text – placed after tool for better UX */}
           <div className="grid md:grid-cols-2 gap-12 text-slate-600 bg-white rounded-2xl p-8 border border-slate-50 shadow-sm">
             <div className="space-y-4">
               <h3 className="text-xl font-bold text-[#051c2c]">Hur fungerar det?</h3>
@@ -57,19 +66,10 @@ export default function Home() {
             </div>
           </div>
 
-          <Suspense fallback={
-            <div className="min-h-[400px] flex flex-col items-center justify-center space-y-4 pt-10">
-              <div className="w-12 h-12 border-4 border-brand-yellow border-t-transparent rounded-full animate-spin"></div>
-              <p className="text-slate-500 font-medium">Laddar menyn...</p>
-            </div>
-          }>
-            <DinnerApp />
-          </Suspense>
-
           {/* Main Info Section */}
           <div className="bg-white rounded-2xl p-8 border border-slate-100 shadow-sm space-y-6">
             <div className="text-center max-w-2xl mx-auto space-y-4">
-              <h2 className="text-3xl font-black text-[#051c2c]">Slipp middagspaniken med Middagsmeny</h2>
+              <h2 className="text-xl md:text-2xl font-black text-[#051c2c]">Slipp middagspaniken med Middagsmeny</h2>
               <p className="text-slate-600 leading-relaxed text-lg">
                 Varje dag ställs hundratusentals föräldrar inför samma fråga: <em>"Vad ska vi äta till middag?"</em>. Med Middagsmeny blir beslutet enklare än någonsin genom smart synkronisering med skolan.
               </p>

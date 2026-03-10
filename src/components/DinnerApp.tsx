@@ -673,7 +673,7 @@ export default function DinnerApp({ initialMenu, initialSchool }: DinnerAppProps
       recipeLink: `https://www.google.com/search?q=recept+${encodeURIComponent(selected.dish)}`,
       matchReason: selected.score < -5 ? 'Baserat på dina favoriter!' :
         selected.score < 5 ? 'Bra komplement till skollunchen.' :
-          'Krockvarning! (Svårt att hitta matchning)'
+          ''
     };
   };
 
@@ -1267,9 +1267,11 @@ export default function DinnerApp({ initialMenu, initialSchool }: DinnerAppProps
                             <Leaf className="w-3 h-3" /> Eko/Veg
                           </span>
                         )}
-                        <span className="text-xs text-slate-400 italic border-l border-slate-300 pl-2">
-                          {day.dinnerSuggestion.matchReason}
-                        </span>
+                        {day.dinnerSuggestion.matchReason && (
+                          <span className="text-xs text-slate-400 italic border-l border-slate-300 pl-2">
+                            {day.dinnerSuggestion.matchReason}
+                          </span>
+                        )}
                       </div>
 
                       <div className="flex items-center justify-between mt-4 pt-4 border-t border-brand-yellow/20">

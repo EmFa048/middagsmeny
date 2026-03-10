@@ -2,6 +2,7 @@ import { Suspense } from 'react';
 import DinnerApp from '@/components/DinnerApp';
 import { ChefHat, Leaf, Heart, Coffee, ExternalLink, MapPin } from 'lucide-react';
 import * as cheerio from 'cheerio';
+import { processMenu } from '@/utils/menuUtils';
 import { format, parseISO } from 'date-fns';
 import { sv } from 'date-fns/locale';
 
@@ -36,16 +37,17 @@ function slugify(text: string) {
 async function getInitialMenu(url: string) {
   try {
     const res = await fetch(url, { next: { revalidate: 3600 } });
-    if (!res.ok) return null;
+    if (!res.ok) return [];
     const html = await res.text();
     const $ = cheerio.load(html);
     const nextDataScript = $('#__NEXT_DATA__').html();
-    if (!nextDataScript) return null;
+    if (!nextDataScript) return [];
     const json = JSON.parse(nextDataScript);
-    return json.props?.pageProps?.meals || null;
+    const rawMeals = json.props?.pageProps?.meals || [];
+    return processMenu(rawMeals);
   } catch (e) {
     console.error("SSR Fetch failed", e);
-    return null;
+    return [];
   }
 }
 

@@ -1,16 +1,15 @@
 import { MetadataRoute } from 'next';
 
 const POPULAR_SCHOOLS = [
-    { id: '18606000', name: 'Engelbrektsskolan' },
-    { id: '14264000', name: 'Gärdesskolan' },
-    { id: '19001000', name: 'Eriksdalsskolan' },
-    { id: '14261000', name: 'Gustav Vasa skola' },
-    { id: '18683000', name: 'Katarina Norra skola' },
-    { id: '18610000', name: 'Matteusskolan' },
-    { id: '18608000', name: 'Norra Real' },
-    { id: '18607000', name: 'Östra Real' },
-    { id: '18681000', name: 'Kungsholmens gymnasium' },
-    { id: '18682000', name: 'Södra Latin' },
+    { id: '644bb58335c2a5fea7d2d9e3', name: 'Arenaskolan' },
+    { id: '6474928f5ed89d169f45b876', name: 'LID Dalängskolan' },
+    { id: '64a411c6469920bc655c117a', name: 'Härnösand Skola/Förskola' },
+    { id: '659fee1037b0fb7f7caca147', name: 'Strängnäs matsedel' },
+    { id: '63fc92f1ccb95f5ce570f7b3', name: 'Vasaskolan' },
+    { id: '63fc8cc3ccb95f5ce57053fa', name: 'Junibackens skola' },
+    { id: '6438f54a9545101593546fcb', name: 'Björkängsskolan' },
+    { id: '6436962095451015931bf7b7', name: 'Skola - Bergsjö skola 4-9' },
+    { id: '6438f76a954510159354a7fa', name: 'Moholm skola' },
 ];
 
 function slugify(text: string) {

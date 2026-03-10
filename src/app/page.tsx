@@ -11,11 +11,11 @@ export const metadata = {
 };
 
 const POPULAR_SCHOOLS = [
-  { id: '18606000', name: 'Engelbrektsskolan', locality: 'Stockholm' },
-  { id: '14264000', name: 'Gärdesskolan', locality: 'Stockholm' },
-  { id: '19001000', name: 'Eriksdalsskolan', locality: 'Stockholm' },
-  { id: '14261000', name: 'Gustav Vasa skola', locality: 'Stockholm' },
-  { id: '18683000', name: 'Katarina Norra skola', locality: 'Stockholm' },
+  { id: '644bb58335c2a5fea7d2d9e3', name: 'Arenaskolan', locality: 'Timrå' },
+  { id: '6474928f5ed89d169f45b876', name: 'LID Dalängskolan', locality: 'Lidköping' },
+  { id: '64a411c6469920bc655c117a', name: 'Härnösand Skola/Förskola', locality: 'Härnösand' },
+  { id: '659fee1037b0fb7f7caca147', name: 'Strängnäs matsedel', locality: 'Strängnäs' },
+  { id: '63fc92f1ccb95f5ce570f7b3', name: 'Vasaskolan', locality: 'Ludvika' },
 ];
 
 function slugify(text: string) {
@@ -97,7 +97,7 @@ export default async function Home() {
           <div className="bg-white rounded-2xl p-8 border border-slate-100 shadow-sm space-y-6">
             <h3 className="text-xl font-bold text-[#051c2c] flex items-center gap-2">
               <MapPin className="w-5 h-5 text-brand-yellow" />
-              Populära matsedlar just nu
+              Populära skolor just nu
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {POPULAR_SCHOOLS.map(school => (

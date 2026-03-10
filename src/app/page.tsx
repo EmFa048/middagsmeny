@@ -1,13 +1,59 @@
 import { Suspense } from 'react';
 import DinnerApp from '@/components/DinnerApp';
-import { ChefHat, Leaf, Heart, Coffee } from 'lucide-react';
+import { ChefHat, Leaf, Heart, Coffee, ExternalLink, MapPin } from 'lucide-react';
+import * as cheerio from 'cheerio';
+import { format, parseISO } from 'date-fns';
+import { sv } from 'date-fns/locale';
 
 export const metadata = {
   title: 'Middagsmeny – Veckans matsedel för skolor',
   description: 'Se vad barnen ätit i skolan och få smarta middagsförslag som kompletterar lunchen. Gratis tjänst för enklare vardagspussel.',
 };
 
-export default function Home() {
+const POPULAR_SCHOOLS = [
+  { id: '18606000', name: 'Engelbrektsskolan', locality: 'Stockholm' },
+  { id: '14264000', name: 'Gärdesskolan', locality: 'Stockholm' },
+  { id: '19001000', name: 'Eriksdalsskolan', locality: 'Stockholm' },
+  { id: '14261000', name: 'Gustav Vasa skola', locality: 'Stockholm' },
+  { id: '18683000', name: 'Katarina Norra skola', locality: 'Stockholm' },
+];
+
+function slugify(text: string) {
+  const swedishMap: { [key: string]: string } = { 'å': 'a', 'ä': 'a', 'ö': 'o', 'Å': 'a', 'Ä': 'a', 'Ö': 'o' };
+  return text
+    .toString()
+    .split('')
+    .map(char => swedishMap[char] || char)
+    .join('')
+    .toLowerCase()
+    .replace(/\s+/g, '-')
+    .replace(/[^\w\-]+/g, '')
+    .replace(/\-\-+/g, '-')
+    .replace(/^-+/, '')
+    .replace(/-+$/, '');
+}
+
+async function getInitialMenu(url: string) {
+  try {
+    const res = await fetch(url, { next: { revalidate: 3600 } });
+    if (!res.ok) return null;
+    const html = await res.text();
+    const $ = cheerio.load(html);
+    const nextDataScript = $('#__NEXT_DATA__').html();
+    if (!nextDataScript) return null;
+    const json = JSON.parse(nextDataScript);
+    return json.props?.pageProps?.meals || null;
+  } catch (e) {
+    console.error("SSR Fetch failed", e);
+    return null;
+  }
+}
+
+export default async function Home() {
+  const defaultSchool = POPULAR_SCHOOLS[0];
+  const defaultUrl = `https://menu.matildaplatform.com/meals/week/${defaultSchool.id}_${slugify(defaultSchool.name)}`;
+  const initialMenu = await getInitialMenu(defaultUrl);
+
   return (
     <div className="min-h-screen bg-slate-50 text-slate-800 font-sans">
       {/* Header - Server Rendered for Speed */}
@@ -41,8 +87,31 @@ export default function Home() {
               <p className="text-slate-500 font-medium">Laddar menyn...</p>
             </div>
           }>
-            <DinnerApp />
+            <DinnerApp
+              initialMenu={initialMenu}
+              initialSchool={{ url: defaultUrl, name: defaultSchool.name }}
+            />
           </Suspense>
+
+          {/* Popular Schools Directory - Important for SEO depth */}
+          <div className="bg-white rounded-2xl p-8 border border-slate-100 shadow-sm space-y-6">
+            <h3 className="text-xl font-bold text-[#051c2c] flex items-center gap-2">
+              <MapPin className="w-5 h-5 text-brand-yellow" />
+              Populära matsedlar just nu
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {POPULAR_SCHOOLS.map(school => (
+                <a
+                  key={school.id}
+                  href={`/?school=https://menu.matildaplatform.com/meals/week/${school.id}_${slugify(school.name)}&name=${encodeURIComponent(school.name)}`}
+                  className="p-4 bg-slate-50 rounded-xl hover:bg-brand-yellow/10 transition-colors border border-transparent hover:border-brand-yellow/30 group"
+                >
+                  <div className="font-bold text-[#051c2c] group-hover:text-amber-700">{school.name}</div>
+                  <div className="text-xs text-slate-500 uppercase tracking-wider">{school.locality}</div>
+                </a>
+              ))}
+            </div>
+          </div>
 
           {/* SEO text – placed after tool for better UX */}
           <div className="grid md:grid-cols-2 gap-12 text-slate-600 bg-white rounded-2xl p-8 border border-slate-50 shadow-sm">
@@ -108,20 +177,28 @@ export default function Home() {
 
             <div className="grid md:grid-cols-2 gap-x-12 gap-y-8">
               <div className="space-y-2">
+                <h4 className="font-bold text-brand-yellow text-lg">Varför ska man synka med skolan?</h4>
+                <p className="text-slate-300 text-sm">Genom att veta vad barnen äter till lunch kan du undvika att servera samma sak till middag. Det ger barnen en mer varierad kost och minskar risken för "matvägran" när de får samma favoriträtt två gånger på en dag.</p>
+              </div>
+              <div className="space-y-2">
                 <h4 className="font-bold text-brand-yellow text-lg">Är tjänsten gratis?</h4>
-                <p className="text-slate-300 text-sm">Ja, Middagsmeny är helt kostnadsfritt för alla användare. Vi finansierar driften genom annonser och frivilliga kaffebidrag.</p>
+                <p className="text-slate-300 text-sm">Ja, Middagsmeny är helt kostnadsfritt för alla användare. Vi finansierar driften genom annonser och frivilliga kaffebidrag via Buy Me a Coffee för att hålla tjänsten vid liv.</p>
               </div>
               <div className="space-y-2">
                 <h4 className="font-bold text-brand-yellow text-lg">Hur många skolor finns med?</h4>
-                <p className="text-slate-300 text-sm">Vi täcker de skolor som använder Matilda Menu som verktyg.</p>
+                <p className="text-slate-300 text-sm">Vi täcker de tusentals skolor och förskolor i Sverige som använder Matilda Menu som sitt verktyg för matsedlar. Det inkluderar de flesta kommunala och fristående skolor.</p>
               </div>
               <div className="space-y-2">
                 <h4 className="font-bold text-brand-yellow text-lg">Kan jag lägga till egna recept?</h4>
-                <p className="text-slate-300 text-sm">Ja! Du kan lägga till egna favoriträtter som sedan blandas in bland förslagen för att göra din matsedel personlig.</p>
+                <p className="text-slate-300 text-sm">Självklart! Du kan lägga till dina egna familjerecept som sedan blandas in i förslagsalgoritmen. På så sätt blir matsedeln personlig och anpassad efter just din familjs smaker.</p>
+              </div>
+              <div className="space-y-2">
+                <h4 className="font-bold text-brand-yellow text-lg">Hur fungerar algoritmen?</h4>
+                <p className="text-slate-300 text-sm">Vår smarta algoritm analyserar skollunchens ingredienser och protein. Om barnen ätit fisk i skolan föreslår vi något annat, t.ex. kyckling eller vegetariskt, för att skapa en balanserad helhet över dagen.</p>
               </div>
               <div className="space-y-2">
                 <h4 className="font-bold text-brand-yellow text-lg">Vem ligger bakom sidan?</h4>
-                <p className="text-slate-300 text-sm">Middagsmeny drivs av engagerade föräldrar som själva ville lösa problemet med middagsplanering i en hektisk vardag.</p>
+                <p className="text-slate-300 text-sm">Middagsmeny drivs av ett litet team engagerade föräldrar som själva ville lösa det klassiska middagspusslet. Vi bygger sidan vi själva saknade i vår vardag.</p>
               </div>
             </div>
           </div>

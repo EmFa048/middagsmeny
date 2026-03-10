@@ -177,17 +177,22 @@ const DEFAULT_DISHES = [
   { dish: 'Salsicciakorv med surkål', description: 'Mustig och kryddig tysk-inspirerad middag.', vegetarian: false, tags: ['pork'], avoidIfSchoolServes: ['korv'] }
 ];
 
-export default function DinnerApp() {
+interface DinnerAppProps {
+  initialMenu?: DayMenu[];
+  initialSchool?: { url: string; name: string };
+}
+
+export default function DinnerApp({ initialMenu, initialSchool }: DinnerAppProps) {
   const router = useRouter();
 
   // Navigation State
   const [navURLs, setNavURLs] = useState<{ prev: string | null; next: string | null }>({ prev: null, next: null });
 
-  // Initialise state empty to avoid hydration mismatch/suspense
-  const [url, setUrl] = useState('');
-  const [searchQuery, setSearchQuery] = useState('');
+  // Initialise state with SSR data if provided
+  const [url, setUrl] = useState(initialSchool?.url || '');
+  const [searchQuery, setSearchQuery] = useState(initialSchool?.name || '');
   const [loading, setLoading] = useState(false);
-  const [menu, setMenu] = useState<DayMenu[]>([]);
+  const [menu, setMenu] = useState<DayMenu[]>(initialMenu || []);
   const [error, setError] = useState('');
 
   // Search State
@@ -229,16 +234,8 @@ export default function DinnerApp() {
     const savedFavDishes = localStorage.getItem('mm_favorite_dishes');
     if (savedFavDishes) setFavoriteDishNames(JSON.parse(savedFavDishes));
 
-    // Check if user has seen the ad in this session
-    const seenAd = sessionStorage.getItem('mm_seen_ad');
-    if (!seenAd) {
-      // Small delay to feel like a "popup" or let page load slightly
-      const timer = setTimeout(() => setShowAd(true), 800);
-      return () => clearTimeout(timer);
-    }
-
-    const timer = setTimeout(() => setShowAd(true), 800);
-    return () => clearTimeout(timer);
+    // REMOVED: Autopopup of Ads. This is frowned upon by AdSense crawlers
+    // if there is no high-value user interaction first.
   }, []);
 
   // Save to LocalStorage

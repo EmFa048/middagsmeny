@@ -1127,6 +1127,19 @@ export default function DinnerApp({ initialMenu, initialSchool }: DinnerAppProps
 
         {/* Weekly Menu */}
         <div className="space-y-6">
+          {menu.length === 0 && !loading && url && (
+            <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-12 text-center space-y-4">
+              <div className="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto text-slate-400">
+                <AlertCircle className="w-8 h-8" />
+              </div>
+              <div>
+                <h3 className="text-lg font-bold text-slate-800">Ingen matsedel hittad</h3>
+                <p className="text-slate-500 max-w-xs mx-auto text-sm mt-1">
+                  Vi kunde inte hitta någon matsedel för den valda skolan den här veckan. Det kan bero på lov eller att skolan inte har publicerat någon meny än.
+                </p>
+              </div>
+            </div>
+          )}
           {menu.map((day) => (
             <div key={day.date} className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden transform transition hover:shadow-md">
 

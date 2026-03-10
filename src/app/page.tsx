@@ -11,11 +11,11 @@ export const metadata = {
 };
 
 const POPULAR_SCHOOLS = [
-  { id: '644bb58335c2a5fea7d2d9e3', name: 'Arenaskolan', locality: 'Timrå' },
-  { id: '6474928f5ed89d169f45b876', name: 'LID Dalängskolan', locality: 'Lidköping' },
-  { id: '64a411c6469920bc655c117a', name: 'Härnösand Skola/Förskola', locality: 'Härnösand' },
-  { id: '659fee1037b0fb7f7caca147', name: 'Strängnäs matsedel', locality: 'Strängnäs' },
-  { id: '63fc92f1ccb95f5ce570f7b3', name: 'Vasaskolan', locality: 'Ludvika' },
+  { id: '6400747a41b4e4e00179ce82', name: 'Förskolor', locality: 'Älvkarleby', url: 'https://menu.matildaplatform.com/meals/week/6400747a41b4e4e00179ce82_alvkarleby' },
+  { id: '64a7cb24469920bc65b4e835', name: 'Fryele skola', locality: 'Värnamo', url: 'https://menu.matildaplatform.com/meals/week/64a7cb24469920bc65b4e835_varnamo' },
+  { id: '6436962095451015931bf7ce', name: 'Skola - Gnarp skola', locality: 'Nordanstig', url: 'https://menu.matildaplatform.com/meals/week/6436962095451015931bf7ce_nordanstig' },
+  { id: '64a411c6469920bc655c117a', name: 'Härnösand Skola/Förskola', locality: 'Härnösand', url: 'https://menu.matildaplatform.com/meals/week/64a411c6469920bc655c117a_harnosand' },
+  { id: '6474928f5ed89d169f45b876', name: 'LID Dalängskolan', locality: 'Lidköping', url: 'https://menu.matildaplatform.com/meals/week/6474928f5ed89d169f45b876_goliska' },
 ];
 
 function slugify(text: string) {
@@ -51,7 +51,7 @@ async function getInitialMenu(url: string) {
 
 export default async function Home() {
   const defaultSchool = POPULAR_SCHOOLS[0];
-  const defaultUrl = `https://menu.matildaplatform.com/meals/week/${defaultSchool.id}_${slugify(defaultSchool.name)}`;
+  const defaultUrl = defaultSchool.url;
   const initialMenu = await getInitialMenu(defaultUrl);
 
   return (
@@ -103,7 +103,7 @@ export default async function Home() {
               {POPULAR_SCHOOLS.map(school => (
                 <a
                   key={school.id}
-                  href={`/?school=https://menu.matildaplatform.com/meals/week/${school.id}_${slugify(school.name)}&name=${encodeURIComponent(school.name)}`}
+                  href={`/?school=${encodeURIComponent(school.url)}&name=${encodeURIComponent(school.name)}`}
                   className="p-4 bg-slate-50 rounded-xl hover:bg-brand-yellow/10 transition-colors border border-transparent hover:border-brand-yellow/30 group"
                 >
                   <div className="font-bold text-[#051c2c] group-hover:text-amber-700">{school.name}</div>

@@ -12,7 +12,7 @@ export const metadata = {
 };
 
 const POPULAR_SCHOOLS = [
-  { id: '6400747a41b4e4e00179ce82', name: 'Förskolor', locality: 'Älvkarleby', url: 'https://menu.matildaplatform.com/meals/week/6400747a41b4e4e00179ce82_alvkarleby' },
+  { id: '66b61ca94060624347658340', name: 'Bullerbyns förskola', locality: 'Karlstad', url: 'https://menu.matildaplatform.com/meals/week/66b61ca94060624347658340_Karlstad Kommun' },
   { id: '64a7cb24469920bc65b4e835', name: 'Fryele skola', locality: 'Värnamo', url: 'https://menu.matildaplatform.com/meals/week/64a7cb24469920bc65b4e835_varnamo' },
   { id: '6436962095451015931bf7ce', name: 'Skola - Gnarp skola', locality: 'Nordanstig', url: 'https://menu.matildaplatform.com/meals/week/6436962095451015931bf7ce_nordanstig' },
   { id: '64a411c6469920bc655c117a', name: 'Härnösand Skola/Förskola', locality: 'Härnösand', url: 'https://menu.matildaplatform.com/meals/week/64a411c6469920bc655c117a_harnosand' },

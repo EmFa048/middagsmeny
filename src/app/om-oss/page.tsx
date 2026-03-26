@@ -56,7 +56,7 @@ export default function AboutPage() {
             <h2 className="text-2xl font-bold text-brand-yellow">Helt gratis och transparent</h2>
           </div>
           <p className="text-slate-200 leading-relaxed">
-            Vi tror på att bra verktyg ska vara tillgängliga för alla. Därför är Middagsmeny helt gratis att använda. För att täcka kostnader för servrar och utveckling använder vi diskret annonsering och möjligheten för användare att ”bjuda på en kaffe” via Buy Me a Coffee.
+            Vi tror på att bra verktyg ska vara tillgängliga för alla. Därför är Middagsmeny helt gratis att använda. För att täcka kostnader för servrar och utveckling använder vi möjligheten för användare att ”bjuda på en kaffe” via Buy Me a Coffee och annonser.
           </p>
           <p className="text-slate-200 leading-relaxed">
             Vi samlar aldrig in personuppgifter utan din tillåtelse. All information om dina sparade skolor och favoriter sparas lokalt i din egen webbläsare, vilket innebär att du har full kontroll över din data.

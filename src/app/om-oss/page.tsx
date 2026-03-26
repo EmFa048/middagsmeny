@@ -24,7 +24,7 @@ export default function AboutPage() {
             Middagsmeny föddes ur en klassisk vardagssituation som nästan alla barnföräldrar känner igen: klockan är 16:30, barnen är hungriga och man har ingen aning om vad man ska laga till middag. Den eviga frågan ”Vad ska vi äta?” blir ofta en stressfaktor i en redan hektisk vardag.
           </p>
           <p className="leading-relaxed">
-            Vi som skapat tjänsten är själva föräldrar som insåg att den viktigaste pusselbiten för en stresfri middagsplanering ofta saknas: <strong>vad barnen redan har ätit till lunch i skolan</strong>. Genom att synka middagen hemma med skollunchen kan vi skapa en mer varierad kost, minska matsvinnet och framför allt – slippa servera fisk två gånger på samma dag.
+            Vi som skapat tjänsten är själva föräldrar som insåg att den viktigaste pusselbiten för en stresfri middagsplanering ofta saknas: <strong>vad barnen redan har ätit till lunch i skolan</strong>. Genom att synka middagen hemma med skollunchen kan vi skapa en mer varierad kost, minska matsvinnet och framförallt, att inte servera samma rätt två gånger på samma dag.
           </p>
         </section>
 

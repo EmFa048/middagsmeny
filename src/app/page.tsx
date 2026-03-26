@@ -206,29 +206,6 @@ export default async function Home() {
           </div>
         </section>
 
-        {/* Footer */}
-        <footer className="pt-8 pb-4 text-center border-t border-slate-100 mt-12">
-          <a
-            href="https://buymeacoffee.com/edysweden"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 px-6 py-3 bg-[#FFDD00] text-slate-900 rounded-full font-bold shadow-md hover:shadow-lg hover:scale-105 transition-all text-sm mb-6"
-          >
-            <Coffee className="w-5 h-5" />
-            Bjud på en kaffe!
-          </a>
-
-          <div className="flex flex-col gap-2 mt-2">
-            <p className="text-slate-400 text-xs">
-              Middagsmeny © {new Date().getFullYear()} — Din guide till en enklare vardag.
-            </p>
-            <div className="flex justify-center gap-4">
-              <a href="/privacy" className="text-slate-400 text-[10px] hover:text-slate-600 underline">Integritetspolicy</a>
-              <span className="text-slate-300 text-[10px]">|</span>
-              <span className="text-slate-400 text-[10px]">Version 1.2.0</span>
-            </div>
-          </div>
-        </footer>
       </main>
     </div>
   );

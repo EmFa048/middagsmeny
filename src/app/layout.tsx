@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import Navbar from "@/components/Navbar";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -58,27 +59,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="sv" suppressHydrationWarning>
+    <html lang="sv">
       <head>
-        <link rel="icon" type="image/png" sizes="32x32" href="/icons/icon-72x72.png?v=2" />
-        <link rel="apple-touch-icon" href="/icons/icon-192x192.png?v=2" />
         <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5713849466989513" crossOrigin="anonymous"></script>
       </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased flex flex-col min-h-screen`}
       >
-        <nav className="bg-[#051c2c] text-white border-b border-white/5 py-3 px-6">
-          <div className="max-w-4xl mx-auto flex justify-between items-center">
-            <a href="/" className="font-black text-lg tracking-tighter hover:text-brand-yellow transition-colors">
-              Middagsmeny<span className="text-brand-yellow">.se</span>
-            </a>
-            <div className="flex gap-4 md:gap-8 text-[10px] md:text-xs font-bold uppercase tracking-widest">
-              <a href="/hur-det-fungerar" className="hover:text-brand-yellow transition-colors">Hur det fungerar</a>
-              <a href="/artiklar" className="hover:text-brand-yellow transition-colors">Tips & Artiklar</a>
-              <a href="/om-oss" className="hover:text-brand-yellow transition-colors hidden sm:block">Om oss</a>
-            </div>
-          </div>
-        </nav>
+        <Navbar />
         <div className="flex-grow">
           {children}
         </div>

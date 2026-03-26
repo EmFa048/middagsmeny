@@ -41,6 +41,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
         { url: `${baseUrl}/hur-det-fungerar`, lastModified: new Date(), changeFrequency: 'monthly' as const, priority: 0.7 },
         { url: `${baseUrl}/artiklar`, lastModified: new Date(), changeFrequency: 'weekly' as const, priority: 0.8 },
         { url: `${baseUrl}/artiklar/matplanering-tips`, lastModified: new Date(), changeFrequency: 'monthly' as const, priority: 0.7 },
+        { url: `${baseUrl}/artiklar/variation-i-kosten`, lastModified: new Date(), changeFrequency: 'monthly' as const, priority: 0.7 },
     ];
 
     return [

@@ -58,12 +58,46 @@ export default async function Home() {
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-800 font-sans">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "WebSite",
+            "name": "Middagsmeny",
+            "url": "https://middagsmeny.se",
+            "description": "Synka skollunchen med smarta middagsförslag för barnfamiljer.",
+            "potentialAction": {
+              "@type": "SearchAction",
+              "target": "https://middagsmeny.se/?q={search_term_string}",
+              "query-input": "required name=search_term_string"
+            }
+          })
+        }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "Organization",
+            "name": "Middagsmeny",
+            "url": "https://middagsmeny.se",
+            "logo": "https://middagsmeny.se/logo.png",
+            "contactPoint": {
+              "@type": "ContactPoint",
+              "email": "hej@middagsmeny.se",
+              "contactType": "customer support"
+            }
+          })
+        }}
+      />
       {/* Header - Server Rendered for Speed */}
       <header className="w-full bg-[#051c2c] shadow-xl overflow-hidden relative">
         <div className="relative w-full">
           <img
             src="/header-bg-clean-final.png"
-            alt="Bakgrund"
+            alt="Middagsmeny - Veckans matsedel och middagsförslag"
             className="w-full h-auto block"
           />
           <div className="absolute inset-0 flex flex-col items-center justify-center p-4 text-center">

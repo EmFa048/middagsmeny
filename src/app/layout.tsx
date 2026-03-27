@@ -22,17 +22,25 @@ export const viewport = {
 };
 
 export const metadata: Metadata = {
-  title: "Middagsmeny",
-  description: "Synka skollunchen med smarta middagsförslag",
+  metadataBase: new URL("https://middagsmeny.se"),
+  title: {
+    default: "Middagsmeny – Veckans matsedel för skolor & smarta middagstips",
+    template: "%s | Middagsmeny"
+  },
+  description: "Se vad barnen ätit i skolan och få smarta middagsförslag som kompletterar lunchen. En gratis tjänst för en enklare och hälosammare vardag.",
+  keywords: ["skolmat", "matsedel", "middagsförslag", "matplanering", "skollunch", "veckomeny", "barnfamilj", "recept"],
   manifest: "/manifest.json",
+  alternates: {
+    canonical: "/",
+  },
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
     title: "Middagsmeny",
   },
   openGraph: {
-    title: "Middagsmeny",
-    description: "Slut på middagspaniken! Vi matchar skollunchen med goda receptförslag hemma.",
+    title: "Middagsmeny – Synka skollunchen med middagen",
+    description: "Slut på middagspaniken! Vi matchar automatiskt skollunchen med goda och varierande receptförslag hemma.",
     url: "https://middagsmeny.se",
     siteName: "Middagsmeny",
     images: [
@@ -40,6 +48,7 @@ export const metadata: Metadata = {
         url: "/logo.png",
         width: 1024,
         height: 1024,
+        alt: "Middagsmeny logotyp"
       },
     ],
     locale: "sv_SE",
@@ -47,8 +56,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Middagsmeny",
-    description: "Synka skollunchen med smarta middagsförslag",
+    title: "Middagsmeny – Smartare matplanering",
+    description: "Synka skollunchen med smarta middagsförslag för barnfamiljer.",
     images: ["/logo.png"],
   },
 };

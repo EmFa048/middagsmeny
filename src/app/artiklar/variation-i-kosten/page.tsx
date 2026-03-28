@@ -23,7 +23,7 @@ export default function ArticleVariationPage() {
       <main className="max-w-3xl mx-auto px-6 mt-12">
         <article className="prose prose-slate lg:prose-lg mx-auto bg-white p-8 md:p-12 rounded-2xl shadow-sm border border-slate-100">
           <p className="lead text-xl text-slate-600 font-medium">
-            "Jag gillar inte det här" är en mening som ekat i de flesta småbarnshem. Neofobi – rädslan för ny mat – är en naturlig del av många barns utveckling, men det betyder inte att vi ska ge upp hoppet om en varierad kost.
+            "Jag gillar inte det här" är en mening som ekat i de flesta småbarnshem. Rädslan för ny mat är en naturlig del av många barns utveckling, men det betyder inte att vi ska ge upp hoppet om en varierad kost.
           </p>
 
           <h2 className="text-2xl font-bold text-[#051c2c] mt-8 mb-4">Exponering utan tvång</h2>
@@ -47,7 +47,7 @@ export default function ArticleVariationPage() {
 
           <h2 className="text-2xl font-bold text-[#051c2c] mt-8 mb-4">Var en förebild</h2>
           <p>
-            Barn gör inte som vi säger, de gör som vi gör. Om du själv äter varierat och visar matglädje kommer barnen förr eller lökare att följa efter. Undvik att prata negativt om viss mat inför barnen, även om du själv inte är ett fan av t.ex. brysselkål.
+            Barn gör inte som vi säger, de gör som vi gör. Om du själv äter varierat och visar matglädje kommer barnen förr eller senare att följa efter. Undvik att prata negativt om viss mat inför barnen, även om du själv inte är ett fan av t.ex. brysselkål.
           </p>
 
           <section className="mt-12 p-8 bg-brand-blue text-white rounded-2xl space-y-4">
@@ -57,14 +57,14 @@ export default function ArticleVariationPage() {
             </h3>
             <ul className="text-sm text-slate-200 space-y-2 list-decimal pl-4">
               <li><strong>Erbjud alltid grönsaker:</strong> Även om de inte äts upp, ska de finnas på bordet vid varje måltid.</li>
-              <li><strong>Låt de vara med:</strong> Barn som får hjälpa till att skölja sallad eller röra i grytan är oftare mer benägna att smaka resultatet.</li>
+              <li><strong>Låt dem vara med:</strong> Barn som får hjälpa till att skölja sallad eller röra i grytan är oftare mer benägna att smaka resultatet.</li>
               <li><strong>Ha tålamod:</strong> Rom byggdes inte på en dag, och en varierad kost för ett barn kan ta år att utveckla.</li>
             </ul>
           </section>
 
           <div className="mt-12 pt-8 border-t border-slate-100 flex justify-between items-center">
-             <a href="/artiklar" className="text-brand-blue font-bold hover:underline">&larr; Tillbaka till alla artiklar</a>
-             <a href="/" className="px-6 py-2 bg-slate-100 text-slate-800 rounded-lg font-bold hover:bg-slate-200 transition-colors">Tillbaka hem</a>
+            <a href="/artiklar" className="text-brand-blue font-bold hover:underline">&larr; Tillbaka till alla artiklar</a>
+            <a href="/" className="px-6 py-2 bg-slate-100 text-slate-800 rounded-lg font-bold hover:bg-slate-200 transition-colors">Tillbaka hem</a>
           </div>
         </article>
       </main>

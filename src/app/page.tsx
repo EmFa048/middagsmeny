@@ -186,7 +186,7 @@ export default async function Home() {
                   <Leaf className="w-6 h-6 text-green-600" />
                 </div>
                 <h3 className="font-bold text-[#051c2c] text-lg">Varierad kost</h3>
-                <p className="text-sm text-slate-600">Vår algoritm analyserar barnens skollunch och ser till att middagen hemma blir ett bra komplement för en hälosam vardag.</p>
+                <p className="text-sm text-slate-600">Vår algoritm analyserar barnens skollunch och ser till att middagen hemma blir ett bra komplement för en hälsosam vardag.</p>
               </div>
 
               <div className="space-y-3 p-4 bg-slate-50 rounded-xl">

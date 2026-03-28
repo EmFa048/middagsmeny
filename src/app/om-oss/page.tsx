@@ -24,7 +24,7 @@ export default function AboutPage() {
             Middagsmeny föddes ur en klassisk vardagssituation som nästan alla barnföräldrar känner igen: klockan är 16:30, barnen är hungriga och man har ingen aning om vad man ska laga till middag. Den eviga frågan ”Vad ska vi äta?” blir ofta en stressfaktor i en redan hektisk vardag.
           </p>
           <p className="leading-relaxed">
-            Vi som skapat tjänsten är själva föräldrar som insåg att den viktigaste pusselbiten för en stresfri middagsplanering ofta saknas: <strong>vad barnen redan har ätit till lunch i skolan</strong>. Genom att synka middagen hemma med skollunchen kan vi skapa en mer varierad kost, minska matsvinnet och framförallt, att inte servera samma rätt två gånger på samma dag.
+            Vi som skapat tjänsten är själva föräldrar som insåg att den viktigaste pusselbiten för en stressfri middagsplanering ofta saknas: <strong>vad barnen redan har ätit till lunch i skolan</strong>. Genom att synka middagen hemma med skollunchen kan vi skapa en mer varierad kost, minska matsvinnet och framförallt, att inte servera samma rätt två gånger på samma dag.
           </p>
         </section>
 
@@ -62,9 +62,9 @@ export default function AboutPage() {
             Vi samlar aldrig in personuppgifter utan din tillåtelse. All information om dina sparade skolor och favoriter sparas lokalt i din egen webbläsare, vilket innebär att du har full kontroll över din data.
           </p>
           <div className="pt-4">
-             <a href="/" className="inline-block px-8 py-3 bg-brand-yellow text-brand-dark rounded-full font-bold hover:scale-105 transition-transform">
-               Tillbaka till startsidan
-             </a>
+            <a href="/" className="inline-block px-8 py-3 bg-brand-yellow text-brand-dark rounded-full font-bold hover:scale-105 transition-transform">
+              Tillbaka till startsidan
+            </a>
           </div>
         </section>
       </main>

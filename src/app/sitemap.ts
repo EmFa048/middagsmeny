@@ -36,12 +36,25 @@ export default function sitemap(): MetadataRoute.Sitemap {
     const staticPages = [
         { url: baseUrl, lastModified: new Date(), changeFrequency: 'daily' as const, priority: 1 },
         { url: `${baseUrl}/privacy`, lastModified: new Date(), changeFrequency: 'monthly' as const, priority: 0.3 },
+        { url: `${baseUrl}/terms`, lastModified: new Date(), changeFrequency: 'monthly' as const, priority: 0.3 },
+        { url: `${baseUrl}/cookies`, lastModified: new Date(), changeFrequency: 'monthly' as const, priority: 0.3 },
+        { url: `${baseUrl}/disclaimer`, lastModified: new Date(), changeFrequency: 'monthly' as const, priority: 0.3 },
         { url: `${baseUrl}/om-oss`, lastModified: new Date(), changeFrequency: 'monthly' as const, priority: 0.5 },
         { url: `${baseUrl}/kontakt`, lastModified: new Date(), changeFrequency: 'monthly' as const, priority: 0.5 },
         { url: `${baseUrl}/hur-det-fungerar`, lastModified: new Date(), changeFrequency: 'monthly' as const, priority: 0.7 },
         { url: `${baseUrl}/artiklar`, lastModified: new Date(), changeFrequency: 'weekly' as const, priority: 0.8 },
         { url: `${baseUrl}/artiklar/matplanering-tips`, lastModified: new Date(), changeFrequency: 'monthly' as const, priority: 0.7 },
         { url: `${baseUrl}/artiklar/variation-i-kosten`, lastModified: new Date(), changeFrequency: 'monthly' as const, priority: 0.7 },
+        { url: `${baseUrl}/artiklar/hur-skolmaten-fungerar`, lastModified: new Date(), changeFrequency: 'monthly' as const, priority: 0.7 },
+        { url: `${baseUrl}/artiklar/nyttig-mat-for-barn`, lastModified: new Date(), changeFrequency: 'monthly' as const, priority: 0.7 },
+        { url: `${baseUrl}/artiklar/matsvinn-tips`, lastModified: new Date(), changeFrequency: 'monthly' as const, priority: 0.7 },
+        { url: `${baseUrl}/artiklar/vegetariska-barnfavoriter`, lastModified: new Date(), changeFrequency: 'monthly' as const, priority: 0.7 },
+        { url: `${baseUrl}/artiklar/budget-smart-mat`, lastModified: new Date(), changeFrequency: 'monthly' as const, priority: 0.7 },
+        { url: `${baseUrl}/artiklar/mellis-tips`, lastModified: new Date(), changeFrequency: 'monthly' as const, priority: 0.7 },
+        { url: `${baseUrl}/artiklar/matlagning-med-barn`, lastModified: new Date(), changeFrequency: 'monthly' as const, priority: 0.7 },
+        { url: `${baseUrl}/artiklar/sasongsmat-guide`, lastModified: new Date(), changeFrequency: 'monthly' as const, priority: 0.7 },
+        { url: `${baseUrl}/artiklar/frukost-inspiration`, lastModified: new Date(), changeFrequency: 'monthly' as const, priority: 0.7 },
+        { url: `${baseUrl}/artiklar/atstorningar-prevention`, lastModified: new Date(), changeFrequency: 'monthly' as const, priority: 0.7 },
     ];
 
     return [

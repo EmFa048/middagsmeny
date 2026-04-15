@@ -22,6 +22,86 @@ const ARTICLES = [
     date: '2026-03-15',
     readTime: '6 min',
     category: 'Näringslära'
+  },
+  {
+    slug: 'hur-skolmaten-fungerar',
+    title: 'Hur fungerar skolmaten i Sverige?',
+    excerpt: 'Sverige är unikt med sin avgiftsfria skolmat. Lär dig om lagkrav, näringsrekommendationer och hur matsedeln egentligen tas fram.',
+    date: '2026-04-15',
+    readTime: '6 min',
+    category: 'Skolfakta'
+  },
+  {
+    slug: 'nyttig-mat-for-barn',
+    title: 'Näring för växande barn: En guide',
+    excerpt: 'Vad behöver barn egentligen äta? En enkel genomgång av de viktigaste näringsämnena och hur du skapar balanserade måltider.',
+    date: '2026-04-15',
+    readTime: '7 min',
+    category: 'Hälsa & Kost'
+  },
+  {
+    slug: 'matsvinn-tips',
+    title: 'Minska matsvinnet hemma',
+    excerpt: 'Att kasta mat är att kasta pengar. Lär dig enkla knep för att använda rester och planera smartare för att rädda både planeten och plånboken.',
+    date: '2026-04-15',
+    readTime: '6 min',
+    category: 'Miljö & Ekonomi'
+  },
+  {
+    slug: 'vegetariska-barnfavoriter',
+    title: 'Vegetariska barnfavoriter',
+    excerpt: 'Vill du äta mer grönt? Här är rätterna som även de mest kräsna barnen brukar älska. Tips på enkla byten i vardagsmaten.',
+    date: '2026-04-15',
+    readTime: '5 min',
+    category: 'Recept & Inspiration'
+  },
+  {
+    slug: 'budget-smart-mat',
+    title: 'Spara pengar på matkontot',
+    excerpt: 'Matpriserna stiger, men det finns sätt att hålla nere kostnaderna. Lär dig handla efter säsong och planera budget-smart.',
+    date: '2026-04-15',
+    readTime: '6 min',
+    category: 'Ekonomi'
+  },
+  {
+    slug: 'mellis-tips',
+    title: 'Snabba & nyttiga mellis',
+    excerpt: 'Mellanmålet är bryggan fram till middagen. Här får du inspiration till mellis som ger jämn energi utan sockerdippar.',
+    date: '2026-04-15',
+    readTime: '4 min',
+    category: 'Vardagstips'
+  },
+  {
+    slug: 'matlagning-med-barn',
+    title: 'Laga mat med barnen',
+    excerpt: 'Gör köket till en kreativ plats. Tips på hur du inkluderar barnen i matlagningen på ett säkert och roligt sätt anpassat efter ålder.',
+    date: '2026-04-15',
+    readTime: '5 min',
+    category: 'Familj & Lek'
+  },
+  {
+    slug: 'sasongsmat-guide',
+    title: 'Ät efter säsong året runt',
+    excerpt: 'Att följa årstiderna är bra för smak, plånbok och miljö. Vi guidar dig till de bästa svenska råvarorna månad för månad.',
+    date: '2026-04-15',
+    readTime: '6 min',
+    category: 'Miljö & Smak'
+  },
+  {
+    slug: 'frukost-inspiration',
+    title: 'En bra start på skoldagen',
+    excerpt: 'Frukosten lägger grunden för barnens prestation i skolan. Vi ger tips på mättande frukostar för både morgonpigga och svårflirtade.',
+    date: '2026-04-15',
+    readTime: '5 min',
+    category: 'Morgonstund'
+  },
+  {
+    slug: 'atstorningar-prevention',
+    title: 'En hälsosam relation till mat',
+    excerpt: 'Hur pratar man om mat och kropp med barn? Råd för att främja matglädje och en positiv kroppsbild från tidig ålder.',
+    date: '2026-04-15',
+    readTime: '7 min',
+    category: 'Hälsa & Trygghet'
   }
 ];
 

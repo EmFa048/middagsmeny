@@ -81,36 +81,41 @@ export default function RootLayout({
         </div>
 
         {/* Global Footer Expansion for SEO & Navigation */}
-        <footer className="bg-slate-900 text-slate-300 py-12 px-6 mt-auto">
-          <div className="max-w-4xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-8">
-            <div className="col-span-2 space-y-4">
-              <h3 className="text-white font-black text-xl">Middagsmeny<span className="text-brand-yellow">.se</span></h3>
-              <p className="text-sm text-slate-400 max-w-xs leading-relaxed">
-                Vi hjälper svenska barnfamiljer att synka skollunchen med smarta, varierande och enkla middagsförslag för en stressfri vardag.
+        <footer className="bg-slate-900 text-slate-300 py-16 px-6 mt-auto">
+          <div className="max-w-4xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-12">
+            <div className="col-span-2 space-y-6">
+              <h3 className="text-white font-black text-2xl">Middagsmeny<span className="text-brand-yellow">.se</span></h3>
+              <p className="text-sm text-slate-400 max-w-sm leading-relaxed">
+                Vi hjälper svenska barnfamiljer att förenkla vardagspusslet genom att synka skollunchen med smarta, varierande och enkla middagsförslag. En oberoende tjänst skapad av föräldrar.
               </p>
             </div>
-            <div className="space-y-3">
-              <h4 className="text-white font-bold text-xs uppercase tracking-widest mb-4">Sidor</h4>
-              <ul className="text-sm space-y-2">
-                <li><a href="/" className="hover:text-brand-yellow">Startsida</a></li>
-                <li><a href="/hur-det-fungerar" className="hover:text-brand-yellow">Hur det fungerar</a></li>
-                <li><a href="/artiklar" className="hover:text-brand-yellow">Tips & Artiklar</a></li>
-                <li><a href="/om-oss" className="hover:text-brand-yellow">Om oss</a></li>
+            <div className="space-y-4">
+              <h4 className="text-white font-bold text-xs uppercase tracking-[0.2em] mb-4">Innehåll</h4>
+              <ul className="text-sm space-y-3">
+                <li><a href="/" className="hover:text-brand-yellow transition-colors cursor-pointer">Startsida</a></li>
+                <li><a href="/hur-det-fungerar" className="hover:text-brand-yellow transition-colors cursor-pointer">Hur det fungerar</a></li>
+                <li><a href="/artiklar" className="hover:text-brand-yellow transition-colors cursor-pointer">Alla artiklar</a></li>
+                <li><a href="/om-oss" className="hover:text-brand-yellow transition-colors cursor-pointer">Om oss</a></li>
               </ul>
             </div>
-            <div className="space-y-3">
-              <h4 className="text-white font-bold text-xs uppercase tracking-widest mb-4">Support</h4>
-              <ul className="text-sm space-y-2">
-                <li><a href="/kontakt" className="hover:text-brand-yellow">Kontakt</a></li>
-                <li><a href="/privacy" className="hover:text-brand-yellow">Integritetspolicy</a></li>
-                <li><a href="https://buymeacoffee.com/edysweden" target="_blank" rel="noopener noreferrer" className="hover:text-brand-yellow">Bjud på en kaffe</a></li>
+            <div className="space-y-4">
+              <h4 className="text-white font-bold text-xs uppercase tracking-[0.2em] mb-4">Juridiskt</h4>
+              <ul className="text-sm space-y-3">
+                <li><a href="/kontakt" className="hover:text-brand-yellow transition-colors cursor-pointer">Kontakt</a></li>
+                <li><a href="/privacy" className="hover:text-brand-yellow transition-colors cursor-pointer">Integritetspolicy</a></li>
+                <li><a href="/terms" className="hover:text-brand-yellow transition-colors cursor-pointer">Användarvillkor</a></li>
+                <li><a href="/cookies" className="hover:text-brand-yellow transition-colors cursor-pointer">Cookiepolicy</a></li>
+                <li><a href="/disclaimer" className="hover:text-brand-yellow transition-colors cursor-pointer">Disclaimer</a></li>
               </ul>
             </div>
           </div>
-          <div className="max-w-4xl mx-auto border-t border-slate-800 mt-12 pt-8 text-center">
+          <div className="max-w-4xl mx-auto border-t border-slate-800 mt-16 pt-8 text-center space-y-4">
             <p className="text-[10px] text-slate-500 uppercase tracking-widest font-bold">
-              Middagsmeny © {new Date().getFullYear()} — Din guide till en enklare vardag. version 1.3.0
+              Middagsmeny © {new Date().getFullYear()} — Din guide till en enklare vardag. version 1.4.0
             </p>
+            <div className="flex justify-center gap-4">
+               <a href="https://buymeacoffee.com/edysweden" target="_blank" rel="noopener noreferrer" className="text-xs text-slate-500 hover:text-brand-yellow border border-slate-700 px-4 py-1 rounded-full transition-all">Supporta oss med en kaffe</a>
+            </div>
           </div>
         </footer>
       </body>

@@ -102,6 +102,22 @@ const ARTICLES = [
     date: '2026-04-15',
     readTime: '7 min',
     category: 'Hälsa & Trygghet'
+  },
+  {
+    slug: 'hell-hour-overlevnad',
+    title: 'Så överlever du "Hell Hour"',
+    excerpt: 'Klockan är 17:00, barnen är hungriga och tålamodet trötter. Här är våra bästa strategier för att överleva eftermiddagskaoset.',
+    date: '2026-04-15',
+    readTime: '6 min',
+    category: 'Överlevnadsguide'
+  },
+  {
+    slug: 'trevlig-stamning-middag',
+    title: 'Trevlig stämning vid middagen',
+    excerpt: 'Middagen ska vara dagens höjdpunkt, inte en källa till stress. Läs våra tips på hur du skapar en lugnare och mer lustfylld stämning.',
+    date: '2026-04-15',
+    readTime: '5 min',
+    category: 'Matglädje'
   }
 ];
 

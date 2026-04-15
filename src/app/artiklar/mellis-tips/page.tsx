@@ -1,9 +1,9 @@
 import React from 'react';
-import { Coffee, CheckCircle2, Calendar, Clock } from 'lucide-react';
+import { Coffee, CheckCircle2, Calendar, Clock, Trophy } from 'lucide-react';
 
 export const metadata = {
-  title: 'Nyttiga och snabba mellis-tips för hungriga barn – Middagsmeny',
-  description: 'Mellanmålet är ofta dagens svåraste mål. Här får du inspiration till enkla och näringsrika mellanmål som håller barnen mätta fram till middagen.',
+  title: 'Mellis för aktiva barn: Energi som räcker hela dagen – Middagsmeny',
+  description: 'Aktiva barn behöver rätt sorts energi för att orka med både skola och träning. Här är våra bästa tips på näringsrika mellanmål som mättar bra.',
 };
 
 export default function SnacksArticle() {
@@ -11,11 +11,11 @@ export default function SnacksArticle() {
     <div className="min-h-screen bg-slate-50 text-slate-800 font-sans pb-12">
       <header className="bg-[#051c2c] text-white py-16 px-6 text-center">
         <div className="max-w-3xl mx-auto space-y-4">
-          <span className="bg-brand-yellow text-brand-dark px-3 py-1 rounded-full text-xs font-bold uppercase tracking-widest">Vardagstips</span>
-          <h1 className="text-3xl md:text-5xl font-black leading-tight">Snabba & nyttiga mellis</h1>
+          <span className="bg-brand-yellow text-brand-dark px-3 py-1 rounded-full text-xs font-bold uppercase tracking-widest">Aktiv Vardag</span>
+          <h1 className="text-3xl md:text-5xl font-black leading-tight">Mellis för aktiva barn</h1>
           <div className="flex items-center justify-center gap-6 text-sm text-slate-300 pt-4">
             <span className="flex items-center gap-2"><Calendar className="w-4 h-4" /> 15 april 2026</span>
-            <span className="flex items-center gap-2"><Clock className="w-4 h-4" /> 4 min läsning</span>
+            <span className="flex items-center gap-2"><Clock className="w-4 h-4" /> 5 min läsning</span>
           </div>
         </div>
       </header>
@@ -23,50 +23,53 @@ export default function SnacksArticle() {
       <main className="max-w-3xl mx-auto px-6 mt-12">
         <article className="prose prose-slate lg:prose-lg mx-auto bg-white p-8 md:p-12 rounded-2xl shadow-sm border border-slate-100">
           <p className="lead text-xl text-slate-600 font-medium">
-            Klockan är 15:00 och energin börjar tryta efter skolan. Istället för att ta första bästa bulle eller kex, satsa på ett mellis som ger jämn energi utan sockerdippar.
+            När eftermiddagen fylls av fotbollsträning, gympa eller lek utomhus räcker det inte med ett äpple. Aktiva barn behöver mellanmål som ger både snabb energi och långvarig mättnad.
           </p>
 
-          <h2 className="text-2xl font-bold text-[#051c2c] mt-8 mb-4">Varför är mellanmålet viktigt?</h2>
+          <h2 className="text-2xl font-bold text-[#051c2c] mt-8 mb-4">Balansen mellan protein och kolhydrater</h2>
           <p>
-            Ett bra mellanmål hjälper barnen att hålla koncentrationen uppe och minskar risken för att de blir "hangry" (hungriga och arga) innan middagen är klar. Målet är att få i sig lite protein, bra fett och långsamma kolhydrater.
+            För barn som rör på sig mycket är balansen viktig. Kolhydraterna fungerar som bränsle för musklerna, medan proteinet hjälper till med återhämtningen. Bra fettkällor ser till att energin räcker ända fram till middagen.
           </p>
 
-          <h2 className="text-2xl font-bold text-[#051c2c] mt-8 mb-4">5 enkla mellis-tips</h2>
-          <div className="grid md:grid-cols-2 gap-4 my-8">
-            <div className="p-4 bg-slate-50 rounded-xl border border-slate-100">
-              <h3 className="font-bold text-[#051c2c] mb-2">1. Bananpannkakor</h3>
-              <p className="text-sm">Mosa en banan, blanda med två ägg och stek. Snabbt, naturligt sött och fullt med proteiner.</p>
+          <h2 className="text-2xl font-bold text-[#051c2c] mt-8 mb-4">4 kraftfulla mellis för små idrottare</h2>
+          <div className="grid md:grid-cols-2 gap-6 my-8">
+            <div className="p-6 bg-slate-50 rounded-xl border border-slate-100">
+              <div className="w-10 h-10 bg-brand-yellow/20 rounded-full flex items-center justify-center mb-4 text-brand-yellow">
+                <Trophy className="w-5 h-5" />
+              </div>
+              <h3 className="font-bold text-[#051c2c] mt-0">Energismörgås</h3>
+              <p className="text-sm">Grovt bröd med jordnötssmör (om skolan tillåter) och skivad banan. Ger massor av bra energi och mättar länge.</p>
             </div>
             <div className="p-4 bg-slate-50 rounded-xl border border-slate-100">
-              <h3 className="font-bold text-[#051c2c] mb-2">2. Keso med bär</h3>
-              <p className="text-sm">En proteinbomb som mättar otroligt bra. Toppa med frysta eller färska bär och lite frön.</p>
+              <h3 className="font-bold text-[#051c2c] mb-2">Kvarg med nötter</h3>
+              <p className="text-sm">Naturell kvarg eller grekisk yoghurt toppad med valnötter och en klick honung. Proteinet i kvargen är perfekt för återhämtning.</p>
             </div>
             <div className="p-4 bg-slate-50 rounded-xl border border-slate-100">
-              <h3 className="font-bold text-[#051c2c] mb-2">3. Grönsaksstavar med dipp</h3>
-              <p className="text-sm">Skär upp morötter, gurka och paprika. Servera med en klick hummus eller lite gräddfilsdipp.</p>
+              <h3 className="font-bold text-[#051c2c] mb-2">Hembakade energibars</h3>
+              <p className="text-sm">Gör egna bars på havregryn, dadlar och solrosfrön. Perfekta att ha i väskan på väg till träningen.</p>
             </div>
             <div className="p-4 bg-slate-50 rounded-xl border border-slate-100">
-              <h3 className="font-bold text-[#051c2c] mb-2">4. Smoothie</h3>
-              <p className="text-sm">Mixa yoghurt, spenat, banan och lite bär. Ett perfekt sätt att "smyga" ner lite grönt.</p>
+              <h3 className="font-bold text-[#051c2c] mb-2">Ägg & Avocado</h3>
+              <p className="text-sm">Ett kokt ägg och en halv avocado. Enkelt att förbereda och packat med nyttiga fetter och proteiner.</p>
             </div>
           </div>
 
-          <h2 className="text-2xl font-bold text-[#051c2c] mt-8 mb-4">Mellis on-the-go</h2>
+          <h2 className="text-2xl font-bold text-[#051c2c] mt-8 mb-4">Tajmingen är allt</h2>
           <p>
-            Om ni ska direkt på träning eller aktivitet behövs något som är enkelt att äta i farten. Ett kokt ägg, en näve nötter (om ingen i gruppen är allergisk) eller ett grovt bröd med ost är klassiker som fungerar.
+            Ett större mellanmål bör ätas ca 1,5–2 timmar före träning. Om det är kortare tid kvar räcker det med något lättsmält, som en banan, för att inte belasta magen under aktiviteten.
           </p>
 
           <div className="bg-slate-50 p-6 rounded-xl border-l-4 border-brand-yellow my-8 italic text-slate-700">
-            "Ett bra mellanmål är inte en ersättning för middagen, utan bryggan som gör att orken räcker ända fram."
+            "Målet är att barnen ska ha roligt och orka hela träningen, utan att energin tar slut halvvägs."
           </div>
 
           <section className="mt-12 p-8 bg-brand-blue text-white rounded-2xl space-y-4">
             <h3 className="text-xl font-bold flex items-center gap-2">
               <CheckCircle2 className="w-6 h-6 text-brand-yellow" />
-              Tänk på tänderna
+              Vätska är A och O
             </h3>
             <p className="text-sm text-slate-200">
-              Välj vatten som dryck till mellanmålet. Juice och mjölk innehåller socker som kan skada tänderna om man dricker det för ofta mellan målen.
+              Glöm inte vattenflaskan! Aktiva barn behöver dricka regelbundet under hela dagen, inte bara när de tränar.
             </p>
           </section>
 

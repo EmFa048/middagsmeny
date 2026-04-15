@@ -55,6 +55,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
         { url: `${baseUrl}/artiklar/sasongsmat-guide`, lastModified: new Date(), changeFrequency: 'monthly' as const, priority: 0.7 },
         { url: `${baseUrl}/artiklar/frukost-inspiration`, lastModified: new Date(), changeFrequency: 'monthly' as const, priority: 0.7 },
         { url: `${baseUrl}/artiklar/atstorningar-prevention`, lastModified: new Date(), changeFrequency: 'monthly' as const, priority: 0.7 },
+        { url: `${baseUrl}/artiklar/hell-hour-overlevnad`, lastModified: new Date(), changeFrequency: 'monthly' as const, priority: 0.7 },
+        { url: `${baseUrl}/artiklar/trevlig-stamning-middag`, lastModified: new Date(), changeFrequency: 'monthly' as const, priority: 0.7 },
     ];
 
     return [

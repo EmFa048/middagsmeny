@@ -1,11 +1,3 @@
-import React from 'react';
-import { Mail, MessageSquare, Coffee, ExternalLink } from 'lucide-react';
-
-export const metadata = {
-  title: 'Kontakt – Hör av dig till oss på Middagsmeny',
-  description: 'Har du frågor, förslag på nya skolor eller vill du dela med dig av ett favoritrecept? Kontakta oss på Middagsmeny.se.',
-};
-
 "use client";
 
 import React, { useState } from 'react';

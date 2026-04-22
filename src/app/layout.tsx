@@ -21,6 +21,8 @@ export const viewport = {
   userScalable: false,
 };
 
+import CookieBanner from "@/components/CookieBanner";
+
 export const metadata: Metadata = {
   metadataBase: new URL("https://middagsmeny.se"),
   title: {
@@ -75,6 +77,7 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased flex flex-col min-h-screen`}
       >
+        <CookieBanner />
         <Navbar />
         <div className="flex-grow">
           {children}

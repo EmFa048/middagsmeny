@@ -1,5 +1,5 @@
 import React from 'react';
-import { Coffee, CheckCircle2, Calendar, Clock, Trophy } from 'lucide-react';
+import { Coffee, CheckCircle2, Calendar, Clock } from 'lucide-react';
 
 export const metadata = {
   title: 'Mellis för aktiva barn: Energi som räcker hela dagen – Middagsmeny',
@@ -33,11 +33,8 @@ export default function SnacksArticle() {
 
           <h2 className="text-2xl font-bold text-[#051c2c] mt-8 mb-4">4 kraftfulla mellis för små idrottare</h2>
           <div className="grid md:grid-cols-2 gap-6 my-8">
-            <div className="p-6 bg-slate-50 rounded-xl border border-slate-100">
-              <div className="w-10 h-10 bg-brand-yellow/20 rounded-full flex items-center justify-center mb-4 text-brand-yellow">
-                <Trophy className="w-5 h-5" />
-              </div>
-              <h3 className="font-bold text-[#051c2c] mt-0">Energismörgås</h3>
+            <div className="p-4 bg-slate-50 rounded-xl border border-slate-100">
+              <h3 className="font-bold text-[#051c2c] mb-2">Energismörgås</h3>
               <p className="text-sm">Grovt bröd med jordnötssmör (om skolan tillåter) och skivad banan. Ger massor av bra energi och mättar länge.</p>
             </div>
             <div className="p-4 bg-slate-50 rounded-xl border border-slate-100">

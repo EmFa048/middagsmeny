@@ -43,7 +43,7 @@ export default function BudgetArticle() {
 
           <h2 className="text-2xl font-bold text-[#051c2c] mt-8 mb-4">3. Sluta med spontanköp</h2>
           <p>
-            Varje gång du går in i en soptunna... förlåt, mataffär, utan en lista riskerar du att komma ut med saker du inte behöver. Genom att använda <strong>Middagsmeny.se</strong> för att planera din vecka skapar du en struktur som gör att du bara köper det du faktiskt ska äta.
+            Varje gång du går in i en mataffär utan en lista riskerar du att komma ut med saker du inte behöver. Genom att använda <strong>Middagsmeny.se</strong> för att planera din vecka skapar du en struktur som gör att du bara köper det du faktiskt ska äta.
           </p>
 
           <div className="bg-slate-50 p-6 rounded-xl border-l-4 border-brand-yellow my-8 italic text-slate-700">

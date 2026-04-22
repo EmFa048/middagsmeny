@@ -36,7 +36,7 @@ export default function BudgetArticle() {
             Kött är ofta den dyraste komponenten i en måltid. Du kan spara mycket genom att:
           </p>
           <ul>
-            <li><strong>Dröja ut köttfärsen:</strong> Blanda i rivna morötter eller linser i färsen. Det blir både nyttigare och billigare.</li>
+            <li><strong>Dryga ut köttfärsen:</strong> Blanda i rivna morötter eller linser i färsen. Det blir både nyttigare och billigare.</li>
             <li><strong>Använda bönor och linser:</strong> Dessa mättar bra och kostar bara en bråkdel av vad kött eller fisk gör.</li>
             <li><strong>Ägg:</strong> Ett fantastiskt och billigt protein som passar i allt från pannkakor till omelett.</li>
           </ul>

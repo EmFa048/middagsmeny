@@ -31,7 +31,7 @@ export default function HellHourArticle() {
             Det är den där timmen (eller två) när barnen är trötta efter skolan, föräldrarna är trötta efter jobbet, och alla är hungriga. Det är en perfekt storm för utbrott och stress. Men med rätt förberedelser kan du lugna ner stormen.
           </p>
 
-          <h2 className="text-2xl font-bold text-[#051c2c] mt-8 mb-4">5 strategier för lugnare eftermiddagar</h2>
+          <h2 className="text-2xl font-bold text-[#051c2c] mt-8 mb-4">4 strategier för lugnare eftermiddagar</h2>
           <div className="space-y-6 my-8">
             <div className="p-6 bg-slate-50 rounded-xl border-t-4 border-brand-yellow">
               <h3 className="font-bold text-[#051c2c] mt-0 flex items-center gap-2">
@@ -61,7 +61,7 @@ export default function HellHourArticle() {
           <section className="mt-12 p-8 bg-brand-blue text-white rounded-2xl space-y-4">
             <h3 className="text-xl font-bold flex items-center gap-2">
               <CheckCircle2 className="w-6 h-6 text-brand-yellow" />
-              Proffstips: För-vaskning
+              Proffstips: Grönsakstricket
             </h3>
             <p className="text-sm text-slate-200">
               Ställ fram en skål med morötter, gurka eller tomater medan du lagar maten. Om barnen äter sig mätta på grönsaker innan middagen är det faktiskt en vinst!

@@ -39,19 +39,19 @@ export default function SeasonalFoodArticle() {
           <h2 className="text-2xl font-bold text-[#051c2c] mt-8 mb-4">Säsongsguide (Sverige)</h2>
           <div className="space-y-4">
              <div className="p-4 bg-slate-50 rounded-lg">
-                <h3 className="font-bold text-[#051c2c] mt-0">Vinter (Dec-Feb)</h3>
+                <h3 className="font-bold text-[#051c2c] mt-0">Vinter (dec-feb)</h3>
                 <p className="text-sm">Fokus på rotfrukter (morötter, kålrot, palsternacka), alla sorters kål (grönkål, rödkål) och lök.</p>
              </div>
              <div className="p-4 bg-slate-50 rounded-lg">
-                <h3 className="font-bold text-[#051c2c] mt-0">Vår (Mars-Maj)</h3>
+                <h3 className="font-bold text-[#051c2c] mt-0">Vår (mars-maj)</h3>
                 <p className="text-sm">Säsong för de första färska primörerna som sparris, nässlor, ramslök och tidig rabarber.</p>
              </div>
              <div className="p-4 bg-slate-50 rounded-lg">
-                <h3 className="font-bold text-[#051c2c] mt-0">Sommar (Juni-Aug)</h3>
+                <h3 className="font-bold text-[#051c2c] mt-0">Sommar (juni-aug)</h3>
                 <p className="text-sm">Högsäsong för bär, svenska tomater, gurka, färskpotatis, sockerärtor och blomkål.</p>
              </div>
              <div className="p-4 bg-slate-50 rounded-lg">
-                <h3 className="font-bold text-[#051c2c] mt-0">Höst (Sept-Nov)</h3>
+                <h3 className="font-bold text-[#051c2c] mt-0">Höst (sept-nov)</h3>
                 <p className="text-sm">Skördetid för äpplen, päron, all sorts svamp, zucchini, pumpor och rödbeta.</p>
              </div>
           </div>

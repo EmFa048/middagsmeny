@@ -42,7 +42,7 @@ export default function VeggieArticle() {
               <p className="text-sm">En stekt halloumi (eller grillost) har en salt och god smak som barn ofta älskar. Servera i bröd med klassiska burgartillbehör.</p>
             </div>
             <div className="p-6 bg-slate-50 rounded-xl">
-              <h3 className="font-bold text-[#051c2c] text-lg mt-0">3. Vegansk nuggets</h3>
+              <h3 className="font-bold text-[#051c2c] text-lg mt-0">3. Veganska nuggets</h3>
               <p className="text-sm">Det finns fantastiska alternativ i frysdisken som smakar nästan identiskt med kycklingnuggets. Perfekt för en snabb vardagsmiddag.</p>
             </div>
           </div>

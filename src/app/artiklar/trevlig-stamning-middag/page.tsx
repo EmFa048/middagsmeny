@@ -36,7 +36,7 @@ export default function DinnerVibeArticle() {
             Gör middagsbordet till en mobilfri zon – för både barn och vuxna. Genom att lägga undan skärmarna visar ni varandra att den gemensamma tiden är viktigast. Det ger utrymme för de små, viktiga samtalen om hur dagen har varit.
           </p>
 
-          <h2 className="text-2xl font-bold text-[#051c2c] mt-8 mb-4">4 tips för bättre samtal</h2>
+          <h2 className="text-2xl font-bold text-[#051c2c] mt-8 mb-4">2 tips för bättre samtal</h2>
           <div className="grid md:grid-cols-2 gap-6 my-8">
             <div className="p-4 bg-slate-50 rounded-xl border border-slate-100 flex items-start gap-4">
               <Smile className="w-6 h-6 text-brand-yellow shrink-0 mt-1" />

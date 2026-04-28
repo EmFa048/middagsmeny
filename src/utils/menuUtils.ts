@@ -171,21 +171,14 @@ export function generateMockSuggestion(
 
     if (forceDish) {
         const found = allDishes.find(d => d.dish === forceDish);
-        if (found) {
-            const dishName = found.dish.toLowerCase();
-            const schoolDishNames = schoolMeals.flatMap(m => m.courses.map(c => c.name.toLowerCase()));
-            const isDirectClash = schoolDishNames.some(name => name.includes(dishName) || dishName.includes(name));
-
-            if (!isDirectClash) {
-                return {
-                    dish: found.dish,
-                    description: found.description,
-                    vegetarian: found.vegetarian,
-                    recipeLink: `https://www.google.com/search?q=recept+${encodeURIComponent(found.dish)}`,
-                    matchReason: 'Delat förslag (från länk)'
-                };
-            }
-        }
+        
+        return {
+            dish: forceDish,
+            description: found?.description || 'Eget förslag (delat)',
+            vegetarian: found?.vegetarian || false,
+            recipeLink: `https://www.google.com/search?q=recept+${encodeURIComponent(forceDish)}`,
+            matchReason: 'Delat förslag (från länk)'
+        };
     }
 
     const schoolDishNames = schoolMeals.flatMap(m => m.courses.map(c => c.name.toLowerCase()));
@@ -305,14 +298,11 @@ export function generateMockSuggestion(
     });
 
     scoredDishes.sort((a, b) => a.score - b.score);
-    let pool = scoredDishes.filter(d => d.score < 1500);
+    // Take only the top 10 best-scoring dishes to ensure penalties actually work
+    let pool = scoredDishes.filter(d => d.score < 1500).slice(0, 10);
 
-    if (pool.length < 15) {
-        pool = scoredDishes.slice(0, Math.max(15, Math.floor(scoredDishes.length * 0.15)));
-    }
-
-    if (pool.length === 0) {
-        pool = scoredDishes.slice(0, 3);
+    if (pool.length < 5) {
+        pool = scoredDishes.slice(0, 10);
     }
 
     const uniquePool = pool.filter(d => !avoidDishes.includes(d.dish));

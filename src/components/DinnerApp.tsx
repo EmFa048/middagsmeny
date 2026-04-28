@@ -92,11 +92,12 @@ export default function DinnerApp({ initialMenu, initialSchool }: DinnerAppProps
   // Read URL param and fetch
   // Track fetching to prevent loops
   const lastFetchedUrl = useRef('');
-  const initialLoadDone = useRef(false);
+  const [initialLoadDone, setInitialLoadDone] = useState(false);
+  const menuUrlRef = useRef(initialSchool?.url || '');
 
   // Load params on mount (Client Side Only)
   useEffect(() => {
-    if (initialLoadDone.current) return;
+    if (initialLoadDone) return;
 
     const params = new URLSearchParams(window.location.search);
     const schoolParam = params.get('school');
@@ -123,13 +124,14 @@ export default function DinnerApp({ initialMenu, initialSchool }: DinnerAppProps
       }
     }
 
-    initialLoadDone.current = true;
-  }, []);
+    setInitialLoadDone(true);
+  }, [initialLoadDone]);
 
 
   // Sync state BACK to URL (Deep linking)
   useEffect(() => {
-    if (!url || !initialLoadDone.current) return;
+    if (!url || !initialLoadDone) return;
+    if (menuUrlRef.current !== url) return;
 
     const params = new URLSearchParams(window.location.search);
     let needsUpdate = false;
@@ -357,11 +359,18 @@ export default function DinnerApp({ initialMenu, initialSchool }: DinnerAppProps
 
     try {
       const res = await fetch(`/api/menu?url=${encodeURIComponent(activeUrl)}`);
+      
+      // If a newer fetch has started, discard this stale response
+      if (activeUrl !== lastFetchedUrl.current) return;
+
       if (!res.ok) throw new Error('Kunde inte hämta menyn');
       const data = await res.json();
+      
+      if (activeUrl !== lastFetchedUrl.current) return;
 
       if (!data.meals || data.meals.length === 0) {
         setMenu([]);
+        menuUrlRef.current = activeUrl;
         setLoading(false);
         return;
       }
@@ -433,6 +442,7 @@ export default function DinnerApp({ initialMenu, initialSchool }: DinnerAppProps
       }
 
       setMenu(processedMenu);
+      menuUrlRef.current = activeUrl;
     } catch (err: any) {
       setError(err.message);
     } finally {

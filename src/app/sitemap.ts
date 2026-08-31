@@ -2,10 +2,11 @@ import { MetadataRoute } from 'next';
 
 const POPULAR_SCHOOLS = [
     { id: '66b61ca94060624347658340', name: 'Bullerbyns förskola' },
-    { id: '64a7cb24469920bc655c117a', name: 'Härnösand Skola/Förskola' },
     { id: '64a7cb24469920bc65b4e835', name: 'Fryele skola' },
     { id: '6436962095451015931bf7ce', name: 'Skola - Gnarp skola' },
-    { id: '6474928f5ed89d169f45b876', name: 'LID Dalängskolan' },
+    { id: '63fc6e2dccb95f5ce56d8ada', name: 'Förskolor & Skolor' },
+    { id: '641d4fca4d93451045242b22', name: 'Gullstenskolan' },
+    { id: '63fc7f76ccb95f5ce56f1758', name: 'Fredriksbergskola' },
 ];
 
 export default function sitemap(): MetadataRoute.Sitemap {

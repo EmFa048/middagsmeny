@@ -2,7 +2,7 @@
 
 import { useState, useEffect, Suspense, useRef } from 'react';
 import { useRouter } from 'next/navigation';
-import { format, parseISO, startOfWeek, endOfWeek } from 'date-fns';
+import { format, parseISO, startOfWeek, endOfWeek, addWeeks } from 'date-fns';
 import { sv } from 'date-fns/locale';
 import { Search, Utensils, ChefHat, Leaf, Fish, AlertCircle, Heart, RefreshCw, Share2, Coffee, X, ExternalLink, Cookie, Pencil } from 'lucide-react';
 import { DayMenu, SchoolMeal, Dish, DEFAULT_DISHES, generateMockSuggestion, processMenu } from '@/utils/menuUtils';
@@ -10,17 +10,17 @@ import { DayMenu, SchoolMeal, Dish, DEFAULT_DISHES, generateMockSuggestion, proc
 
 interface DinnerAppProps {
   initialMenu?: DayMenu[];
-  initialSchool?: { url: string; name: string };
+  initialSchool?: { distributorId: string; name: string };
 }
 
 export default function DinnerApp({ initialMenu, initialSchool }: DinnerAppProps) {
   const router = useRouter();
 
-  // Navigation State
-  const [navURLs, setNavURLs] = useState<{ prev: string | null; next: string | null }>({ prev: null, next: null });
+  // Navigation State — week offset relative to current week
+  const [weekOffset, setWeekOffset] = useState(0);
 
   // Initialise state with SSR data if provided
-  const [url, setUrl] = useState(initialSchool?.url || '');
+  const [distributorId, setDistributorId] = useState(initialSchool?.distributorId || '');
   const [searchQuery, setSearchQuery] = useState(initialSchool?.name || '');
   const [loading, setLoading] = useState(false);
   const [menu, setMenu] = useState<DayMenu[]>(initialMenu || []);
@@ -91,9 +91,20 @@ export default function DinnerApp({ initialMenu, initialSchool }: DinnerAppProps
 
   // Read URL param and fetch
   // Track fetching to prevent loops
-  const lastFetchedUrl = useRef('');
+  const lastFetchedKey = useRef('');
   const [initialLoadDone, setInitialLoadDone] = useState(false);
-  const menuUrlRef = useRef(initialSchool?.url || '');
+  const currentDistributorId = useRef(initialSchool?.distributorId || '');
+
+  // Helper to compute week start/end dates from offset
+  const getWeekDates = (offset: number) => {
+    const targetWeek = addWeeks(new Date(), offset);
+    const start = startOfWeek(targetWeek, { weekStartsOn: 1 }); // Monday
+    const end = endOfWeek(targetWeek, { weekStartsOn: 1 }); // Sunday
+    return {
+      startDate: format(start, 'yyyy-MM-dd'),
+      endDate: format(end, 'yyyy-MM-dd'),
+    };
+  };
 
   // Load params on mount (Client Side Only)
   useEffect(() => {
@@ -104,23 +115,9 @@ export default function DinnerApp({ initialMenu, initialSchool }: DinnerAppProps
     const nameParam = params.get('name');
 
     if (schoolParam) {
-      setUrl(schoolParam);
-
+      setDistributorId(schoolParam);
       if (nameParam) {
         setSearchQuery(nameParam);
-      } else {
-        // Fallback: Try to derive name from URL if missing
-        try {
-          const decoded = decodeURIComponent(schoolParam);
-          const parts = decoded.split('_');
-          const lastPart = parts[parts.length - 1].split('?')[0];
-          if (lastPart) {
-            const readable = lastPart.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
-            setSearchQuery(readable);
-          }
-        } catch (e) {
-          console.error("Failed to parse school name from URL", e);
-        }
       }
     }
 
@@ -130,15 +127,15 @@ export default function DinnerApp({ initialMenu, initialSchool }: DinnerAppProps
 
   // Sync state BACK to URL (Deep linking)
   useEffect(() => {
-    if (!url || !initialLoadDone) return;
-    if (menuUrlRef.current !== url) return;
+    if (!distributorId || !initialLoadDone) return;
+    if (currentDistributorId.current !== distributorId) return;
 
     const params = new URLSearchParams(window.location.search);
     let needsUpdate = false;
 
     // Sync School
-    if (params.get('school') !== url) {
-      params.set('school', url);
+    if (params.get('school') !== distributorId) {
+      params.set('school', distributorId);
       needsUpdate = true;
     }
 
@@ -161,11 +158,9 @@ export default function DinnerApp({ initialMenu, initialSchool }: DinnerAppProps
     });
 
     if (needsUpdate) {
-      // Use replaceState but don't trigger a full Next.js navigation if possible
-      // to avoid re-triggering useSearchParams effects in a loop
       window.history.replaceState(null, '', `?${params.toString()}`);
     }
-  }, [url, menu, searchQuery]);
+  }, [distributorId, menu, searchQuery]);
 
   const handleShare = async () => {
     const shareTitle = 'Middagsmeny';
@@ -231,22 +226,23 @@ export default function DinnerApp({ initialMenu, initialSchool }: DinnerAppProps
     }
   };
 
-  const selectSchool = (school: { url: string, name: string }) => {
-    setUrl(school.url);
+  const selectSchool = (school: { id: string, name: string }) => {
+    setDistributorId(school.id);
     setSearchQuery(school.name);
+    setWeekOffset(0);
     setSearchResults([]);
     setShowResults(false);
   };
 
   const toggleFavorite = () => {
-    // Basic check using URL as ID
-    const exists = favorites.find(f => f.url === url);
+    // Basic check using distributorId as ID
+    const exists = favorites.find(f => f.url === distributorId);
     if (exists) {
-      setFavorites(favorites.filter(f => f.url !== url));
+      setFavorites(favorites.filter(f => f.url !== distributorId));
     } else {
       // Use searchQuery as name if available, otherwise default
       const name = searchQuery && searchQuery.length > 2 ? searchQuery : 'Min Skola';
-      setFavorites([...favorites, { name, url }]);
+      setFavorites([...favorites, { name, url: distributorId }]);
     }
   };
 
@@ -259,7 +255,7 @@ export default function DinnerApp({ initialMenu, initialSchool }: DinnerAppProps
   };
 
   // Helper to get current favorite status
-  const isFavorite = favorites.some(f => f.url === url);
+  const isFavorite = favorites.some(f => f.url === distributorId);
 
   const handleAddDish = (e: React.FormEvent) => {
     e.preventDefault();
@@ -335,15 +331,16 @@ export default function DinnerApp({ initialMenu, initialSchool }: DinnerAppProps
     });
   };
 
-  const fetchMenu = async (overrideUrl?: string, forceSkipAutoCorrect = false, clearSuggestions = false) => {
-    const activeUrl = overrideUrl || url;
-    const skipAutoCorrect = forceSkipAutoCorrect;
+  const fetchMenu = async (overrideOffset?: number, clearSuggestions = false) => {
+    const activeId = distributorId;
+    const activeOffset = overrideOffset !== undefined ? overrideOffset : weekOffset;
 
-    if (!activeUrl) return;
+    if (!activeId) return;
 
-    // Only skip if NOT forced and URL is the same
-    if (activeUrl === lastFetchedUrl.current && !forceSkipAutoCorrect && !clearSuggestions) return;
-    lastFetchedUrl.current = activeUrl;
+    // Build a unique key to prevent re-fetching the same data
+    const fetchKey = `${activeId}_${activeOffset}`;
+    if (fetchKey === lastFetchedKey.current && !clearSuggestions) return;
+    lastFetchedKey.current = fetchKey;
 
     if (clearSuggestions) {
       // Clear all suggestion params from the URL to allow a fresh shuffle
@@ -358,59 +355,23 @@ export default function DinnerApp({ initialMenu, initialSchool }: DinnerAppProps
     setError('');
 
     try {
-      const res = await fetch(`/api/menu?url=${encodeURIComponent(activeUrl)}`);
-      
+      const { startDate, endDate } = getWeekDates(activeOffset);
+      const res = await fetch(`/api/menu?distributorId=${encodeURIComponent(activeId)}&startDate=${startDate}&endDate=${endDate}`);
+
       // If a newer fetch has started, discard this stale response
-      if (activeUrl !== lastFetchedUrl.current) return;
+      if (fetchKey !== lastFetchedKey.current) return;
 
       if (!res.ok) throw new Error('Kunde inte hämta menyn');
       const data = await res.json();
-      
-      if (activeUrl !== lastFetchedUrl.current) return;
+
+      if (fetchKey !== lastFetchedKey.current) return;
 
       if (!data.meals || data.meals.length === 0) {
         setMenu([]);
-        menuUrlRef.current = activeUrl;
+        currentDistributorId.current = activeId;
         setLoading(false);
         return;
       }
-
-      // --- AUTO-CORRECTION LOGIC ---
-      const now = new Date();
-      const isWeekday = now.getDay() >= 1 && now.getDay() <= 5;
-      const todayStr = format(now, 'yyyy-MM-dd');
-
-      const menuDates = data.meals.map((m: any) => m.date.split('T')[0]);
-      const hasToday = menuDates.includes(todayStr);
-
-      // Auto-jump logic: 
-      // Only jump to NEXT week if it's Friday afternoon or weekend AND the current menu doesn't have today
-      // OR if it's a weekday and we are looking at a past week.
-      const isWeekend = now.getDay() === 0 || now.getDay() === 6;
-      const isFridayAfternoon = now.getDay() === 5 && now.getHours() >= 14;
-
-      if (!skipAutoCorrect && !hasToday && menuDates.length > 0) {
-        const lastDate = [...menuDates].sort().pop();
-        const firstDate = [...menuDates].sort()[0];
-
-        // If current week is in the past, jump to next (if available)
-        if (lastDate && todayStr > lastDate && data.nextURL) {
-          // If it's Friday/Weekend, we definitely want the next week.
-          // Otherwise, we might still be looking for "current" week.
-          setUrl(data.nextURL);
-          return;
-        }
-        // If current week is in the future, but it's middle of the week, maybe jump back?
-        else if (firstDate && todayStr < firstDate && data.previousURL && !isFridayAfternoon && !isWeekend) {
-          setUrl(data.previousURL);
-          return;
-        }
-      }
-
-      setNavURLs({
-        prev: data.previousURL,
-        next: data.nextURL
-      });
 
       // Group by date
       const grouped = new Map<string, SchoolMeal[]>();
@@ -442,7 +403,7 @@ export default function DinnerApp({ initialMenu, initialSchool }: DinnerAppProps
       }
 
       setMenu(processedMenu);
-      menuUrlRef.current = activeUrl;
+      currentDistributorId.current = activeId;
     } catch (err: any) {
       setError(err.message);
     } finally {
@@ -450,13 +411,10 @@ export default function DinnerApp({ initialMenu, initialSchool }: DinnerAppProps
     }
   };
 
-  // Trigger fetch when URL changes
+  // Trigger fetch when distributorId or weekOffset changes
   useEffect(() => {
-    // On the very first load of the page, we want to skip auto-correct 
-    // to preserve the week specified in the URL.
-    const isFirstFetchForSession = lastFetchedUrl.current === '';
-    fetchMenu(undefined, isFirstFetchForSession);
-  }, [url]);
+    fetchMenu();
+  }, [distributorId, weekOffset]);
 
 
   return (
@@ -511,7 +469,7 @@ export default function DinnerApp({ initialMenu, initialSchool }: DinnerAppProps
             </div>
 
             <button
-              onClick={() => fetchMenu(undefined, false, true)}
+              onClick={() => { lastFetchedKey.current = ''; fetchMenu(undefined, true); }}
               disabled={loading}
               className="md:flex-1 h-[42px] bg-brand-blue hover:bg-brand-dark text-white rounded-lg font-medium transition-colors disabled:opacity-50 whitespace-nowrap shadow-sm"
             >
@@ -540,7 +498,7 @@ export default function DinnerApp({ initialMenu, initialSchool }: DinnerAppProps
             </button>
 
             <button
-              onClick={() => fetchMenu(undefined, true, true)}
+              onClick={() => { lastFetchedKey.current = ''; fetchMenu(undefined, true); }}
               disabled={loading}
               className="h-[42px] bg-brand-yellow hover:bg-[#ffc800] text-brand-dark rounded-lg font-bold transition-colors disabled:opacity-50 flex items-center justify-center gap-2 shadow-sm"
             >
@@ -560,10 +518,11 @@ export default function DinnerApp({ initialMenu, initialSchool }: DinnerAppProps
                     <div key={i} className="relative group/fav">
                       <button
                         onClick={() => {
-                          setUrl(fav.url);
+                          setDistributorId(fav.url);
                           setSearchQuery(fav.name);
+                          setWeekOffset(0);
                         }}
-                        className={`whitespace-nowrap px-3 py-1.5 pr-8 text-xs font-medium rounded-full border transition-all ${url === fav.url ? 'bg-brand-blue text-white border-brand-blue shadow-md' : 'bg-white text-slate-600 border-slate-200 hover:border-brand-blue hover:text-brand-blue'}`}
+                        className={`whitespace-nowrap px-3 py-1.5 pr-8 text-xs font-medium rounded-full border transition-all ${distributorId === fav.url ? 'bg-brand-blue text-white border-brand-blue shadow-md' : 'bg-white text-slate-600 border-slate-200 hover:border-brand-blue hover:text-brand-blue'}`}
                       >
                         {fav.name}
                       </button>
@@ -572,7 +531,7 @@ export default function DinnerApp({ initialMenu, initialSchool }: DinnerAppProps
                           e.stopPropagation();
                           setFavorites(favorites.filter(f => f.url !== fav.url));
                         }}
-                        className={`absolute right-2 top-1/2 -translate-y-1/2 p-0.5 rounded-full hover:bg-black/10 transition-colors ${url === fav.url ? 'text-white/70 hover:text-white' : 'text-slate-400 hover:text-brand-red'}`}
+                        className={`absolute right-2 top-1/2 -translate-y-1/2 p-0.5 rounded-full hover:bg-black/10 transition-colors ${distributorId === fav.url ? 'text-white/70 hover:text-white' : 'text-slate-400 hover:text-brand-red'}`}
                       >
                         <X className="w-3 h-3" />
                       </button>
@@ -702,26 +661,16 @@ export default function DinnerApp({ initialMenu, initialSchool }: DinnerAppProps
         {/* Weekly Navigation */}
         <div className="flex justify-between items-center pt-2">
           <button
-            onClick={() => {
-              if (navURLs.prev) {
-                setUrl(navURLs.prev);
-                fetchMenu(navURLs.prev, true);
-              }
-            }}
-            disabled={!navURLs.prev || loading}
+            onClick={() => setWeekOffset(prev => prev - 1)}
+            disabled={loading}
             className="flex items-center gap-2 px-4 py-2 bg-white border border-slate-200 rounded-lg text-sm font-medium text-slate-600 hover:text-brand-blue hover:border-brand-blue disabled:opacity-50 disabled:cursor-not-allowed transition-all"
           >
             &larr; Föregående vecka
           </button>
 
           <button
-            onClick={() => {
-              if (navURLs.next) {
-                setUrl(navURLs.next);
-                fetchMenu(navURLs.next, true);
-              }
-            }}
-            disabled={!navURLs.next || loading}
+            onClick={() => setWeekOffset(prev => prev + 1)}
+            disabled={loading}
             className="flex items-center gap-2 px-4 py-2 bg-white border border-slate-200 rounded-lg text-sm font-medium text-slate-600 hover:text-brand-blue hover:border-brand-blue disabled:opacity-50 disabled:cursor-not-allowed transition-all"
           >
             Nästa vecka &rarr;
@@ -767,7 +716,7 @@ export default function DinnerApp({ initialMenu, initialSchool }: DinnerAppProps
 
         {/* Weekly Menu */}
         <div className="space-y-6">
-          {menu.length === 0 && !loading && url && (
+          {menu.length === 0 && !loading && distributorId && (
             <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-12 text-center space-y-4">
               <div className="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto text-slate-400">
                 <AlertCircle className="w-8 h-8" />

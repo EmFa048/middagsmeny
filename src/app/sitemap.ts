@@ -1,33 +1,18 @@
 import { MetadataRoute } from 'next';
 
 const POPULAR_SCHOOLS = [
-    { id: '6400747a41b4e4e00179ce82', name: 'Förskolor', url: 'https://menu.matildaplatform.com/meals/week/6400747a41b4e4e00179ce82_alvkarleby' },
-    { id: '64a7cb24469920bc655c117a', name: 'Härnösand Skola/Förskola', url: 'https://menu.matildaplatform.com/meals/week/64a411c6469920bc655c117a_harnosand' },
-    { id: '64a7cb24469920bc65b4e835', name: 'Fryele skola', url: 'https://menu.matildaplatform.com/meals/week/64a7cb24469920bc65b4e835_varnamo' },
-    { id: '6436962095451015931bf7ce', name: 'Skola - Gnarp skola', url: 'https://menu.matildaplatform.com/meals/week/6436962095451015931bf7ce_nordanstig' },
-    { id: '6474928f5ed89d169f45b876', name: 'LID Dalängskolan', url: 'https://menu.matildaplatform.com/meals/week/6474928f5ed89d169f45b876_goliska' },
+    { id: '66b61ca94060624347658340', name: 'Bullerbyns förskola' },
+    { id: '64a7cb24469920bc655c117a', name: 'Härnösand Skola/Förskola' },
+    { id: '64a7cb24469920bc65b4e835', name: 'Fryele skola' },
+    { id: '6436962095451015931bf7ce', name: 'Skola - Gnarp skola' },
+    { id: '6474928f5ed89d169f45b876', name: 'LID Dalängskolan' },
 ];
-
-function slugify(text: string) {
-    const swedishMap: { [key: string]: string } = { 'å': 'a', 'ä': 'a', 'ö': 'o', 'Å': 'a', 'Ä': 'a', 'Ö': 'o' };
-    return text
-        .toString()
-        .split('')
-        .map(char => swedishMap[char] || char)
-        .join('')
-        .toLowerCase()
-        .replace(/\s+/g, '-')
-        .replace(/[^\w\-]+/g, '')
-        .replace(/\-\-+/g, '-')
-        .replace(/^-+/, '')
-        .replace(/-+$/, '');
-}
 
 export default function sitemap(): MetadataRoute.Sitemap {
     const baseUrl = 'https://middagsmeny.se';
 
     const schoolUrls = POPULAR_SCHOOLS.map(school => ({
-        url: `${baseUrl}/?school=${encodeURIComponent(school.url)}&name=${encodeURIComponent(school.name)}`,
+        url: `${baseUrl}/?school=${encodeURIComponent(school.id)}&name=${encodeURIComponent(school.name)}`,
         lastModified: new Date(),
         changeFrequency: 'weekly' as const,
         priority: 0.8,

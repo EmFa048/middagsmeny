@@ -1,46 +1,53 @@
 import { NextResponse } from 'next/server';
-import * as cheerio from 'cheerio';
 
 export async function GET(request: Request) {
     const { searchParams } = new URL(request.url);
-    const menuUrl = searchParams.get('url');
+    const distributorId = searchParams.get('distributorId');
+    const startDate = searchParams.get('startDate');
+    const endDate = searchParams.get('endDate');
 
-    if (!menuUrl) {
-        return NextResponse.json({ error: 'Missing url parameter' }, { status: 400 });
+    if (!distributorId || !startDate || !endDate) {
+        return NextResponse.json(
+            { error: 'Missing required parameters: distributorId, startDate, endDate' },
+            { status: 400 }
+        );
     }
 
     try {
-        const response = await fetch(menuUrl);
-        if (!response.ok) {
-            return NextResponse.json({ error: 'Failed to fetch menu from Matilda' }, { status: response.status });
-        }
-        const html = await response.text();
-        const $ = cheerio.load(html);
-        const nextDataScript = $('#__NEXT_DATA__').html();
-
-        if (!nextDataScript) {
-            return NextResponse.json({ error: 'Could not find menu data on page' }, { status: 404 });
-        }
-
-        const json = JSON.parse(nextDataScript);
-
-        // Extract relevant parts
-        const meals = json.props?.pageProps?.meals;
-        const nextURL = json.props?.pageProps?.nextURL;
-        const previousURL = json.props?.pageProps?.previousURL;
-
-        if (!meals) {
-            return NextResponse.json({ error: 'Invalid data structure from Matilda' }, { status: 500 });
-        }
-
-        return NextResponse.json({
-            meals,
-            previousURL: previousURL ? `https://menu.matildaplatform.com${previousURL}` : null,
-            nextURL: nextURL ? `https://menu.matildaplatform.com${nextURL}` : null
+        const matildaParams = new URLSearchParams({
+            distributorId,
+            startDate,
+            endDate,
+            lang: 'sv',
         });
 
+        const response = await fetch(
+            `https://menu.matildaplatform.com/api/menu?${matildaParams.toString()}`,
+            {
+                headers: {
+                    'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+                },
+            }
+        );
+
+        if (response.status === 404) {
+            return NextResponse.json({ meals: [] });
+        }
+
+        if (!response.ok) {
+            return NextResponse.json(
+                { error: 'Failed to fetch menu from Matilda' },
+                { status: response.status }
+            );
+        }
+
+        const data = await response.json();
+        const meals = data.meals || [];
+
+        return NextResponse.json({ meals });
+
     } catch (error) {
-        console.error('Error scraping menu:', error);
+        console.error('Error fetching menu:', error);
         return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
     }
 }

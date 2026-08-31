@@ -1,12 +1,10 @@
 import { NextResponse } from 'next/server';
-import * as cheerio from 'cheerio';
 
 interface Distributor {
     id: string;
     name: string;
-    organization?: string;
     address?: {
-        addressLocality?: string;
+        addressLocality?: string | null;
     };
 }
 
@@ -19,29 +17,20 @@ export async function GET(request: Request) {
     }
 
     try {
-        // 1. Fetch the homepage
-        const response = await fetch('https://menu.matildaplatform.com/', {
+        const response = await fetch('https://menu.matildaplatform.com/api/distributors', {
             headers: {
                 'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
-            }
+            },
+            next: { revalidate: 3600 } // Cache for 1 hour
         });
 
         if (!response.ok) {
-            return NextResponse.json({ error: 'Failed to fetch Matilda homepage' }, { status: response.status });
+            return NextResponse.json({ error: 'Failed to fetch distributors from Matilda' }, { status: response.status });
         }
 
-        const html = await response.text();
-        const $ = cheerio.load(html);
-        const nextDataScript = $('#__NEXT_DATA__').html();
+        const json = await response.json();
+        const distributors: Distributor[] = json.distributors || [];
 
-        if (!nextDataScript) {
-            return NextResponse.json({ error: 'Could not find data on page' }, { status: 404 });
-        }
-
-        const json = JSON.parse(nextDataScript);
-        const distributors: Distributor[] = json.props?.pageProps?.distributors || [];
-
-        // 2. Filter locally
         const results = distributors.filter(d =>
             (d.name && d.name.toLowerCase().includes(query)) ||
             (d.address?.addressLocality && d.address.addressLocality.toLowerCase().includes(query))
@@ -49,29 +38,12 @@ export async function GET(request: Request) {
             id: d.id,
             name: d.name,
             locality: d.address?.addressLocality || '',
-            // Matilda URLs use [id]_[organization] or [id]_[slugified-name]
-            url: `https://menu.matildaplatform.com/meals/week/${d.id}_${d.organization || slugify(d.name)}`
         }));
 
-        return NextResponse.json({ results: results.slice(0, 100) }); // Limit to 100
+        return NextResponse.json({ results: results.slice(0, 100) });
 
     } catch (error) {
         console.error('Error searching:', error);
         return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
     }
-}
-
-function slugify(text: string) {
-    const swedishMap: { [key: string]: string } = { 'å': 'a', 'ä': 'a', 'ö': 'o', 'Å': 'a', 'Ä': 'a', 'Ö': 'o' };
-    return text
-        .toString()
-        .split('')
-        .map(char => swedishMap[char] || char)
-        .join('')
-        .toLowerCase()
-        .replace(/\s+/g, '-')           // Replace spaces with -
-        .replace(/[^\w\-]+/g, '')       // Remove all non-word chars
-        .replace(/\-\-+/g, '-')         // Replace multiple - with single -
-        .replace(/^-+/, '')             // Trim - from start of text
-        .replace(/-+$/, '');            // Trim - from end of text
 }

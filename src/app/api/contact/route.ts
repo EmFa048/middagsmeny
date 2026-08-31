@@ -20,7 +20,7 @@ export async function POST(request: Request) {
     
     // We send the email TO ourselves
     const recipients = [
-      new Recipient("hej@middagsmeny.se", "Middagsmeny Admin")
+      new Recipient("hello@edy.se", "Middagsmeny Admin")
     ];
 
     const emailParams = new EmailParams()

@@ -1,9 +1,8 @@
 import { Suspense } from 'react';
 import DinnerApp from '@/components/DinnerApp';
 import { ChefHat, Leaf, Heart, Coffee, ExternalLink, MapPin } from 'lucide-react';
-import * as cheerio from 'cheerio';
 import { processMenu } from '@/utils/menuUtils';
-import { format, parseISO } from 'date-fns';
+import { format, startOfWeek, endOfWeek } from 'date-fns';
 import { sv } from 'date-fns/locale';
 
 export const metadata = {
@@ -12,38 +11,26 @@ export const metadata = {
 };
 
 const POPULAR_SCHOOLS = [
-  { id: '66b61ca94060624347658340', name: 'Bullerbyns förskola', locality: 'Karlstad', url: 'https://menu.matildaplatform.com/meals/week/66b61ca94060624347658340_Karlstad Kommun' },
-  { id: '64a7cb24469920bc65b4e835', name: 'Fryele skola', locality: 'Värnamo', url: 'https://menu.matildaplatform.com/meals/week/64a7cb24469920bc65b4e835_varnamo' },
-  { id: '6436962095451015931bf7ce', name: 'Skola - Gnarp skola', locality: 'Nordanstig', url: 'https://menu.matildaplatform.com/meals/week/6436962095451015931bf7ce_nordanstig' },
-  { id: '64a411c6469920bc655c117a', name: 'Härnösand Skola/Förskola', locality: 'Härnösand', url: 'https://menu.matildaplatform.com/meals/week/64a411c6469920bc655c117a_harnosand' },
-  { id: '6474928f5ed89d169f45b876', name: 'LID Dalängskolan', locality: 'Lidköping', url: 'https://menu.matildaplatform.com/meals/week/6474928f5ed89d169f45b876_goliska' },
+  { id: '66b61ca94060624347658340', name: 'Bullerbyns förskola', locality: 'Karlstad' },
+  { id: '64a7cb24469920bc65b4e835', name: 'Fryele skola', locality: 'Värnamo' },
+  { id: '6436962095451015931bf7ce', name: 'Skola - Gnarp skola', locality: 'Nordanstig' },
+  { id: '64a411c6469920bc655c117a', name: 'Härnösand Skola/Förskola', locality: 'Härnösand' },
+  { id: '6474928f5ed89d169f45b876', name: 'LID Dalängskolan', locality: 'Lidköping' },
 ];
 
-function slugify(text: string) {
-  const swedishMap: { [key: string]: string } = { 'å': 'a', 'ä': 'a', 'ö': 'o', 'Å': 'a', 'Ä': 'a', 'Ö': 'o' };
-  return text
-    .toString()
-    .split('')
-    .map(char => swedishMap[char] || char)
-    .join('')
-    .toLowerCase()
-    .replace(/\s+/g, '-')
-    .replace(/[^\w\-]+/g, '')
-    .replace(/\-\-+/g, '-')
-    .replace(/^-+/, '')
-    .replace(/-+$/, '');
-}
-
-async function getInitialMenu(url: string) {
+async function getInitialMenu(distributorId: string) {
   try {
-    const res = await fetch(url, { next: { revalidate: 3600 } });
+    const now = new Date();
+    const startDate = format(startOfWeek(now, { weekStartsOn: 1 }), 'yyyy-MM-dd');
+    const endDate = format(endOfWeek(now, { weekStartsOn: 1 }), 'yyyy-MM-dd');
+
+    const res = await fetch(
+      `https://menu.matildaplatform.com/api/menu?distributorId=${distributorId}&startDate=${startDate}&endDate=${endDate}&lang=sv`,
+      { next: { revalidate: 3600 } }
+    );
     if (!res.ok) return [];
-    const html = await res.text();
-    const $ = cheerio.load(html);
-    const nextDataScript = $('#__NEXT_DATA__').html();
-    if (!nextDataScript) return [];
-    const json = JSON.parse(nextDataScript);
-    const rawMeals = json.props?.pageProps?.meals || [];
+    const json = await res.json();
+    const rawMeals = json.meals || [];
     return processMenu(rawMeals);
   } catch (e) {
     console.error("SSR Fetch failed", e);
@@ -53,8 +40,7 @@ async function getInitialMenu(url: string) {
 
 export default async function Home() {
   const defaultSchool = POPULAR_SCHOOLS[0];
-  const defaultUrl = defaultSchool.url;
-  const initialMenu = await getInitialMenu(defaultUrl);
+  const initialMenu = await getInitialMenu(defaultSchool.id);
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-800 font-sans">
@@ -125,7 +111,7 @@ export default async function Home() {
           }>
             <DinnerApp
               initialMenu={initialMenu}
-              initialSchool={{ url: defaultUrl, name: defaultSchool.name }}
+              initialSchool={{ distributorId: defaultSchool.id, name: defaultSchool.name }}
             />
           </Suspense>
 
@@ -139,7 +125,7 @@ export default async function Home() {
               {POPULAR_SCHOOLS.map(school => (
                 <a
                   key={school.id}
-                  href={`/?school=${encodeURIComponent(school.url)}&name=${encodeURIComponent(school.name)}`}
+                  href={`/?school=${encodeURIComponent(school.id)}&name=${encodeURIComponent(school.name)}`}
                   className="p-4 bg-slate-50 rounded-xl hover:bg-brand-yellow/10 transition-colors border border-transparent hover:border-brand-yellow/30 group"
                 >
                   <div className="font-bold text-[#051c2c] group-hover:text-amber-700">{school.name}</div>

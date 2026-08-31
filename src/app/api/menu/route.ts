@@ -1,17 +1,20 @@
 import { NextResponse } from 'next/server';
+import { extractDistributorId } from '@/utils/menuUtils';
 
 export async function GET(request: Request) {
     const { searchParams } = new URL(request.url);
-    const distributorId = searchParams.get('distributorId');
+    const rawDistributorId = searchParams.get('distributorId');
     const startDate = searchParams.get('startDate');
     const endDate = searchParams.get('endDate');
 
-    if (!distributorId || !startDate || !endDate) {
+    if (!rawDistributorId || !startDate || !endDate) {
         return NextResponse.json(
             { error: 'Missing required parameters: distributorId, startDate, endDate' },
             { status: 400 }
         );
     }
+
+    const distributorId = extractDistributorId(rawDistributorId);
 
     try {
         const matildaParams = new URLSearchParams({

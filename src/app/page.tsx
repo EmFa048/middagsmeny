@@ -1,7 +1,7 @@
 import { Suspense } from 'react';
 import DinnerApp from '@/components/DinnerApp';
 import { ChefHat, Leaf, Heart, Coffee, ExternalLink, MapPin } from 'lucide-react';
-import { processMenu } from '@/utils/menuUtils';
+import { processMenu, extractDistributorId } from '@/utils/menuUtils';
 import { format, startOfWeek, endOfWeek } from 'date-fns';
 import { sv } from 'date-fns/locale';
 
@@ -20,12 +20,13 @@ const POPULAR_SCHOOLS = [
 
 async function getInitialMenu(distributorId: string) {
   try {
+    const cleanId = extractDistributorId(distributorId);
     const now = new Date();
     const startDate = format(startOfWeek(now, { weekStartsOn: 1 }), 'yyyy-MM-dd');
     const endDate = format(endOfWeek(now, { weekStartsOn: 1 }), 'yyyy-MM-dd');
 
     const res = await fetch(
-      `https://menu.matildaplatform.com/api/menu?distributorId=${distributorId}&startDate=${startDate}&endDate=${endDate}&lang=sv`,
+      `https://menu.matildaplatform.com/api/menu?distributorId=${cleanId}&startDate=${startDate}&endDate=${endDate}&lang=sv`,
       { next: { revalidate: 3600 } }
     );
     if (!res.ok) return [];

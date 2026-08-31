@@ -1,5 +1,11 @@
 import { format, parseISO } from 'date-fns';
 
+export function extractDistributorId(input: string): string {
+    if (!input) return '';
+    const match = input.match(/([a-f0-9]{24})/i);
+    return match ? match[1] : input.trim();
+}
+
 export interface Dish {
     id: string;
     name: string;

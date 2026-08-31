@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { format, parseISO, startOfWeek, endOfWeek, addWeeks } from 'date-fns';
 import { sv } from 'date-fns/locale';
 import { Search, Utensils, ChefHat, Leaf, Fish, AlertCircle, Heart, RefreshCw, Share2, Coffee, X, ExternalLink, Cookie, Pencil } from 'lucide-react';
-import { DayMenu, SchoolMeal, Dish, DEFAULT_DISHES, generateMockSuggestion, processMenu } from '@/utils/menuUtils';
+import { DayMenu, SchoolMeal, Dish, DEFAULT_DISHES, generateMockSuggestion, processMenu, extractDistributorId } from '@/utils/menuUtils';
 
 
 interface DinnerAppProps {
@@ -20,7 +20,7 @@ export default function DinnerApp({ initialMenu, initialSchool }: DinnerAppProps
   const [weekOffset, setWeekOffset] = useState(0);
 
   // Initialise state with SSR data if provided
-  const [distributorId, setDistributorId] = useState(initialSchool?.distributorId || '');
+  const [distributorId, setDistributorId] = useState(extractDistributorId(initialSchool?.distributorId || ''));
   const [searchQuery, setSearchQuery] = useState(initialSchool?.name || '');
   const [loading, setLoading] = useState(false);
   const [menu, setMenu] = useState<DayMenu[]>(initialMenu || []);
@@ -57,7 +57,15 @@ export default function DinnerApp({ initialMenu, initialSchool }: DinnerAppProps
   // Load from LocalStorage on Mount AND Check Ad Status
   useEffect(() => {
     const savedFavs = localStorage.getItem('mm_favorites');
-    if (savedFavs) setFavorites(JSON.parse(savedFavs));
+    if (savedFavs) {
+      try {
+        const parsed = JSON.parse(savedFavs);
+        const sanitized = parsed.map((f: any) => ({ ...f, url: extractDistributorId(f.url) }));
+        setFavorites(sanitized);
+      } catch (e) {
+        console.error("Failed to parse favorites", e);
+      }
+    }
 
     const savedDishes = localStorage.getItem('mm_custom_dishes');
     if (savedDishes) setCustomDishes(JSON.parse(savedDishes));
@@ -93,7 +101,7 @@ export default function DinnerApp({ initialMenu, initialSchool }: DinnerAppProps
   // Track fetching to prevent loops
   const lastFetchedKey = useRef('');
   const [initialLoadDone, setInitialLoadDone] = useState(false);
-  const currentDistributorId = useRef(initialSchool?.distributorId || '');
+  const currentDistributorId = useRef(extractDistributorId(initialSchool?.distributorId || ''));
 
   // Helper to compute week start/end dates from offset
   const getWeekDates = (offset: number) => {
@@ -115,7 +123,7 @@ export default function DinnerApp({ initialMenu, initialSchool }: DinnerAppProps
     const nameParam = params.get('name');
 
     if (schoolParam) {
-      setDistributorId(schoolParam);
+      setDistributorId(extractDistributorId(schoolParam));
       if (nameParam) {
         setSearchQuery(nameParam);
       }
@@ -227,7 +235,7 @@ export default function DinnerApp({ initialMenu, initialSchool }: DinnerAppProps
   };
 
   const selectSchool = (school: { id: string, name: string }) => {
-    setDistributorId(school.id);
+    setDistributorId(extractDistributorId(school.id));
     setSearchQuery(school.name);
     setWeekOffset(0);
     setSearchResults([]);
@@ -235,14 +243,13 @@ export default function DinnerApp({ initialMenu, initialSchool }: DinnerAppProps
   };
 
   const toggleFavorite = () => {
-    // Basic check using distributorId as ID
-    const exists = favorites.find(f => f.url === distributorId);
+    const cleanId = extractDistributorId(distributorId);
+    const exists = favorites.find(f => extractDistributorId(f.url) === cleanId);
     if (exists) {
-      setFavorites(favorites.filter(f => f.url !== distributorId));
+      setFavorites(favorites.filter(f => extractDistributorId(f.url) !== cleanId));
     } else {
-      // Use searchQuery as name if available, otherwise default
       const name = searchQuery && searchQuery.length > 2 ? searchQuery : 'Min Skola';
-      setFavorites([...favorites, { name, url: distributorId }]);
+      setFavorites([...favorites, { name, url: cleanId }]);
     }
   };
 
@@ -255,7 +262,7 @@ export default function DinnerApp({ initialMenu, initialSchool }: DinnerAppProps
   };
 
   // Helper to get current favorite status
-  const isFavorite = favorites.some(f => f.url === distributorId);
+  const isFavorite = favorites.some(f => extractDistributorId(f.url) === extractDistributorId(distributorId));
 
   const handleAddDish = (e: React.FormEvent) => {
     e.preventDefault();
@@ -332,7 +339,7 @@ export default function DinnerApp({ initialMenu, initialSchool }: DinnerAppProps
   };
 
   const fetchMenu = async (overrideOffset?: number, clearSuggestions = false) => {
-    const activeId = distributorId;
+    const activeId = extractDistributorId(distributorId);
     const activeOffset = overrideOffset !== undefined ? overrideOffset : weekOffset;
 
     if (!activeId) return;

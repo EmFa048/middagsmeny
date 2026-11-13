@@ -5,13 +5,13 @@
 
 import { isNativeApp } from './capacitorDetection';
 
-// Officiella Test Ad Unit IDs från Google AdMob
-const ADMOB_TEST_IDS = {
+// Officiella produktions- och test-ID:n för Google AdMob
+const ADMOB_IDS = {
   android: {
-    banner: 'ca-app-pub-3940256099942544/6300978111',
+    banner: 'ca-app-pub-5713849466989513/5513707128',
   },
   ios: {
-    banner: 'ca-app-pub-3940256099942544/2934735716',
+    banner: 'ca-app-pub-3940256099942544/2934735716', // Google test-ID för iOS tills Apple-konto aktiverats
   },
 };
 
@@ -24,8 +24,7 @@ export async function initializeAdMob(): Promise<void> {
   try {
     const { AdMob } = await import('@capacitor-community/admob');
     await AdMob.initialize({
-      testingDevices: ['2077ef9a63d2b398840261c8221a0c9b'],
-      initializeForTesting: true,
+      initializeForTesting: false,
     });
     isAdMobInitialized = true;
     console.log('AdMob successfully initialized');
@@ -43,14 +42,14 @@ export async function showBannerAd(): Promise<void> {
 
     const cap = (window as any).Capacitor;
     const isIOS = cap?.getPlatform?.() === 'ios';
-    const adId = isIOS ? ADMOB_TEST_IDS.ios.banner : ADMOB_TEST_IDS.android.banner;
+    const adId = isIOS ? ADMOB_IDS.ios.banner : ADMOB_IDS.android.banner;
 
     await AdMob.showBanner({
       adId,
       adSize: BannerAdSize.ADAPTIVE_BANNER,
       position: BannerAdPosition.BOTTOM_CENTER,
       margin: 0,
-      isTesting: true, // Ändras till false inför App Store / Play Store release
+      isTesting: false,
     });
   } catch (error) {
     console.warn('Failed to show AdMob banner:', error);

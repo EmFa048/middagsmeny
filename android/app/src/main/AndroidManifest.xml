@@ -28,10 +28,10 @@
             <meta-data android:name="android.support.FILE_PROVIDER_PATHS" android:resource="@xml/file_paths" />
         </provider>
 
-        <!-- Google AdMob App ID (Test-ID under utveckling) -->
+        <!-- Google AdMob App ID (Produktion) -->
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"
-            android:value="ca-app-pub-3940256099942544~3347511713" />
+            android:value="ca-app-pub-5713849466989513~9512836899" />
     </application>
 
     <!-- Permissions -->

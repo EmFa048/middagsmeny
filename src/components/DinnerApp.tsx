@@ -6,6 +6,9 @@ import { format, parseISO, startOfWeek, endOfWeek, addWeeks } from 'date-fns';
 import { sv } from 'date-fns/locale';
 import { Search, Utensils, ChefHat, Leaf, Fish, AlertCircle, Heart, RefreshCw, Share2, Coffee, X, ExternalLink, Cookie, Pencil } from 'lucide-react';
 import { DayMenu, SchoolMeal, Dish, DEFAULT_DISHES, generateMockSuggestion, processMenu, extractDistributorId } from '@/utils/menuUtils';
+import { isNativeApp } from '@/utils/capacitorDetection';
+import { triggerLightHaptic, triggerMediumHaptic, triggerSuccessHaptic } from '@/utils/hapticsUtils';
+import { showBannerAd } from '@/utils/admobUtils';
 
 
 interface DinnerAppProps {
@@ -73,8 +76,10 @@ export default function DinnerApp({ initialMenu, initialSchool }: DinnerAppProps
     const savedFavDishes = localStorage.getItem('mm_favorite_dishes');
     if (savedFavDishes) setFavoriteDishNames(JSON.parse(savedFavDishes));
 
-    // REMOVED: Autopopup of Ads. This is frowned upon by AdSense crawlers
-    // if there is no high-value user interaction first.
+    // Ladda native bannerannons om appen körs på iOS/Android
+    if (isNativeApp()) {
+      showBannerAd();
+    }
   }, []);
 
   // Save to LocalStorage
@@ -171,6 +176,7 @@ export default function DinnerApp({ initialMenu, initialSchool }: DinnerAppProps
   }, [distributorId, menu, searchQuery]);
 
   const handleShare = async () => {
+    triggerLightHaptic();
     const shareTitle = 'Middagsmeny';
 
     // 1. Skapa den snygga listan för textmeddelandet
@@ -184,9 +190,20 @@ export default function DinnerApp({ initialMenu, initialSchool }: DinnerAppProps
       .join('\n');
 
     const finalUrl = window.location.href;
-    const shareText = `Här är veckans middagsplanering:\n\n${dishList}\n\nKolla in hela matsedeln här:`;
+    const shareText = `Här är veckans middagsplanering:\n\n${dishList}\n\nKolla in hela matsedeln här:\n${finalUrl}`;
 
     try {
+      if (isNativeApp()) {
+        const { Share } = await import('@capacitor/share');
+        await Share.share({
+          title: shareTitle,
+          text: shareText,
+          url: finalUrl,
+          dialogTitle: 'Dela veckans middagar',
+        });
+        return;
+      }
+
       if (navigator.share) {
         await navigator.share({
           title: shareTitle,
@@ -195,12 +212,12 @@ export default function DinnerApp({ initialMenu, initialSchool }: DinnerAppProps
         });
       }
       else if (navigator.clipboard && navigator.clipboard.writeText) {
-        await navigator.clipboard.writeText(`${shareText}\n${finalUrl}`);
+        await navigator.clipboard.writeText(shareText);
         alert('Planeringen och länk är kopierad!');
       }
       else {
         const textArea = document.createElement("textarea");
-        textArea.value = `${shareText}\n${finalUrl}`;
+        textArea.value = shareText;
         document.body.appendChild(textArea);
         textArea.select();
         document.execCommand('copy');
@@ -235,6 +252,7 @@ export default function DinnerApp({ initialMenu, initialSchool }: DinnerAppProps
   };
 
   const selectSchool = (school: { id: string, name: string }) => {
+    triggerLightHaptic();
     setDistributorId(extractDistributorId(school.id));
     setSearchQuery(school.name);
     setWeekOffset(0);
@@ -243,6 +261,7 @@ export default function DinnerApp({ initialMenu, initialSchool }: DinnerAppProps
   };
 
   const toggleFavorite = () => {
+    triggerSuccessHaptic();
     const cleanId = extractDistributorId(distributorId);
     const exists = favorites.find(f => extractDistributorId(f.url) === cleanId);
     if (exists) {
@@ -254,6 +273,7 @@ export default function DinnerApp({ initialMenu, initialSchool }: DinnerAppProps
   };
 
   const toggleDishFavorite = (dishName: string) => {
+    triggerSuccessHaptic();
     if (favoriteDishNames.includes(dishName)) {
       setFavoriteDishNames(favoriteDishNames.filter(n => n !== dishName));
     } else {
@@ -313,6 +333,7 @@ export default function DinnerApp({ initialMenu, initialSchool }: DinnerAppProps
 
 
   const regenerateSuggestion = (date: string) => {
+    triggerMediumHaptic();
     setMenu(prevMenu => {
       // Collect all OTHER dishes currently showing to avoid duplicates
       const otherDishes = prevMenu
@@ -428,7 +449,7 @@ export default function DinnerApp({ initialMenu, initialSchool }: DinnerAppProps
     <>
       <main className="max-w-4xl mx-auto p-6 space-y-8">
         {/* Settings / Search */}
-        <div className="bg-white rounded-xl shadow-sm p-6 space-y-6 border border-slate-100">
+        <div className="bg-white dark:bg-slate-900 rounded-xl shadow-sm p-6 space-y-6 border border-slate-100 dark:border-slate-800 transition-colors">
 
           {/* RAD 1: Sökfält & Se meny */}
           <div className="flex flex-col md:flex-row gap-4">
@@ -440,7 +461,7 @@ export default function DinnerApp({ initialMenu, initialSchool }: DinnerAppProps
                 onChange={(e) => handleSearch(e.target.value)}
                 onFocus={() => setShowResults(true)}
                 placeholder="Sök skola (t.ex. Malmö)..."
-                className="w-full pl-10 pr-10 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-brand-yellow outline-none transition-all h-[42px]"
+                className="w-full pl-10 pr-10 py-2 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-800 dark:text-white rounded-lg focus:ring-2 focus:ring-brand-yellow outline-none transition-all h-[42px]"
               />
               {searchQuery && (
                 <button
@@ -457,18 +478,18 @@ export default function DinnerApp({ initialMenu, initialSchool }: DinnerAppProps
 
               {/* Search Results Dropdown */}
               {showResults && searchResults.length > 0 && (
-                <div className="absolute top-full left-0 right-0 z-[100] mt-2 bg-white border border-slate-200 rounded-xl shadow-2xl max-h-80 overflow-y-auto animate-in fade-in slide-in-from-top-2 duration-200">
-                  <div className="p-2 border-b border-slate-50 sticky top-0 bg-white/95 backdrop-blur-sm z-10">
-                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest pl-2">Sökresultat</span>
+                <div className="absolute top-full left-0 right-0 z-[100] mt-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl shadow-2xl max-h-80 overflow-y-auto animate-in fade-in slide-in-from-top-2 duration-200">
+                  <div className="p-2 border-b border-slate-50 dark:border-slate-700 sticky top-0 bg-white/95 dark:bg-slate-800/95 backdrop-blur-sm z-10">
+                    <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest pl-2">Sökresultat</span>
                   </div>
                   {searchResults.map((school) => (
                     <button
                       key={school.id}
                       onClick={() => selectSchool(school)}
-                      className="w-full text-left px-4 py-3 hover:bg-slate-50 transition-colors border-b border-slate-50 last:border-0 flex flex-col gap-0.5"
+                      className="w-full text-left px-4 py-3 hover:bg-slate-50 dark:hover:bg-slate-750 transition-colors border-b border-slate-50 dark:border-slate-700/60 last:border-0 flex flex-col gap-0.5"
                     >
-                      <span className="text-sm font-semibold text-slate-800">{school.name}</span>
-                      <span className="text-[10px] text-slate-400 uppercase tracking-widest font-bold">{school.locality}</span>
+                      <span className="text-sm font-semibold text-slate-800 dark:text-white">{school.name}</span>
+                      <span className="text-[10px] text-slate-400 dark:text-slate-400 uppercase tracking-widest font-bold">{school.locality}</span>
                     </button>
                   ))}
                 </div>
@@ -488,7 +509,7 @@ export default function DinnerApp({ initialMenu, initialSchool }: DinnerAppProps
           < div className="grid grid-cols-1 md:grid-cols-3 gap-3" >
             <button
               onClick={toggleFavorite}
-              className={`h-[42px] rounded-lg border transition-colors flex items-center justify-center gap-2 group ${isFavorite ? 'bg-brand-yellow text-brand-dark border-brand-yellow shadow-sm' : 'bg-white border-slate-200 text-slate-400 hover:text-brand-yellow hover:border-brand-yellow'}`}
+              className={`h-[42px] rounded-lg border transition-colors flex items-center justify-center gap-2 group ${isFavorite ? 'bg-brand-yellow text-brand-dark border-brand-yellow shadow-sm' : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-400 hover:text-brand-yellow hover:border-brand-yellow'}`}
               title={isFavorite ? "Ta bort från genvägar" : "Spara skola till dina genvägar"}
             >
               <Heart className={`w-4 h-4 ${isFavorite ? 'fill-current' : 'group-hover:scale-110 transition-transform'}`} />
@@ -497,7 +518,7 @@ export default function DinnerApp({ initialMenu, initialSchool }: DinnerAppProps
 
             <button
               onClick={handleShare}
-              className="h-[42px] rounded-lg border border-slate-200 bg-white text-slate-600 hover:text-brand-blue hover:border-brand-blue transition-colors flex items-center justify-center gap-2"
+              className="h-[42px] rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:text-brand-blue hover:border-brand-blue transition-colors flex items-center justify-center gap-2"
               title="Kopiera och dela veckans middagar"
             >
               <Share2 className="w-4 h-4" />
@@ -505,7 +526,11 @@ export default function DinnerApp({ initialMenu, initialSchool }: DinnerAppProps
             </button>
 
             <button
-              onClick={() => { lastFetchedKey.current = ''; fetchMenu(undefined, true); }}
+              onClick={() => { 
+                triggerMediumHaptic();
+                lastFetchedKey.current = ''; 
+                fetchMenu(undefined, true); 
+              }}
               disabled={loading}
               className="h-[42px] bg-brand-yellow hover:bg-[#ffc800] text-brand-dark rounded-lg font-bold transition-colors disabled:opacity-50 flex items-center justify-center gap-2 shadow-sm"
             >
@@ -525,11 +550,12 @@ export default function DinnerApp({ initialMenu, initialSchool }: DinnerAppProps
                     <div key={i} className="relative group/fav">
                       <button
                         onClick={() => {
+                          triggerLightHaptic();
                           setDistributorId(fav.url);
                           setSearchQuery(fav.name);
                           setWeekOffset(0);
                         }}
-                        className={`whitespace-nowrap px-3 py-1.5 pr-8 text-xs font-medium rounded-full border transition-all ${distributorId === fav.url ? 'bg-brand-blue text-white border-brand-blue shadow-md' : 'bg-white text-slate-600 border-slate-200 hover:border-brand-blue hover:text-brand-blue'}`}
+                        className={`whitespace-nowrap px-3 py-1.5 pr-8 text-xs font-medium rounded-full border transition-all ${distributorId === fav.url ? 'bg-brand-blue text-white border-brand-blue shadow-md' : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:border-brand-blue hover:text-brand-blue'}`}
                       >
                         {fav.name}
                       </button>
@@ -668,17 +694,23 @@ export default function DinnerApp({ initialMenu, initialSchool }: DinnerAppProps
         {/* Weekly Navigation */}
         <div className="flex justify-between items-center pt-2">
           <button
-            onClick={() => setWeekOffset(prev => prev - 1)}
+            onClick={() => {
+              triggerLightHaptic();
+              setWeekOffset(prev => prev - 1);
+            }}
             disabled={loading}
-            className="flex items-center gap-2 px-4 py-2 bg-white border border-slate-200 rounded-lg text-sm font-medium text-slate-600 hover:text-brand-blue hover:border-brand-blue disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+            className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-brand-blue hover:border-brand-blue disabled:opacity-50 disabled:cursor-not-allowed transition-all"
           >
             &larr; Föregående vecka
           </button>
 
           <button
-            onClick={() => setWeekOffset(prev => prev + 1)}
+            onClick={() => {
+              triggerLightHaptic();
+              setWeekOffset(prev => prev + 1);
+            }}
             disabled={loading}
-            className="flex items-center gap-2 px-4 py-2 bg-white border border-slate-200 rounded-lg text-sm font-medium text-slate-600 hover:text-brand-blue hover:border-brand-blue disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+            className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-brand-blue hover:border-brand-blue disabled:opacity-50 disabled:cursor-not-allowed transition-all"
           >
             Nästa vecka &rarr;
           </button>
@@ -688,14 +720,14 @@ export default function DinnerApp({ initialMenu, initialSchool }: DinnerAppProps
         {
           menu.length > 0 && searchQuery && (
             <div className="text-center space-y-1">
-              <h2 className="text-xl font-bold text-slate-800">{searchQuery}</h2>
-              <p className="text-xs text-slate-400 uppercase tracking-widest font-bold">Aktuell matsedel</p>
+              <h2 className="text-xl font-bold text-slate-800 dark:text-white">{searchQuery}</h2>
+              <p className="text-xs text-slate-400 dark:text-slate-500 uppercase tracking-widest font-bold">Aktuell matsedel</p>
             </div>
           )
         }
 
-        {/* Inline Advertisement Block - Only visible when menu exists */}
-        {menu.length > 0 && (
+        {/* Inline Advertisement Block - Endast på webben, aldrig i native app */}
+        {!isNativeApp() && menu.length > 0 && (
           <div className="w-full bg-slate-50 border-2 border-dashed border-slate-200 rounded-xl p-4 flex flex-col items-center justify-center my-6 min-h-[150px] relative">
             <span className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mb-2 bg-slate-100 px-2 py-1 rounded">Annonsplats</span>
 
@@ -724,30 +756,30 @@ export default function DinnerApp({ initialMenu, initialSchool }: DinnerAppProps
         {/* Weekly Menu */}
         <div className="space-y-6">
           {menu.length === 0 && !loading && distributorId && (
-            <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-12 text-center space-y-4">
-              <div className="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto text-slate-400">
+            <div className="bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 p-12 text-center space-y-4">
+              <div className="w-16 h-16 bg-slate-100 dark:bg-slate-800 rounded-full flex items-center justify-center mx-auto text-slate-400">
                 <AlertCircle className="w-8 h-8" />
               </div>
               <div>
-                <h3 className="text-lg font-bold text-slate-800">Ingen matsedel hittad</h3>
-                <p className="text-slate-500 max-w-xs mx-auto text-sm mt-1">
+                <h3 className="text-lg font-bold text-slate-800 dark:text-white">Ingen matsedel hittad</h3>
+                <p className="text-slate-500 dark:text-slate-400 max-w-xs mx-auto text-sm mt-1">
                   Vi kunde inte hitta någon matsedel för den valda skolan den här veckan. Det kan bero på lov eller att skolan inte har publicerat någon meny än.
                 </p>
               </div>
             </div>
           )}
           {menu.map((day) => (
-            <div key={day.date} className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden transform transition hover:shadow-md">
+            <div key={day.date} className="bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 overflow-hidden transform transition hover:shadow-md">
 
               {/* Date Header */}
-              <div className="bg-slate-50 px-6 py-3 border-b border-slate-100 flex justify-between items-center">
-                <h2 className="text-lg font-semibold text-slate-700 first-letter:capitalize">
+              <div className="bg-slate-50 dark:bg-slate-800/60 px-6 py-3 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center">
+                <h2 className="text-lg font-semibold text-slate-700 dark:text-slate-200 first-letter:capitalize">
                   {format(parseISO(day.date), 'EEEE d MMMM', { locale: sv })}
                 </h2>
-                <span className="text-xs font-medium px-2 py-1 bg-slate-200 text-slate-600 rounded-full">Vecka {format(parseISO(day.date), 'w', { locale: sv })}</span>
+                <span className="text-xs font-medium px-2 py-1 bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300 rounded-full">Vecka {format(parseISO(day.date), 'w', { locale: sv })}</span>
               </div>
 
-              <div className="grid md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-slate-100">
+              <div className="grid md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-slate-100 dark:divide-slate-800">
 
                 {/* School Lunch */}
                 <div className="p-6 space-y-4">
@@ -755,15 +787,15 @@ export default function DinnerApp({ initialMenu, initialSchool }: DinnerAppProps
                     <div className="w-8 h-8 rounded-full bg-brand-blue/10 text-brand-blue flex items-center justify-center">
                       <ChefHat className="w-5 h-5" />
                     </div>
-                    <h3 className="uppercase tracking-wider text-xs font-bold text-slate-400">Skollunch</h3>
+                    <h3 className="uppercase tracking-wider text-xs font-bold text-slate-400 dark:text-slate-500">Skollunch</h3>
                   </div>
 
                   <div className="space-y-3">
                     {day.schoolMeals.map((meal, idx) => (
                       <div key={idx} className="text-sm">
-                        <span className={`${meal.name === 'Vegetarian' ? 'text-green-600' : 'text-slate-500'} font-medium text-xs uppercase block mb-1`}>{meal.name}</span>
+                        <span className={`${meal.name === 'Vegetarian' ? 'text-green-600 dark:text-green-400' : 'text-slate-500 dark:text-slate-400'} font-medium text-xs uppercase block mb-1`}>{meal.name}</span>
                         {meal.courses.map((c, i) => (
-                          <p key={`${c.id}-${i}`} className="text-slate-800">
+                          <p key={`${c.id}-${i}`} className="text-slate-800 dark:text-slate-200">
                             {c.name}
                           </p>
                         ))}
@@ -773,13 +805,13 @@ export default function DinnerApp({ initialMenu, initialSchool }: DinnerAppProps
                 </div>
 
                 {/* Dinner Suggestion */}
-                <div className="p-6 bg-brand-yellow/10">
+                <div className="p-6 bg-brand-yellow/10 dark:bg-brand-yellow/5">
                   <div className="flex items-center justify-between mb-3">
                     <div className="flex items-center gap-2">
-                      <div className="w-8 h-8 rounded-full bg-brand-yellow/20 text-brand-dark flex items-center justify-center">
+                      <div className="w-8 h-8 rounded-full bg-brand-yellow/20 text-brand-dark dark:text-brand-yellow flex items-center justify-center">
                         <Utensils className="w-5 h-5" />
                       </div>
-                      <h3 className="uppercase tracking-wider text-xs font-bold text-brand-dark/70">Middagsförslag</h3>
+                      <h3 className="uppercase tracking-wider text-xs font-bold text-brand-dark/70 dark:text-brand-yellow/80">Middagsförslag</h3>
                     </div>
                     {day.dinnerSuggestion && (
                       <div className="flex gap-1 items-center">
@@ -809,10 +841,10 @@ export default function DinnerApp({ initialMenu, initialSchool }: DinnerAppProps
                   </div>
 
                   {editingDay === day.date && (
-                    <div className="mb-4 p-4 bg-white rounded-lg border border-brand-yellow/30 shadow-sm space-y-3 animate-in fade-in slide-in-from-top-1">
+                    <div className="mb-4 p-4 bg-white dark:bg-slate-850 rounded-lg border border-brand-yellow/30 shadow-sm space-y-3 animate-in fade-in slide-in-from-top-1">
                       <div className="flex justify-between items-center">
                         <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">Sök eller skriv egen rätt</span>
-                        <button onClick={() => setEditingDay(null)} className="text-slate-400 hover:text-slate-600">
+                        <button onClick={() => setEditingDay(null)} className="text-slate-400 hover:text-slate-600 dark:hover:text-white">
                           <X className="w-4 h-4" />
                         </button>
                       </div>
@@ -822,7 +854,7 @@ export default function DinnerApp({ initialMenu, initialSchool }: DinnerAppProps
                         value={editSearchQuery}
                         onChange={(e) => setEditSearchQuery(e.target.value)}
                         placeholder="T.ex. Pasta, Lax..."
-                        className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-brand-blue outline-none"
+                        className="w-full px-3 py-2 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-800 dark:text-white rounded-lg text-sm focus:ring-2 focus:ring-brand-blue outline-none"
                       />
                       <div className="max-h-40 overflow-y-auto space-y-1">
                         {[...DEFAULT_DISHES, ...customDishes]
@@ -832,9 +864,9 @@ export default function DinnerApp({ initialMenu, initialSchool }: DinnerAppProps
                             <button
                               key={i}
                               onClick={() => handleSelectManualDish(day.date, d)}
-                              className="w-full text-left px-3 py-2 hover:bg-slate-50 text-sm rounded transition-colors flex justify-between items-center group"
+                              className="w-full text-left px-3 py-2 hover:bg-slate-50 dark:hover:bg-slate-800 text-sm rounded transition-colors flex justify-between items-center group"
                             >
-                              <span className="font-medium text-slate-700">{d.dish}</span>
+                              <span className="font-medium text-slate-700 dark:text-slate-200">{d.dish}</span>
                               <span className="text-[10px] text-slate-400 opacity-0 group-hover:opacity-100 uppercase tracking-tighter transition-opacity">Välj</span>
                             </button>
                           ))}
@@ -853,8 +885,8 @@ export default function DinnerApp({ initialMenu, initialSchool }: DinnerAppProps
                   {day.dinnerSuggestion && editingDay !== day.date && (
                     <div className="space-y-3">
                       <div>
-                        <h4 className="text-lg font-bold text-slate-800">{day.dinnerSuggestion.dish}</h4>
-                        <p className="text-slate-600 text-sm mt-1">{day.dinnerSuggestion.description}</p>
+                        <h4 className="text-lg font-bold text-slate-800 dark:text-white">{day.dinnerSuggestion.dish}</h4>
+                        <p className="text-slate-600 dark:text-slate-300 text-sm mt-1">{day.dinnerSuggestion.description}</p>
                       </div>
 
                       <div className="flex items-center gap-2">

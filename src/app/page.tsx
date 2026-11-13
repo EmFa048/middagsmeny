@@ -45,7 +45,7 @@ export default async function Home() {
   const initialMenu = await getInitialMenu(defaultSchool.id);
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-800 font-sans">
+    <div className="min-h-screen bg-slate-50 dark:bg-[#051422] text-slate-800 dark:text-slate-100 font-sans transition-colors">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
@@ -118,8 +118,8 @@ export default async function Home() {
           </Suspense>
 
           {/* Popular Schools Directory - Important for SEO depth */}
-          <div className="bg-white rounded-2xl p-8 border border-slate-100 shadow-sm space-y-6">
-            <h3 className="text-xl font-bold text-[#051c2c] flex items-center gap-2">
+          <div className="bg-white dark:bg-slate-900 rounded-2xl p-8 border border-slate-100 dark:border-slate-800 shadow-sm space-y-6 transition-colors">
+            <h3 className="text-xl font-bold text-[#051c2c] dark:text-white flex items-center gap-2">
               <MapPin className="w-5 h-5 text-brand-yellow" />
               Populära skolor just nu
             </h3>
@@ -128,19 +128,19 @@ export default async function Home() {
                 <a
                   key={school.id}
                   href={`/?school=${encodeURIComponent(school.id)}&name=${encodeURIComponent(school.name)}`}
-                  className="p-4 bg-slate-50 rounded-xl hover:bg-brand-yellow/10 transition-colors border border-transparent hover:border-brand-yellow/30 group"
+                  className="p-4 bg-slate-50 dark:bg-slate-800/80 rounded-xl hover:bg-brand-yellow/10 transition-colors border border-transparent hover:border-brand-yellow/30 group"
                 >
-                  <div className="font-bold text-[#051c2c] group-hover:text-amber-700">{school.name}</div>
-                  <div className="text-xs text-slate-500 uppercase tracking-wider">{school.locality}</div>
+                  <div className="font-bold text-[#051c2c] dark:text-white group-hover:text-amber-500">{school.name}</div>
+                  <div className="text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wider">{school.locality}</div>
                 </a>
               ))}
             </div>
           </div>
 
           {/* SEO text – placed after tool for better UX */}
-          <div className="grid md:grid-cols-2 gap-12 text-slate-600 bg-white rounded-2xl p-8 border border-slate-50 shadow-sm">
+          <div className="grid md:grid-cols-2 gap-12 text-slate-600 dark:text-slate-300 bg-white dark:bg-slate-900 rounded-2xl p-8 border border-slate-50 dark:border-slate-800 shadow-sm transition-colors">
             <div className="space-y-4">
-              <h3 className="text-xl font-bold text-[#051c2c]">Hur fungerar det?</h3>
+              <h3 className="text-xl font-bold text-[#051c2c] dark:text-white">Hur fungerar det?</h3>
               <p>
                 Middagsmeny hämtar automatiskt veckans matsedel för de flesta grundskolor och förskolor i Sverige genom att ansluta till de största matsedelsleverantörerna. Genom att söka på din skola får du direkt koll på vad barnen äter till lunch, vilket är grunden för en bra matplanering.
               </p>
@@ -149,7 +149,7 @@ export default async function Home() {
               </p>
             </div>
             <div className="space-y-4">
-              <h3 className="text-xl font-bold text-[#051c2c]">Spara dina favoriter</h3>
+              <h3 className="text-xl font-bold text-[#051c2c] dark:text-white">Spara dina favoriter</h3>
               <p>
                 Du kan enkelt spara din skola som en genväg för att snabbt komma åt veckans meny varje gång du öppnar appen. Du kan också markera dina favoriträtter bland våra förslag för att få upp dem oftare i framtiden. Vår databas innehåller över 130 olika vardagsrecept anpassade för barnfamiljer.
               </p>
@@ -160,10 +160,10 @@ export default async function Home() {
           </div>
 
           {/* Main Info Section */}
-          <div className="bg-white rounded-2xl p-8 border border-slate-100 shadow-sm space-y-6">
+          <div className="bg-white dark:bg-slate-900 rounded-2xl p-8 border border-slate-100 dark:border-slate-800 shadow-sm space-y-6 transition-colors">
             <div className="text-center max-w-2xl mx-auto space-y-4">
-              <h2 className="text-xl md:text-2xl font-black text-[#051c2c]">Slipp middagspaniken med Middagsmeny</h2>
-              <p className="text-slate-600 leading-relaxed text-lg">
+              <h2 className="text-xl md:text-2xl font-black text-[#051c2c] dark:text-white">Slipp middagspaniken med Middagsmeny</h2>
+              <p className="text-slate-600 dark:text-slate-300 leading-relaxed text-lg">
                 Varje dag ställs hundratusentals föräldrar inför samma fråga: <em>"Vad ska vi äta till middag?"</em>. Med Middagsmeny blir beslutet enklare än någonsin genom smart synkronisering med skolan.
               </p>
             </div>

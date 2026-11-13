@@ -3,10 +3,18 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 
+import { isNativeApp } from "@/utils/capacitorDetection";
+
 export default function CookieBanner() {
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
+    // Dölj cookie-banner i native mobilappar (App Store / Google Play kräver inte cookie-banners)
+    if (isNativeApp()) {
+      setIsVisible(false);
+      return;
+    }
+
     // Check if the user has already consented
     const consent = localStorage.getItem("cookieConsent");
     if (!consent) {

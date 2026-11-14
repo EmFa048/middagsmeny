@@ -202,7 +202,7 @@ export default async function Home() {
             <div className="grid md:grid-cols-2 gap-x-12 gap-y-8">
               <div className="space-y-2">
                 <h4 className="font-bold text-brand-yellow text-lg">Varför ska man synka med skolan?</h4>
-                <p className="text-slate-300 text-sm">Genom att veta vad barnen äter till lunch kan du undvika att servera samma sak till middag. Det ger barnen en mer varierad kost och minskar risken för "matvägran" när de får samma favoriträtt två gånger på en dag.</p>
+                <p className="text-slate-300 text-sm">Genom att veta vad barnen äter till lunch kan du undvika att servera samma sak till middag. Det ger barnen en mer varierad kost.</p>
               </div>
               <div className="space-y-2">
                 <h4 className="font-bold text-brand-yellow text-lg">Är tjänsten gratis?</h4>

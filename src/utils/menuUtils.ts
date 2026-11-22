@@ -179,6 +179,27 @@ export const DEFAULT_DISHES = [
     { dish: 'Köttsoppa med klimp', description: 'Värmande gammaldags köttsoppa med rotfrukter och hembakat bröd.', vegetarian: false, tags: ['meat', 'soup'], avoidIfSchoolServes: ['köttsoppa', 'soppa'] }
 ];
 
+const SIGNATURE_THEMES = [
+    { name: 'rödbetor', keywords: ['rödbeta', 'rödbet', 'rödbetor'] },
+    { name: 'getost', keywords: ['getost'] },
+    { name: 'kål', keywords: ['kålpudding', 'kåldolmar', 'kålmaja', 'vitkål', 'surkål'] },
+    { name: 'lax', keywords: ['lax'] },
+    { name: 'torsk_vitfisk', keywords: ['torsk', 'sej', 'spätta'] },
+    { name: 'korv', keywords: ['korv', 'falukorv', 'salsiccia'] },
+    { name: 'soppa', keywords: ['soppa', 'ramen'] },
+    { name: 'texmex', keywords: ['tacos', 'enchiladas', 'fajitas', 'quesadillas'] },
+    { name: 'pannkaka', keywords: ['pannkaka', 'raggmunk', 'plättar'] },
+    { name: 'halloumi', keywords: ['halloumi'] },
+    { name: 'tofu', keywords: ['tofu'] },
+    { name: 'linser', keywords: ['linser', 'beluga'] },
+    { name: 'blomkål', keywords: ['blomkål'] },
+];
+
+function getSignatureThemes(dish: any): string[] {
+    const t = (dish.dish + ' ' + (dish.description || '')).toLowerCase();
+    return SIGNATURE_THEMES.filter(theme => theme.keywords.some(kw => t.includes(kw))).map(theme => theme.name);
+}
+
 export function generateMockSuggestion(
     schoolMeals: SchoolMeal[],
     prefs: { vegetarian: boolean; noPork: boolean; noFish: boolean },
@@ -231,27 +252,27 @@ export function generateMockSuggestion(
         const tags = d.tags || [];
         const text = (d.dish + ' ' + (d.description || '')).toLowerCase();
 
-        if (prefs.vegetarian) {
-            if (text.includes('pizza')) return 'pizza';
+        // If vegetarian, ensure it is NEVER categorized as meat/fish/chicken
+        if (d.vegetarian || prefs.vegetarian) {
             if (tags.includes('soup') || text.includes('soppa')) return 'soup';
-            if (tags.includes('pasta') || text.includes('pasta')) return 'pasta';
+            if (tags.includes('pasta') || text.includes('pasta') || text.includes('lasagne')) return 'pasta';
             if (tags.includes('rice') || text.includes('ris')) return 'rice';
             if (tags.includes('noodles') || text.includes('nudlar')) return 'noodles';
-            if (tags.includes('pie') || tags.includes('paj')) return 'pie';
-            if (tags.includes('stew') || tags.includes('gryta') || tags.includes('curry')) return 'stew';
-            if (tags.includes('salad') || text.includes('sallad')) return 'salad';
-            if (tags.includes('bread') || text.includes('macka') || text.includes('burgare')) return 'bread';
+            if (tags.includes('pie') || text.includes('paj')) return 'pie';
+            if (tags.includes('stew') || text.includes('gryta') || text.includes('curry')) return 'stew';
+            if (tags.includes('salad') || text.includes('sallad') || text.includes('carpaccio')) return 'salad';
+            if (tags.includes('bread') || text.includes('macka') || text.includes('burgare') || text.includes('pizza') || text.includes('falafel')) return 'bread';
+            if (tags.includes('cheese') || text.includes('halloumi') || text.includes('getost') || text.includes('feta')) return 'cheese';
             if (tags.includes('asian')) return 'asian';
-            if (tags.includes('texmex') || tags.includes('tacos')) return 'texmex';
-            return 'vegetarian_general';
+            if (tags.includes('texmex') || text.includes('tacos')) return 'texmex';
+            return 'vegetarian';
         }
 
-        if (tags.includes('fish') || text.includes('lax') || text.includes('torsk') || text.includes('fisk') || text.includes('räkor')) return 'fish';
+        if (tags.includes('fish') || text.includes('lax') || text.includes('torsk') || text.includes('fisk') || text.includes('räkor') || text.includes('spätta') || text.includes('sej')) return 'fish';
         if (tags.includes('chicken') || text.includes('kyckling')) return 'chicken';
-        if (tags.includes('minced_sausage') || text.includes('köttfärs') || text.includes('färs') || text.includes('korv')) return 'minced_sausage';
-        if (tags.some((t: string) => ['meat', 'pork'].includes(t)) || text.includes('kött') || text.includes('biff') || text.includes('fläsk')) return 'red_meat';
+        if (tags.includes('minced_sausage') || text.includes('köttfärs') || text.includes('färs') || text.includes('korv') || text.includes('köttbullar') || text.includes('biffar')) return 'minced_sausage';
+        if (tags.some((t: string) => ['meat', 'pork'].includes(t)) || text.includes('kött') || text.includes('biff') || text.includes('fläsk') || text.includes('kotlett') || text.includes('schnitzel') || text.includes('oxe') || text.includes('vilt')) return 'red_meat';
         if (tags.includes('soup') || text.includes('soppa')) return 'soup';
-        if (tags.includes('vegetarian') || d.vegetarian) return 'vegetarian';
         if (tags.includes('bread') || text.includes('pizza') || text.includes('macka')) return 'bread';
         if (tags.includes('pasta')) return 'pasta';
         return 'other';
@@ -261,6 +282,11 @@ export function generateMockSuggestion(
         const d = allDishes.find(ad => ad.dish === usedName);
         return d ? getCoreCategory(d) : null;
     }).filter(Boolean);
+
+    const usedThemes = avoidDishes.flatMap(usedName => {
+        const d = allDishes.find(ad => ad.dish === usedName);
+        return d ? getSignatureThemes(d) : [];
+    });
 
     const lastDishName = avoidDishes[avoidDishes.length - 1];
     const lastDish = allDishes.find(ad => ad.dish === lastDishName);
@@ -300,6 +326,7 @@ export function generateMockSuggestion(
         let score = 0;
         const currentCategory = getCoreCategory(d);
         const currentBase = getBase(d);
+        const currentThemes = getSignatureThemes(d);
         const dishNameLower = d.dish.toLowerCase();
         const dishDescLower = d.description?.toLowerCase() || '';
 
@@ -321,6 +348,19 @@ export function generateMockSuggestion(
                 if (d.tags?.includes(cat.tag)) score += 500;
             }
         });
+
+        // Signature themes already served at school today (e.g. tacos, pannkakor, lax, rödbetor)
+        if (currentThemes.some(theme => {
+            const themeDef = SIGNATURE_THEMES.find(st => st.name === theme);
+            return themeDef ? themeDef.keywords.some(kw => schoolToText.includes(kw)) : false;
+        })) {
+            score += 2000;
+        }
+
+        // Signature themes already used this week (prevents e.g. rödbetscarpaccio + rödbetsbiffar in same week!)
+        if (currentThemes.some(theme => usedThemes.includes(theme))) {
+            score += 3000;
+        }
 
         // Carb base clash with school lunch
         if (schoolBase && currentBase === schoolBase) {

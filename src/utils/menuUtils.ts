@@ -88,7 +88,7 @@ export const DEFAULT_DISHES = [
     { dish: 'Shepherds pie', description: 'Köttfärsgryta under ett täcke av krämigt potatismos.', vegetarian: false, tags: ['minced_sausage', 'potato'], avoidIfSchoolServes: ['köttfärs', 'potatismos'] },
     { dish: 'Bangers and mash', description: 'Brittisk klassiker med smakrik korv och potatismos.', vegetarian: false, tags: ['pork', 'potato'], avoidIfSchoolServes: ['korv', 'potatismos'] },
     { dish: 'Fiskpinnar', description: 'Frasiga fiskpinnar med potatismos och remouladsås.', vegetarian: false, tags: ['fish', 'potato'], avoidIfSchoolServes: ['fiskpinnar', 'fisk'] },
-    { dish: 'Hemgjord pizza', description: 'Välj dina favorittoppings själv!', vegetarian: true, tags: ['bread'], avoidIfSchoolServes: ['pizza'] },
+    { dish: 'Hemgjord pizza', description: 'Välj dina favorittoppings själv!', vegetarian: true, tags: ['bread', 'vegetarian'], avoidIfSchoolServes: ['pizza'] },
     { dish: 'Blomkålsgratäng', description: 'Krämig gratäng med blomkål och örter.', vegetarian: true, tags: ['vegetarian', 'blomkål'], avoidIfSchoolServes: ['blomkål', 'gratäng'] },
     { dish: 'Kyckling adobo', description: 'Filippinsk kycklinggryta med soja, vinäger och vitlök.', vegetarian: false, tags: ['chicken', 'rice', 'asian'], avoidIfSchoolServes: ['kyckling', 'ris'] },
     { dish: 'Mango chutney kyckling', description: 'Krämig kycklinggratäng med mango chutney och paprika.', vegetarian: false, tags: ['chicken', 'rice'], avoidIfSchoolServes: ['kyckling', 'gratäng'] },
@@ -162,7 +162,21 @@ export const DEFAULT_DISHES = [
     { dish: 'Köttpiroger', description: 'Hemgjorda piroger med kryddig färsfyllning.', vegetarian: false, tags: ['meat', 'bread', 'minced_sausage'], avoidIfSchoolServes: ['piroger'] },
     { dish: 'Chili con carne', description: 'Långkokt med massor av bönor och chili.', vegetarian: false, tags: ['meat', 'stew'], avoidIfSchoolServes: ['chili', 'gryta'] },
     { dish: 'Pljeskavica', description: 'Balkansk färsbiff med adjika och gräddfil.', vegetarian: false, tags: ['meat', 'bread'], avoidIfSchoolServes: ['biff'] },
-    { dish: 'Salsicciakorv med surkål', description: 'Mustig och kryddig tysk-inspirerad middag.', vegetarian: false, tags: ['pork'], avoidIfSchoolServes: ['korv'] }
+    { dish: 'Salsicciakorv med surkål', description: 'Mustig och kryddig tysk-inspirerad middag.', vegetarian: false, tags: ['pork'], avoidIfSchoolServes: ['korv'] },
+    { dish: 'Falukorv i ugn', description: 'Klassisk ugnstekt falukorv med äpple, senap och krämigt potatismos.', vegetarian: false, tags: ['minced_sausage', 'potato'], avoidIfSchoolServes: ['korv', 'falukorv', 'potatismos'] },
+    { dish: 'Pyttipanna', description: 'Klassisk svensk pytt med stekt ägg och inlagda rödbetor.', vegetarian: false, tags: ['meat', 'potato'], avoidIfSchoolServes: ['pyttipanna', 'pytt'] },
+    { dish: 'Raggmunk med fläsk', description: 'Frasiga raggmunkar med stekt rimmat sidfläsk och rårörda lingon.', vegetarian: false, tags: ['pork', 'potato'], avoidIfSchoolServes: ['raggmunk', 'fläsk', 'pannkaka'] },
+    { dish: 'Kasslergratäng', description: 'Krämig gratäng med strimlad kassler, ananas och ris.', vegetarian: false, tags: ['pork', 'rice'], avoidIfSchoolServes: ['kassler', 'fläsk'] },
+    { dish: 'Wallenbergare', description: 'Fina kalvfärsbiffar med potatismos, gröna ärtor och skirat smör.', vegetarian: false, tags: ['meat', 'potato'], avoidIfSchoolServes: ['biffar', 'färsbiffar', 'potatismos'] },
+    { dish: 'Kalops', description: 'Långkokt nötkött med kryddpeppar, morötter och kokt potatis.', vegetarian: false, tags: ['meat', 'potato', 'stew'], avoidIfSchoolServes: ['kalops', 'gryta'] },
+    { dish: 'Laxfilé med romsås', description: 'Ugnsbakad lax med krämig romsås, dill och kokt färskpotatis.', vegetarian: false, tags: ['fish', 'potato'], avoidIfSchoolServes: ['lax', 'fisk'] },
+    { dish: 'Fiskbiffar med remouladsås', description: 'Hemgjorda biffar på torsk och lax med potatismos och ärtor.', vegetarian: false, tags: ['fish', 'potato'], avoidIfSchoolServes: ['fiskbiffar', 'fisk'] },
+    { dish: 'Kycklingfajitas', description: 'Stekt kyckling med paprika, lök, guacamole och varma vetetortillas.', vegetarian: false, tags: ['chicken', 'texmex', 'bread'], avoidIfSchoolServes: ['kyckling', 'tacos'] },
+    { dish: 'Halloumi stroganoff', description: 'Smakrik stroganoff på stekt halloumi, tomat och crème fraiche med ris.', vegetarian: true, tags: ['vegetarian', 'rice', 'cheese'], avoidIfSchoolServes: ['stroganoff', 'halloumi'] },
+    { dish: 'Pasta med tonfisksås', description: 'Snabb italiensk pastasås med tonfisk, vitlök, tomat och kapris.', vegetarian: false, tags: ['fish', 'pasta'], avoidIfSchoolServes: ['pasta', 'tonfisk'] },
+    { dish: 'Toast Skagen', description: 'Klassisk lyxig räkröra på smörstekt bröd med dill och citron.', vegetarian: false, tags: ['fish', 'bread'], avoidIfSchoolServes: ['skaldjur', 'räkor'] },
+    { dish: 'Rotfruktsgratäng med biff', description: 'Krämig gratäng på potatis och palsternacka med stekt biff.', vegetarian: false, tags: ['meat', 'potato'], avoidIfSchoolServes: ['biff', 'gratäng'] },
+    { dish: 'Köttsoppa med klimp', description: 'Värmande gammaldags köttsoppa med rotfrukter och hembakat bröd.', vegetarian: false, tags: ['meat', 'soup'], avoidIfSchoolServes: ['köttsoppa', 'soppa'] }
 ];
 
 export function generateMockSuggestion(
@@ -171,7 +185,8 @@ export function generateMockSuggestion(
     custom: any[] = [],
     favDishNames: string[] = [],
     avoidDishes: string[] = [],
-    forceDish?: string
+    forceDish?: string,
+    recentDishes: string[] = []
 ) {
     const allDishes = [...DEFAULT_DISHES, ...custom];
 
@@ -191,12 +206,26 @@ export function generateMockSuggestion(
     const schoolDescriptions = schoolMeals.flatMap(m => m.courses.map(c => c.description?.toLowerCase() || ''));
     const schoolToText = [...schoolDishNames, ...schoolDescriptions].join(' ');
 
+    // Filter available dishes: hard restrictions and avoid dishes already planned this week
     let availableDishes = allDishes.filter(d => {
+        if (avoidDishes.includes(d.dish)) return false;
         if (prefs.vegetarian && !d.vegetarian) return false;
         if (prefs.noPork && d.tags?.includes('pork')) return false;
         if (prefs.noFish && d.tags?.includes('fish')) return false;
         return true;
     });
+
+    // Fallback if avoidDishes somehow exhausted all options
+    if (availableDishes.length === 0) {
+        availableDishes = allDishes.filter(d => {
+            if (prefs.vegetarian && !d.vegetarian) return false;
+            if (prefs.noPork && d.tags?.includes('pork')) return false;
+            if (prefs.noFish && d.tags?.includes('fish')) return false;
+            return true;
+        });
+    }
+
+    if (availableDishes.length === 0) return undefined;
 
     const getCoreCategory = (d: any) => {
         const tags = d.tags || [];
@@ -204,26 +233,28 @@ export function generateMockSuggestion(
 
         if (prefs.vegetarian) {
             if (text.includes('pizza')) return 'pizza';
-            if (tags.includes('soup')) return 'soup';
-            if (tags.includes('pasta')) return 'pasta';
-            if (tags.includes('rice')) return 'rice';
-            if (tags.includes('noodles')) return 'noodles';
+            if (tags.includes('soup') || text.includes('soppa')) return 'soup';
+            if (tags.includes('pasta') || text.includes('pasta')) return 'pasta';
+            if (tags.includes('rice') || text.includes('ris')) return 'rice';
+            if (tags.includes('noodles') || text.includes('nudlar')) return 'noodles';
             if (tags.includes('pie') || tags.includes('paj')) return 'pie';
             if (tags.includes('stew') || tags.includes('gryta') || tags.includes('curry')) return 'stew';
-            if (tags.includes('salad')) return 'salad';
-            if (tags.includes('bread') || tags.includes('macka') || tags.includes('burgare')) return 'bread';
+            if (tags.includes('salad') || text.includes('sallad')) return 'salad';
+            if (tags.includes('bread') || text.includes('macka') || text.includes('burgare')) return 'bread';
             if (tags.includes('asian')) return 'asian';
             if (tags.includes('texmex') || tags.includes('tacos')) return 'texmex';
             return 'vegetarian_general';
         }
 
-        if (tags.includes('soup') || text.includes('soppa')) return 'soup';
-        if (tags.includes('fish') || text.includes('lax') || text.includes('torsk')) return 'fish';
-        if (tags.includes('vegetarian')) return 'vegetarian';
+        if (tags.includes('fish') || text.includes('lax') || text.includes('torsk') || text.includes('fisk') || text.includes('räkor')) return 'fish';
         if (tags.includes('chicken') || text.includes('kyckling')) return 'chicken';
         if (tags.includes('minced_sausage') || text.includes('köttfärs') || text.includes('färs') || text.includes('korv')) return 'minced_sausage';
-        if (tags.some((t: string) => ['meat', 'pork'].includes(t)) || text.includes('kött') || text.includes('biff')) return 'red_meat';
-        return null;
+        if (tags.some((t: string) => ['meat', 'pork'].includes(t)) || text.includes('kött') || text.includes('biff') || text.includes('fläsk')) return 'red_meat';
+        if (tags.includes('soup') || text.includes('soppa')) return 'soup';
+        if (tags.includes('vegetarian') || d.vegetarian) return 'vegetarian';
+        if (tags.includes('bread') || text.includes('pizza') || text.includes('macka')) return 'bread';
+        if (tags.includes('pasta')) return 'pasta';
+        return 'other';
     };
 
     const usedWeekCategories = avoidDishes.map(usedName => {
@@ -235,87 +266,125 @@ export function generateMockSuggestion(
     const lastDish = allDishes.find(ad => ad.dish === lastDishName);
     const lastCategory = lastDish ? getCoreCategory(lastDish) : null;
 
+    const getBase = (dish: any) => {
+        const tags = dish.tags || [];
+        const t = (dish.dish + ' ' + (dish.description || '')).toLowerCase();
+        if (tags.includes('pasta') || tags.includes('noodles') || t.includes('pasta') || t.includes('spaghetti') || t.includes('makaron') || t.includes('lasagne') || t.includes('nudlar') || t.includes('penne')) return 'pasta';
+        if (tags.includes('rice') || t.includes('ris') || t.includes('bulgur') || t.includes('couscous') || t.includes('paella')) return 'rice';
+        if (tags.includes('potato') || t.includes('potatis') || t.includes('mos') || t.includes('pommes') || t.includes('klyftpotatis')) return 'potato';
+        if (tags.includes('bread') || t.includes('bröd') || t.includes('macka') || t.includes('pitabröd') || t.includes('tortilla')) return 'bread';
+        return null;
+    };
+    const lastBase = lastDish ? getBase(lastDish) : null;
+
+    // Detect school lunch carbohydrate base to avoid repetition
+    const getSchoolBase = () => {
+        if (schoolToText.includes('pasta') || schoolToText.includes('spaghetti') || schoolToText.includes('makaron') || schoolToText.includes('lasagne')) return 'pasta';
+        if (schoolToText.includes('ris') || schoolToText.includes('bulgur') || schoolToText.includes('couscous')) return 'rice';
+        if (schoolToText.includes('potatis') || schoolToText.includes('mos') || schoolToText.includes('pommes')) return 'potato';
+        return null;
+    };
+    const schoolBase = getSchoolBase();
+
+    const categories = [
+        { tag: 'fish', keywords: ['fisk', 'lax', 'torsk', 'spätta', 'sej', 'strömming', 'makrill', 'skaldjur', 'räkor', 'fiskgratäng', 'fiskpinnar'] },
+        { tag: 'chicken', keywords: ['kyckling', 'nuggets', 'piccata', 'jacob', 'hönskött', 'kycklingfilé'] },
+        { tag: 'pork', keywords: ['fläsk', 'skinka', 'bacon', 'salami', 'salsiccia', 'korv', 'kassler', 'falukorv', 'kotlett', 'schnitzel', 'chorizo', 'frankfurter', 'hot dog'] },
+        { tag: 'meat', keywords: ['kött', 'nöt', 'biff', 'färs', 'innerfilé', 'entrecote', 'högrev', 'kalv', 'rydberg', 'steak', 'oxe'] },
+        { tag: 'minced_sausage', keywords: ['köttfärs', 'korv', 'färs', 'bolognese', 'biffar', 'köttbullar', 'stroganoff', 'lasagne', 'kebab', 'burgare', 'pudding', 'dolmar', 'panna'] },
+    ];
+
+    const combinedKeywords = ['kyckling', 'fisk', 'korv', 'lax', 'torsk', 'färs', 'kött', 'pasta', 'ris', 'soppa', 'potatis'];
+
     const scoredDishes = availableDishes.map(d => {
         let score = 0;
         const currentCategory = getCoreCategory(d);
+        const currentBase = getBase(d);
         const dishNameLower = d.dish.toLowerCase();
         const dishDescLower = d.description?.toLowerCase() || '';
 
+        // Heavy penalty if dish name matches school menu
         if (schoolDishNames.some(name => name.includes(dishNameLower) || dishNameLower.includes(name))) {
             score += 5000;
         }
 
-        const categories = [
-            { tag: 'fish', keywords: ['fisk', 'lax', 'torsk', 'spätta', 'sej', 'strömming', 'makrill', 'skaldjur', 'räkor', 'fiskgratäng', 'fiskpinnar'] },
-            { tag: 'chicken', keywords: ['kyckling', 'nuggets', 'piccata', 'jacob', 'hönskött', 'kycklingfilé'] },
-            { tag: 'pork', keywords: ['fläsk', 'skinka', 'bacon', 'salami', 'salsiccia', 'korv', 'kassler', 'falukorv', 'kotlett', 'schnitzel', 'chorizo', 'frankfurter', 'hot dog'] },
-            { tag: 'meat', keywords: ['kött', 'nöt', 'biff', 'färs', 'innerfilé', 'entrecote', 'högrev', 'kalv', 'rydberg', 'steak', 'oxe'] },
-            { tag: 'minced_sausage', keywords: ['köttfärs', 'korv', 'färs', 'bolognese', 'biffar', 'köttbullar', 'stroganoff', 'lasagne', 'kebab', 'burgare', 'pudding', 'dolmar', 'panna'] },
-        ];
-
-        const combinedKeywords = ['kyckling', 'fisk', 'korv', 'lax', 'torsk', 'färs', 'kött', 'pasta', 'ris', 'soppa'];
+        // Keywords in school menu matching dish name or description
         combinedKeywords.forEach(kw => {
             if (schoolToText.includes(kw) && (dishNameLower.includes(kw) || dishDescLower.includes(kw))) {
                 score += 1000;
             }
         });
 
+        // Category clash with school lunch
         categories.forEach(cat => {
             if (cat.keywords.some(word => schoolToText.includes(word))) {
                 if (d.tags?.includes(cat.tag)) score += 500;
             }
         });
 
-        if (currentCategory && currentCategory === lastCategory) {
-            score += 300;
+        // Carb base clash with school lunch
+        if (schoolBase && currentBase === schoolBase) {
+            score += 400;
         }
 
-        const getBase = (dish: any) => {
-            const t = (dish.dish + ' ' + (dish.description || '')).toLowerCase();
-            if (t.includes('pasta') || t.includes('spaghetti') || t.includes('makaron') || t.includes('lasagne') || t.includes('tortellini') || t.includes('penne')) return 'pasta';
-            if (t.includes('ris') || t.includes('bulgur') || t.includes('couscous') || t.includes('paella')) return 'rice';
-            if (t.includes('potatis') || t.includes('mos') || t.includes('pommes') || t.includes('stubbar')) return 'potato';
-            return null;
-        };
+        // Penalty if same protein/category as yesterday
+        if (currentCategory && currentCategory !== 'other' && currentCategory === lastCategory) {
+            score += 400;
+        }
 
-        const currentBase = getBase(d);
-        const lastBase = lastDish ? getBase(lastDish) : null;
+        // Penalty if same carb base as yesterday
         if (currentBase && currentBase === lastBase) {
-            score += 500;
+            score += 350;
         }
 
-        if (currentCategory) {
-            if (usedWeekCategories.includes(currentCategory)) {
-                score += 200;
+        // Category variety across the week
+        if (currentCategory && currentCategory !== 'other') {
+            const timesUsed = usedWeekCategories.filter(c => c === currentCategory).length;
+            if (timesUsed > 0) {
+                score += timesUsed * 250;
             } else {
                 score -= 50;
             }
         }
 
+        // Avoid if school serves terms
         if (d.avoidIfSchoolServes) {
             d.avoidIfSchoolServes.forEach((term: string) => {
                 if (schoolToText.includes(term.toLowerCase())) score += 300;
             });
         }
 
-        if (favDishNames.includes(d.dish)) score -= 100;
+        // Favorite bonus
+        if (favDishNames.includes(d.dish)) score -= 120;
+
+        // Recency penalty: dishes suggested in recent history receive a cooling-off penalty
+        if (recentDishes && recentDishes.length > 0) {
+            const idx = recentDishes.indexOf(d.dish);
+            if (idx !== -1) {
+                score += Math.max(80, 400 - idx * 15);
+            }
+        }
 
         return { ...d, score };
     });
 
-    scoredDishes.sort((a, b) => a.score - b.score);
-    // Take only the top 10 best-scoring dishes to ensure penalties actually work
-    let pool = scoredDishes.filter(d => d.score < 1500).slice(0, 10);
+    // Find the minimum score among all eligible dishes
+    const minScore = Math.min(...scoredDishes.map(d => d.score));
 
-    if (pool.length < 5) {
-        pool = scoredDishes.slice(0, 10);
+    // Candidate pool: all dishes within a tight tolerance of minScore (ensuring no arbitrary cutoff!)
+    let pool = scoredDishes.filter(d => d.score <= minScore + 60);
+
+    // If fewer than 15 dishes in top tier, expand tolerance
+    if (pool.length < 15) {
+        pool = scoredDishes.filter(d => d.score <= minScore + 200);
     }
+    // If still small, include any non-conflicting dish
+    if (pool.length < 10) {
+        pool = scoredDishes.filter(d => d.score < 1000);
+    }
+    if (pool.length === 0) pool = scoredDishes;
 
-    const uniquePool = pool.filter(d => !avoidDishes.includes(d.dish));
-    if (uniquePool.length > 0) pool = uniquePool;
-
-    if (pool.length === 0) return undefined;
-
+    // Pick uniformly at random from the candidate pool
     const selected = pool[Math.floor(Math.random() * pool.length)];
 
     return {
@@ -331,7 +400,10 @@ export function generateMockSuggestion(
 
 export function processMenu(
     rawMeals: any[],
-    prefs: { vegetarian: boolean; noPork: boolean; noFish: boolean } = { vegetarian: false, noPork: false, noFish: false }
+    prefs: { vegetarian: boolean; noPork: boolean; noFish: boolean } = { vegetarian: false, noPork: false, noFish: false },
+    custom: any[] = [],
+    favDishNames: string[] = [],
+    recentDishes: string[] = []
 ): DayMenu[] {
     if (!rawMeals || !Array.isArray(rawMeals)) return [];
 
@@ -352,7 +424,7 @@ export function processMenu(
 
     for (const date of sortedDates) {
         const schoolMeals = grouped.get(date)!;
-        const suggestion = generateMockSuggestion(schoolMeals, prefs, [], [], usedDishes);
+        const suggestion = generateMockSuggestion(schoolMeals, prefs, custom, favDishNames, usedDishes, undefined, recentDishes);
 
         if (suggestion) {
             usedDishes.push(suggestion.dish);

@@ -37,6 +37,7 @@ export default function DinnerApp({ initialMenu, initialSchool }: DinnerAppProps
   const [favorites, setFavorites] = useState<{ name: string; url: string }[]>([]);
   const [favoriteDishNames, setFavoriteDishNames] = useState<string[]>([]);
   const [customDishes, setCustomDishes] = useState<any[]>([]); // Using any for simplicity in this specific block, ideally typed
+  const [recentDishes, setRecentDishes] = useState<string[]>([]);
   const [showAddDish, setShowAddDish] = useState(false);
   const [newDish, setNewDish] = useState({ dish: '', description: '', vegetarian: false, tags: '' });
   const [editingDay, setEditingDay] = useState<string | null>(null);
@@ -76,6 +77,15 @@ export default function DinnerApp({ initialMenu, initialSchool }: DinnerAppProps
     const savedFavDishes = localStorage.getItem('mm_favorite_dishes');
     if (savedFavDishes) setFavoriteDishNames(JSON.parse(savedFavDishes));
 
+    const savedRecent = localStorage.getItem('mm_recent_dishes');
+    if (savedRecent) {
+      try {
+        setRecentDishes(JSON.parse(savedRecent));
+      } catch (e) {
+        console.error("Failed to parse recent dishes", e);
+      }
+    }
+
     // Ladda native bannerannons om appen körs på iOS/Android
     if (isNativeApp()) {
       showBannerAd();
@@ -94,6 +104,22 @@ export default function DinnerApp({ initialMenu, initialSchool }: DinnerAppProps
   useEffect(() => {
     localStorage.setItem('mm_favorite_dishes', JSON.stringify(favoriteDishNames));
   }, [favoriteDishNames]);
+
+  useEffect(() => {
+    localStorage.setItem('mm_recent_dishes', JSON.stringify(recentDishes));
+  }, [recentDishes]);
+
+  const recordRecentDishes = (dishNames: string[]) => {
+    if (!dishNames || dishNames.length === 0) return;
+    setRecentDishes(prev => {
+      const filtered = prev.filter(d => !dishNames.includes(d));
+      const updated = [...dishNames, ...filtered].slice(0, 30);
+      try {
+        localStorage.setItem('mm_recent_dishes', JSON.stringify(updated));
+      } catch (e) {}
+      return updated;
+    });
+  };
 
 
   const [preferences, setPreferences] = useState({
@@ -253,6 +279,14 @@ export default function DinnerApp({ initialMenu, initialSchool }: DinnerAppProps
 
   const selectSchool = (school: { id: string, name: string }) => {
     triggerLightHaptic();
+    // Clear URL suggestion params so the newly selected school gets a fresh, tailored menu
+    const params = new URLSearchParams(window.location.search);
+    Array.from(params.keys()).forEach(key => {
+      if (key.startsWith('s_')) params.delete(key);
+    });
+    window.history.replaceState(null, '', `?${params.toString()}`);
+    lastFetchedKey.current = '';
+
     setDistributorId(extractDistributorId(school.id));
     setSearchQuery(school.name);
     setWeekOffset(0);
@@ -340,8 +374,7 @@ export default function DinnerApp({ initialMenu, initialSchool }: DinnerAppProps
         .filter(day => day.date !== date && day.dinnerSuggestion)
         .map(day => day.dinnerSuggestion!.dish);
 
-      // Add potentially the CURRENT dish to avoid list too? 
-      // Yes, if we are regenerating, we probably don't want the SAME one back immediately.
+      // Add the CURRENT dish to avoid list too so we don't suggest the same one immediately
       const currentDay = prevMenu.find(d => d.date === date);
       if (currentDay?.dinnerSuggestion) {
         otherDishes.push(currentDay.dinnerSuggestion.dish);
@@ -349,9 +382,21 @@ export default function DinnerApp({ initialMenu, initialSchool }: DinnerAppProps
 
       return prevMenu.map(day => {
         if (day.date === date) {
+          const newSuggestion = generateMockSuggestion(
+            day.schoolMeals,
+            preferences,
+            customDishes,
+            favoriteDishNames,
+            otherDishes,
+            undefined,
+            recentDishes
+          );
+          if (newSuggestion) {
+            recordRecentDishes([newSuggestion.dish]);
+          }
           return {
             ...day,
-            dinnerSuggestion: generateMockSuggestion(day.schoolMeals, preferences, customDishes, favoriteDishNames, otherDishes)
+            dinnerSuggestion: newSuggestion
           };
         }
         return day;
@@ -413,14 +458,26 @@ export default function DinnerApp({ initialMenu, initialSchool }: DinnerAppProps
       const usedDishes: string[] = [];
       const sortedDates = Array.from(grouped.keys()).sort();
       const currentParams = new URLSearchParams(window.location.search);
+      const newSuggestedDishes: string[] = [];
 
       for (const date of sortedDates) {
         const mealsForDay = grouped.get(date)!;
         const sharedDish = currentParams.get('s_' + date) || undefined;
-        const suggestion = generateMockSuggestion(mealsForDay, preferences, customDishes, favoriteDishNames, usedDishes, sharedDish);
+        const suggestion = generateMockSuggestion(
+          mealsForDay,
+          preferences,
+          customDishes,
+          favoriteDishNames,
+          usedDishes,
+          sharedDish,
+          recentDishes
+        );
 
         if (suggestion) {
           usedDishes.push(suggestion.dish);
+          if (!sharedDish) {
+            newSuggestedDishes.push(suggestion.dish);
+          }
         }
 
         processedMenu.push({
@@ -428,6 +485,10 @@ export default function DinnerApp({ initialMenu, initialSchool }: DinnerAppProps
           schoolMeals: mealsForDay,
           dinnerSuggestion: suggestion,
         });
+      }
+
+      if (newSuggestedDishes.length > 0) {
+        recordRecentDishes(newSuggestedDishes);
       }
 
       setMenu(processedMenu);
@@ -550,10 +611,7 @@ export default function DinnerApp({ initialMenu, initialSchool }: DinnerAppProps
                     <div key={i} className="relative group/fav">
                       <button
                         onClick={() => {
-                          triggerLightHaptic();
-                          setDistributorId(fav.url);
-                          setSearchQuery(fav.name);
-                          setWeekOffset(0);
+                          selectSchool({ id: fav.url, name: fav.name });
                         }}
                         className={`whitespace-nowrap px-3 py-1.5 pr-8 text-xs font-medium rounded-full border transition-all ${distributorId === fav.url ? 'bg-brand-blue text-white border-brand-blue shadow-md' : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:border-brand-blue hover:text-brand-blue'}`}
                       >

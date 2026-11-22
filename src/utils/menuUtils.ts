@@ -432,9 +432,7 @@ export function generateMockSuggestion(
         description: selected.description,
         vegetarian: selected.vegetarian,
         recipeLink: `https://www.google.com/search?q=recept+${encodeURIComponent(selected.dish)}`,
-        matchReason: selected.score < -5 ? 'Baserat på dina favoriter!' :
-            selected.score < 5 ? 'Bra komplement till skollunchen.' :
-                ''
+        matchReason: ''
     };
 }
 
